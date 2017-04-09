@@ -6,7 +6,7 @@
 
 
 
-enum MENU{ SET_NAMES = 1, REGULAR_GAME = 2, SWITCHED_GAME = 3, RESET_SCORE = 4, EXIT_MENU = 9 };
+enum MenuOptions{ SET_NAMES = 1, REGULAR_GAME = 2, SWITCHED_GAME = 3, RESET_SCORE = 4, EXIT_MENU = 9 };
 
 using namespace std;
 
@@ -22,11 +22,13 @@ void GameManager::run() {
 			setUserNames();
 			break;
 		case REGULAR_GAME:
-			cout << "Pew Pew\n";
+			cout << "Starting Regular Game!\n";
+			Sleep(1000);
 			startMatch(REGULAR_GAME);
 			break;
 		case SWITCHED_GAME:
-			cout << "weP weP\n";
+			cout << "Starting Switched Game!\n";
+			Sleep(1000);
 			startMatch(SWITCHED_GAME);
 			break;
 		case RESET_SCORE:

@@ -49,8 +49,6 @@ Soldier & Soldier::battleWinner(Soldier & Attacker, Soldier & Defender)
 		//maybe we should add battleground parameter to the function to solve this.
 		return (loser._player == Attacker._player) ? Defender : Attacker; 
 	}
-	// TODO: insert return statement here
-
 }
 
 void Soldier::attack(Soldier & Attacker, Soldier & Defender)

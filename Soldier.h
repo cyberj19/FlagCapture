@@ -25,7 +25,7 @@ public:
 	int getNextY();
 	void step();
 	void setState(State* state) { this->state = state; }
-	bool isAlive() { return (status == ALIVE) ? true : false; }
+	bool isAlive() { return (status == SoldierStatus::ALIVE); }
 private:
 	void stepLogic(Soldier& soldier, int command);
 	Soldier& battleWinner(Soldier& Attacker, Soldier& Defender);

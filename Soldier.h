@@ -24,6 +24,7 @@ public:
 	int getNextX();
 	int getNextY();
 	void step();
+	void control(Input input);
 	void setState(State* state) { this->state = state; }
 	bool isAlive() { return (status == SoldierStatus::ALIVE); }
 private:

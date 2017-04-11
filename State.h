@@ -1,6 +1,7 @@
 #pragma once
 #include "Soldier.h"
 #include "Controller.h"
+#include <vector>
 
 
 #define ROWS 13
@@ -15,12 +16,15 @@ typedef struct cell{
 } Cell;
 
 class State {
-	Soldier *soldiersA, *soldiersB;
+	std::vector<Soldier&> soldiersA, soldiersB;
 	Cell board[ROWS][COLS];
 	int movingSoldierIndexA, movingSoldierIndexB;
+	int clock;
 public:
+	State():clock(0){}
 	Player winner;
 	bool isFinished;
 	void step();
 	void control(Input input);
+	const int getClock() { return clock; }
 };

@@ -28,13 +28,13 @@ public:
 	void setState(State* state) { this->state = state; }
 	bool isAlive() { return (status == SoldierStatus::ALIVE); }
 private:
-	void stepLogic(Soldier& soldier, int command);
-	Soldier& battleWinner(Soldier& Attacker, Soldier& Defender);
+	void stepLogic();
+	static Soldier& battleWinner(Soldier& Attacker, Soldier& Defender);
 	void attack(Soldier& Attacker, Soldier& Defender);
 	void die() {
 		this->status = DEAD;
 	}
 
-	void move(int srcX, int srcY, int dstX, int dstY);
+	void move();
 
 };

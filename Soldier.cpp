@@ -4,9 +4,7 @@ void Soldier::step()
 {
 	if (!isMoving || !isAlive()) return;
 	if (state->getClock() % 2 == 1 && _player == Player::A) {
-		//get direction from keyboard
-		int command = controller.getInput();
-		stepLogic(*this, command);
+		stepLogic();
 		// check direction on board
 		//if forest or sea check type - if approved move else do nothing
 		//if FlagA do nothing, if FlagB move -end game - you winner
@@ -20,13 +18,13 @@ void Soldier::step()
 	}
 }
 
-void Soldier::stepLogic(Soldier & soldier, int command)
+void Soldier::stepLogic()
 {
 
 }
 
 // returns the winner of the battle
-Soldier & Soldier::battleWinner(Soldier & Attacker, Soldier & Defender)
+static Soldier & Soldier::battleWinner(Soldier & Attacker, Soldier & Defender)
 {
 	if (Attacker._player == Player::A)
 	{
@@ -54,8 +52,8 @@ Soldier & Soldier::battleWinner(Soldier & Attacker, Soldier & Defender)
 void Soldier::attack(Soldier & Attacker, Soldier & Defender)
 {
 	Soldier& winner = battleWinner(Attacker, Defender);
-	winner.move(winner.getX(), winner.getY(), winner.getNextX(), winner.getNextY);
 	if (winner._player == Attacker._player) {
+		winner.move();
 		Defender.die();
 	}
 	else {

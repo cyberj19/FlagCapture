@@ -8,4 +8,5 @@
 
 void User::resetScore()
 {
+	score = 0;
 }

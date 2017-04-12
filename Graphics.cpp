@@ -62,7 +62,7 @@ void Graphics::render() {
 
 void Graphics::renderChange(Position posToChange) {
 	if (posToChange.x == -1 || posToChange.y == -1) return;
-	gotoxy(posToChange.y * 5 + 6, posToChange.x * 2 + 3);
+	gotoxy(posToChange.y * 5 + 6, posToChange.x * 2 + 2);
 	const char* entity = state->getCell(Position(posToChange.x, posToChange.y)).getSymbol();
 	setColorByEntity(entity);
 	cout << state->getCell(posToChange).getSymbol();
@@ -72,7 +72,7 @@ void Graphics::renderChange(Position posToChange) {
 void Graphics::drawBoard()
 {
 	clearScreen();
-	cout << "-----------------------------------------------------------------------" << endl;
+	//cout << "-----------------------------------------------------------------------" << endl;
 	setTextColor(BLACK, GREY);
 	cout << "     | A  | B  | C  | D  | E  | F  | G  | H  | I  | J  | K  | L  | M   " << endl;
 	setTextColor(WHITE, BLACK);
@@ -86,7 +86,7 @@ void Graphics::drawBoard()
 		cout << "     |    |    |    |    |    |    |    |    |    |    |    |    |" << endl;
 	}
 	cout << "-----------------------------------------------------------------------" << endl;
-	//cout << "Scores: " <<  
+	//cout << "Scores: " << userA << ": X                    " << userB << ":  Y" << endl;
 }
 
 void Graphics::drawEnv()
@@ -94,10 +94,17 @@ void Graphics::drawEnv()
 	for (int i = 0; i < ROWS; i++){
 		for (int j = 0; j < COLS; j++){
 			const char* entity = state->getCell(Position(i, j)).getSymbol();
-			gotoxy(j * 5 +6, i * 2 + 3);
+			gotoxy(j * 5 +6, i * 2 + 2);
 			setColorByEntity(entity);
 			cout << entity;
 			setTextColor(WHITE, BLACK);
 		}
 	}
+}
+
+void announceWinner(string winner)
+{
+	clearScreen();
+	cout << "The winner is " << winner << endl;
+	Sleep(2000);
 }

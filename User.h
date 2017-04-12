@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include "enums.h"
 
 using namespace std;
 
@@ -13,7 +14,6 @@ public:
 	void setName(const string _name) { name = _name; }
 	void resetScore();
 	void increaseScore(){ score++; }
-	char* getKeyboardLayout();
 	const int getScore() { return score; }
 	const string getName() { return name; }
 };

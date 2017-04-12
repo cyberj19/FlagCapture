@@ -5,3 +5,7 @@
 //void User::increaseScore(){
 //	score++;
 //}
+
+void User::resetScore()
+{
+}

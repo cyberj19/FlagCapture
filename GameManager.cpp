@@ -75,6 +75,7 @@ void GameManager::resetScore()
 
 void GameManager::startMatch(int GameType) {
 	Player winner;
+	printScores(UserA.getName(), UserA.getScore(), UserB.getName(), UserB.getScore());
 	if (GameType == REGULAR_GAME) {
 		Match match = Match("123wxad", "789imjl");
 		winner = match.Play();

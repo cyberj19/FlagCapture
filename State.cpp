@@ -1,15 +1,13 @@
 #include "State.h"
 #include "Soldier.h"
-#include <time.h>
+#include <time.h>
+
 
 const int State::forest_positions[22] = { 6,0,   7,0,     6,1,    3,2,    4,2,    5,2,    6,2,     5,3,    6,3,    7,3,     8,3 };
 const int State::sea_positions[28] = { 5,7,   4,8,    5,8,    3,9,   4,9,   5,9,   6,9,   7,9,   8,9,   9,9,  6,10,   7,10,   8,10,   7,11 };
 const int State::flgAPos[2] = { 0,10 };
 const int State::flgBPos[2] = { 12,1 };
 
-static int uniformRand(int min, int max) {
-	return (rand() % (int)(max - min + 1));
-}
 
 void State::step()
 {

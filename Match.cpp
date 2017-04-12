@@ -18,5 +18,6 @@ Player Match::Play()
 		Sleep(100);
 		controller->getInput();
 	} while (!state->isFinished);
+	graphics->render();
 	return state->winner;
 }

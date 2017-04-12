@@ -18,28 +18,28 @@ void Soldier::setSymbol()
 	if (_player == Player::A) {
 		switch (_type) {
 		case SoldierType::S1:
-			_symbol = " 1  ";
+			_symbol = "[1] ";
 			break;
 		case SoldierType::S2:
-			_symbol = " 2  ";
+			_symbol = "[2] ";
 			break;
 		case SoldierType::S3:
 		default:
-			_symbol = " 3  ";
+			_symbol = "[3] ";
 			break;
 		}
 	}
 	else { // (_player == Player::B)
 		switch (_type) {
 		case SoldierType::S1:
-			_symbol = " 7  ";
+			_symbol = "[7] ";
 			break;
 		case SoldierType::S2:
-			_symbol = " 8  ";
+			_symbol = "[8] ";
 			break;
 		case SoldierType::S3:
 		default:
-			_symbol = " 9  ";
+			_symbol = "[9] ";
 			break;
 		}
 	}
@@ -84,7 +84,7 @@ void Soldier::stepLogic(Player player)
 	if (nextPos.x >= COLS || nextPos.x < 0 || nextPos.y >= ROWS || nextPos.y < 0) {
 		stop(); 
 	}
-	//if forest or sea check type - if approved move else do nothing
+	//if forest or sea check type - if approved move else stop
 	else if (state->getCell(nextPos).getType() == CellType::FOREST) {
 		if (player == Player::A) {
 			if (_type == SoldierType::S2) move();
@@ -94,7 +94,7 @@ void Soldier::stepLogic(Player player)
 			if (_type == SoldierType::S1 || _type == SoldierType::S2) move();
 			else stop();
 		}
-	} //check soldiertype}
+	} 
 	else if (state->getCell(nextPos).getType() == CellType::SEA) {
 		if (player == Player::A) {
 			if (_type == SoldierType::S2 || _type == SoldierType::S3) move();
@@ -104,44 +104,30 @@ void Soldier::stepLogic(Player player)
 			if (_type == SoldierType::S1) move();
 			else stop();
 		}
-	}//check soldiertype}
-	
-
-	//if FlagA do nothing, if FlagB move -end game - you winner
+	}
+	//if myFlag -stop, if oppositeFlag move -end match - you're the winner
 	else if (state->getCell(nextPos).getType() == CellType::FLAG_A ) {
-		if (player == Player::B) {
-			move();
-			state->isFinished = true;
-			state->winner = Player::B;
-		}
-		else {stop();}
+		if (player == Player::B) win(player);
+		else stop();
 	}
 	else if (state->getCell(nextPos).getType() == CellType::FLAG_B) {
-		if (player == Player::A) {
-			move();
-			state->isFinished = true;
-			state->winner = Player::A;
-		}
-		else {
-			stop();
-		}
+		if (player == Player::A) win(player);
+		else stop();
 	}
-
 	else {
-		//if empty - check if there is an other soldier on this cell (is nullptr?)
-		//if there isnt - move
+		//if empty - check if there is an other soldier on this cell
 		Soldier* cellSoldier = state->getCell(nextPos).getSoldier();
-		if (cellSoldier == nullptr) {
-			move();
-		}
-		// if there is :if playerA -do nothing, if playerB -attack
-		else if (cellSoldier->getPlayer() == player) {
-			stop();
-		}
-		else{
-			attack(*this, *cellSoldier);
-		}
+		if (cellSoldier == nullptr) move(); //if there isnt - move
+		//if there is
+		else if (cellSoldier->getPlayer() == player) stop(); // if from myTeam -stop
+		else attack(*this, *cellSoldier); // if oppositeTeam -attack
 	}
+}
+
+void Soldier::win(Player player) {
+	move();
+	state->winner = player;
+	state->isFinished = true;
 }
 
 // returns the winner of the battle

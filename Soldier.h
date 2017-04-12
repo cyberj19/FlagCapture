@@ -37,5 +37,6 @@ private:
 	void die();
 	void move();
 	void stop() { _dir_x = 0; _dir_y = 0; }
+	void Soldier::win(Player player);
 
 };

@@ -29,3 +29,4 @@ void clearScreen();
 void gotoxy(int x, int y);
 void hideCursor();
 void announceWinner(string winner);
+void printScores(string userA, int scoreA, string userB, int scoreB);

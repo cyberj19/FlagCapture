@@ -18,28 +18,28 @@ void Soldier::setSymbol()
 	if (_player == Player::A) {
 		switch (_type) {
 		case SoldierType::S1:
-			_symbol = "[1] ";
+			_symbol = "|1| ";
 			break;
 		case SoldierType::S2:
-			_symbol = "[2] ";
+			_symbol = "|2| ";
 			break;
 		case SoldierType::S3:
 		default:
-			_symbol = "[3] ";
+			_symbol = "|3| ";
 			break;
 		}
 	}
 	else { // (_player == Player::B)
 		switch (_type) {
 		case SoldierType::S1:
-			_symbol = "[7] ";
+			_symbol = "|7| ";
 			break;
 		case SoldierType::S2:
-			_symbol = "[8] ";
+			_symbol = "|8| ";
 			break;
 		case SoldierType::S3:
 		default:
-			_symbol = "[9] ";
+			_symbol = "|9| ";
 			break;
 		}
 	}

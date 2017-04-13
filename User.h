@@ -7,7 +7,7 @@ using namespace std;
 
 
 class User {
-	string name;
+	string name;  
 	int score;
 public:
 	User(const string _name) :score(0), name(_name){}

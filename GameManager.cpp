@@ -26,7 +26,7 @@ void GameManager::run() {
 			startMatch(SWITCHED_GAME);
 			break;
 		case RESET_SCORE:
-			cout << "reset score!" << endl;
+			cout << "Reset score!" << endl;
 			Sleep(1000);
 			resetScore();
 			break;
@@ -55,6 +55,7 @@ int GameManager::getMenuChoice() {
 	cin >> choice;
 	return choice;
 }
+
 void GameManager::setUserNames() {
 	string user_A_name, user_B_name;
 	clearScreen();
@@ -73,10 +74,34 @@ void GameManager::resetScore()
 	UserB.resetScore();
 }
 
+bool GameManager::isUserAwinner(int GameType, Player winner)
+{
+	return ((GameType == REGULAR_GAME && winner == Player::A) || (GameType == SWITCHED_GAME && winner == Player::B));
+}
+
+void GameManager::increaseScoreToTheWinner(int GameType, Player winner)
+{
+	if (isUserAwinner(GameType, winner)){
+		UserA.increaseScore();
+		announceWinner(UserA.getName());
+	}
+	else {
+		UserB.increaseScore();
+		announceWinner(UserB.getName());
+	}
+}
+
+
 void GameManager::startMatch(int GameType) {
 	Player winner;
 	printScores(UserA.getName(), UserA.getScore(), UserB.getName(), UserB.getScore());
-	if (GameType == REGULAR_GAME) {
+	
+	Match match = (GameType == REGULAR_GAME) ? Match("123wxad", "789imjl") : Match("789imjl", "123wxad");
+	winner = match.Play();
+	increaseScoreToTheWinner(GameType, winner);
+
+
+	/*if (GameType == REGULAR_GAME) {
 		Match match = Match("123wxad", "789imjl");
 		winner = match.Play();
 		if (winner == Player::A) {
@@ -99,5 +124,5 @@ void GameManager::startMatch(int GameType) {
 			UserB.increaseScore();
 			announceWinner(UserB.getName());
 		}
-	}
+	}*/
 }

@@ -1,15 +1,18 @@
 #pragma once
-#include "Match.h"
+#include "State.h"
+#include <conio.h>
+#include "enums.h"
+#include "Input.h"
 
-enum class Action{CHOOSE1, CHOOSE2, CHOOSE3, UP, DOWN, LEFT, RIGHT};
 
-typedef struct input {
-	Action action;
-	Player player;
-}Input;
+class State;
+
 class Controller {
-	char *_layoutA, *_layoutB;
+	const char *_layoutA, *_layoutB;
+	State *state;
 public:
-	Input getInput();
-	Controller(const char* layoutA, const char* layoutB);
+	void getInput();
+	Controller(State *state, const char* layoutA, const char* layoutB);
+private:
+	Input parse(char ch);
 };

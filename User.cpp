@@ -2,6 +2,9 @@
 
 
 
-//void User::increaseScore(){
-//	score++;
-//}
+
+
+void User::resetScore()
+{
+	score = 0;
+}

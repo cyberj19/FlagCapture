@@ -1,15 +1,23 @@
 #include "Match.h"
 
+Match::Match(const char * keyboardLayoutA, const char * keyboardLayoutB) 
+{
+	state = new State();
+	graphics = new Graphics(state);
+	controller = new Controller(state, keyboardLayoutA, keyboardLayoutB);
+}
+
 Player Match::Play()
 {
 	int input;
-	while (true) {
-		graphics.render(state);
-		state.step();
-		Sleep(80);
-		input = controller.getInput();
-		state.control(input);
-		if (state.isFinished) break;
-	}
-	return state.winner;
+	graphics->drawBoard();
+	graphics->drawEnv();
+	do{
+		graphics->render();
+		state->step();
+		Sleep(100);
+		controller->getInput();
+	} while (!state->isFinished);
+	graphics->render();
+	return state->winner;
 }

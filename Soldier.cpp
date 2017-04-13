@@ -1,64 +1,185 @@
 #include "Soldier.h"
 
+Position Soldier::nextPosition()
+{
+	Position nextPos = _currentPosition;
+	nextPos.x += _dir_y;
+	nextPos.y += _dir_x;
+	return nextPos;
+}
+
+const char * Soldier::getSymbol()
+{
+	return _symbol;
+}
+
+void Soldier::setSymbol()
+{
+	if (_player == Player::A) {
+		switch (_type) {
+		case SoldierType::S1:
+			_symbol = "[1] ";
+			break;
+		case SoldierType::S2:
+			_symbol = "[2] ";
+			break;
+		case SoldierType::S3:
+		default:
+			_symbol = "[3] ";
+			break;
+		}
+	}
+	else { // (_player == Player::B)
+		switch (_type) {
+		case SoldierType::S1:
+			_symbol = "[7] ";
+			break;
+		case SoldierType::S2:
+			_symbol = "[8] ";
+			break;
+		case SoldierType::S3:
+		default:
+			_symbol = "[9] ";
+			break;
+		}
+	}
+}
+
+void Soldier::control(Input input) {
+	if (input.player != _player) return;
+
+	_dir_x = 0;
+	_dir_y = 0;
+
+	if (input.action == Action::CHOOSE1)
+		isMoving = _type == SoldierType::S1;
+	else if (input.action == Action::CHOOSE2)
+		isMoving = _type == SoldierType::S2;
+	else if (input.action == Action::CHOOSE3)
+		isMoving = _type == SoldierType::S3;
+	else if (isMoving) {
+		switch (input.action) {
+		case Action::UP: _dir_y = -1; break;
+		case Action::DOWN: _dir_y = 1; break;
+		case Action::LEFT: _dir_x = -1; break;
+		case Action::RIGHT: _dir_x = 1; break;
+		}
+	}
+}
 void Soldier::step()
 {
 	if (!isMoving || !isAlive()) return;
 	if (state->getClock() % 2 == 1 && _player == Player::A) {
-		stepLogic();
-		// check direction on board
-		//if forest or sea check type - if approved move else do nothing
-		//if FlagA do nothing, if FlagB move -end game - you winner
-		//if empty - check if there is an other soldier on this cell (is nullptr?)
-		// if there is :if playerA -do nothing, if playerB -attack
-		//if there isnt - move
-
+		stepLogic(Player::A);
 	}
 	else if (state->getClock() % 2 == 0 && _player == Player::B) {
-
+		stepLogic(Player::B);
 	}
 }
 
-void Soldier::stepLogic()
+void Soldier::stepLogic(Player player)
 {
+	// check direction on board
+	Position nextPos = this->nextPosition();
+	if (nextPos.x >= COLS || nextPos.x < 0 || nextPos.y >= ROWS || nextPos.y < 0) {
+		stop(); 
+	}
+	//if forest or sea check type - if approved move else stop
+	else if (state->getCell(nextPos).getType() == CellType::FOREST) {
+		if (player == Player::A) {
+			if (_type == SoldierType::S2) move();
+			else stop();
+		}
+		else {
+			if (_type == SoldierType::S1 || _type == SoldierType::S2) move();
+			else stop();
+		}
+	} 
+	else if (state->getCell(nextPos).getType() == CellType::SEA) {
+		if (player == Player::A) {
+			if (_type == SoldierType::S2 || _type == SoldierType::S3) move();
+			else stop(); 
+		}
+		else {
+			if (_type == SoldierType::S1) move();
+			else stop();
+		}
+	}
+	//if myFlag -stop, if oppositeFlag move -end match - you're the winner
+	else if (state->getCell(nextPos).getType() == CellType::FLAG_A ) {
+		if (player == Player::B) win(player);
+		else stop();
+	}
+	else if (state->getCell(nextPos).getType() == CellType::FLAG_B) {
+		if (player == Player::A) win(player);
+		else stop();
+	}
+	else {
+		//if empty - check if there is an other soldier on this cell
+		Soldier* cellSoldier = state->getCell(nextPos).getSoldier();
+		if (cellSoldier == nullptr) move(); //if there isnt - move
+		//if there is
+		else if (cellSoldier->getPlayer() == player) stop(); // if from myTeam -stop
+		else attack(*this, *cellSoldier); // if oppositeTeam -attack
+	}
+}
 
+void Soldier::win(Player player) {
+	move();
+	state->winner = player;
+	state->isFinished = true;
 }
 
 // returns the winner of the battle
-static Soldier & Soldier::battleWinner(Soldier & Attacker, Soldier & Defender)
+Soldier & Soldier::battleWinner(Soldier & Attacker, Soldier & Defender, Position & battleCell)
 {
 	if (Attacker._player == Player::A)
 	{
 		if (Attacker._type == SoldierType::S1)
-			return (isMatchLines(Defender.getX(), 10, 13) || isMatchLines(Defender.getY(), 4, 4)) ? Defender : Attacker;
+			return (isMatchLines(battleCell.x, 9, 12) || isMatchLines(battleCell.y, 3, 3)) ? Defender : Attacker;
 		if (Attacker._type == SoldierType::S2) {
 			if (Defender._type == SoldierType::S3)
 				return Defender;
 			else {
-				return (isMatchLines(Defender.getX(), 3, 4) || isMatchLines(Defender.getY(), 11, 11)) ? Attacker : Defender;
+				return (isMatchLines(battleCell.x, 2, 3) || isMatchLines(battleCell.y, 10, 10)) ? Attacker : Defender;
 			}
 		}
-		if (Attacker._type == SoldierType::S3) {
-			return (isMatchLines(Defender.getX(), 8, 8) || isMatchLines(Defender.getY(), 7, 7)) ? Attacker : Defender;
+		else{ // if (Attacker._type == SoldierType::S3) 
+			return (isMatchLines(battleCell.x, 7, 7) || isMatchLines(battleCell.y, 6, 6)) ? Attacker : Defender;
 		}	
 	}
 	else{
-		Soldier& loser = battleWinner(Defender, Attacker); // there is a logical problem with this solution, because we rely on defender position as battleground,
-		//and in this case we should reffer to "attacker's" position as battleground 
-		//maybe we should add battleground parameter to the function to solve this.
-		return (loser._player == Attacker._player) ? Defender : Attacker; 
+		return battleWinner(Defender, Attacker, battleCell); 
 	}
 }
 
 void Soldier::attack(Soldier & Attacker, Soldier & Defender)
 {
-	Soldier& winner = battleWinner(Attacker, Defender);
+	Position battleCell;
+	battleCell = Defender.getCurrentPosition();
+	Soldier& winner = battleWinner(Attacker, Defender, battleCell);
 	if (winner._player == Attacker._player) {
-		winner.move();
 		Defender.die();
+		Attacker.move();
 	}
 	else {
 		Attacker.die();
 	}
+}
+
+void Soldier::die()
+{
+	state->updateBoardSoldierDied(_currentPosition);
+	status = DEAD; 
+}
+
+void Soldier::move()
+{
+	Position nextPos = nextPosition();
+	state->updateBoardSoldierMoved(_currentPosition, nextPos);
+	_currentPosition = nextPos;
+
+	
 }
 
 bool isMatchLines(int myLine, int startLine, int stopLine) {
@@ -69,3 +190,4 @@ bool isMatchLines(int myLine, int startLine, int stopLine) {
 	}
 	return false;
 }
+

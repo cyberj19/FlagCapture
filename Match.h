@@ -3,13 +3,16 @@
 #include "Graphics.h"
 #include "Controller.h"
 #include "State.h"
+#include "enums.h"
 
-enum class Player{A,B};
+class State;
+class Controller;
+class Graphics;
 
 class Match{
-	Graphics graphics;
-	Controller controller;
-	State state;
+	Graphics *graphics;
+	Controller *controller;
+	State *state;
 public:	
 	Match(const char* keyboardLayoutA, const char* keyboardLayoutB);
 	Player Play();

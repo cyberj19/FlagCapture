@@ -46,12 +46,11 @@ void State::updateBoardSoldierDied(Position placeOfDeath)
 {
 	board[placeOfDeath.x][placeOfDeath.y].unsetSoldier();
 	boardChanges[0] = placeOfDeath;
-	boardChanges[1] = placeOfDeath;
 }
 
 void State::initBoardPosition(Soldier* soldier) {
-	Player player = soldier->getPlayer();
-	if (player == Player::A) {
+	
+	if (soldier->getPlayer() == Player::A) {
 		int randomIndex = rand() % freePositionsA.size();
 		soldier->setCurrentPosition(freePositionsA[randomIndex].x, freePositionsA[randomIndex].y);
 		board[freePositionsA[randomIndex].x][freePositionsA[randomIndex].y].setSoldier(soldier);

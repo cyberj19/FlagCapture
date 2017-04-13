@@ -5,8 +5,6 @@ const char* Cell::getSymbol()
 	if (_soldier != nullptr) return _soldier->getSymbol();
 	else {
 		switch (_type) {
-		case CellType::EMPTY:
-			return "    ";
 		case CellType::FOREST:
 			return " FR ";
 		case CellType::SEA:
@@ -15,6 +13,7 @@ const char* Cell::getSymbol()
 			return "FlgA";
 		case CellType::FLAG_B:
 			return "FlgB";
+		case CellType::EMPTY:
 		default:
 			return "    ";
 		}

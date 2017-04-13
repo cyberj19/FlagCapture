@@ -25,7 +25,7 @@ void setColorByEntity(const char* entity) {
 		setTextColor(RED, BLACK);
 	}
 	else{
-		setTextColor(BLACK, OLIVE);
+		setTextColor(BLACK, WHITE);
 	}
 }
 
@@ -63,27 +63,25 @@ void Graphics::render() {
 void Graphics::renderChange(Position posToChange) {
 	if (posToChange.x == -1 || posToChange.y == -1) return;
 	gotoxy(posToChange.y * 5 + 6, posToChange.x * 2 + 3);
-	const char* entity = state->getCell(Position(posToChange.x, posToChange.y)).getSymbol();
+	const char* entity = state->getCell(posToChange).getSymbol();
 	setColorByEntity(entity);
-	cout << state->getCell(posToChange).getSymbol();
+	cout << entity;
 	setTextColor(WHITE, BLACK);
 }
 
 void Graphics::drawBoard()
 {
-	setTextColor(BLACK, GREY);
+	hideCursor();
+	setTextColor(WHITE, BLACK);
 	cout << "     | A  | B  | C  | D  | E  | F  | G  | H  | I  | J  | K  | L  | M   " << endl;
 	setTextColor(WHITE, BLACK);
-	for (int i = 0; i < ROWS; i++)
+	for (int i = 1; i <= ROWS; i++)
 	{
-		hideCursor();
 		cout << "-----------------------------------------------------------------------" << endl;
-		setTextColor(BLACK, GREY);
-		printf(" %2d  ", i + 1); 
 		setTextColor(WHITE, BLACK);
+		printf(" %2d  ", i); 
+		setTextColor(WHITE);
 		cout << "     |    |    |    |    |    |    |    |    |    |    |    |    |" << endl;
-		setTextColor(BLACK, OLIVE);
-		//cout << "                                                                  " << endl;
 		setTextColor(WHITE, BLACK);
 
 	}
@@ -95,8 +93,8 @@ void Graphics::drawEnv()
 	for (int i = 0; i < ROWS; i++){
 		for (int j = 0; j < COLS; j++){
 			const char* entity = state->getCell(Position(i, j)).getSymbol();
-			gotoxy(j * 5 +6, i * 2 + 3);
 			setColorByEntity(entity);
+			gotoxy(j * 5 + 6, i * 2 + 3);
 			cout << entity;
 			setTextColor(WHITE, BLACK);
 		}
@@ -114,14 +112,14 @@ void printScores(string userA, int scoreA, string userB, int scoreB) {
 	clearScreen();
 
 	gotoxy(0, 0);
-	setTextColor(DARK_RED, GREY);
+	setTextColor(YELLOW, DARK_RED);
 	cout << userA << ": " << scoreA;
 	int usersNamesNScoresLen = userA.length() + userB.length() + (to_string(scoreA)).length() + (to_string(scoreB)).length();
 	for (int i = 0; i < floor((56 - usersNamesNScoresLen)/2.0); i++)
 		cout << " ";
-	setTextColor(BLUE, GREY);
+	setTextColor(BLACK, WHITE);
 	cout << "FlagCapture";
-	setTextColor(DARK_RED, GREY);
+	setTextColor(YELLOW, DARK_RED);
 	for (int i = 0; i < ceil((56 - usersNamesNScoresLen) / 2.0); i++)
 		cout << " ";
 

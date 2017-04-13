@@ -7,16 +7,11 @@
 
 class Soldier;
 
-
-
-
-
-
 class State {
 	const static int forest_positions[22];
 	const static int sea_positions[28];
-		const static int flgAPos[2];
-		const static int flgBPos[2];
+	const static int flgAPos[2];
+	const static int flgBPos[2];
 
 	std::vector<Soldier*> soldiersA, soldiersB;
 	GameBoard board;
@@ -38,7 +33,6 @@ public:
 		initVectorFreePositions(freePositionsA, 0, 5);
 		initVectorFreePositions(freePositionsB, 8, 13);
 		soldiersFactory();
-
 	}
  	Player winner;
 	bool isFinished;

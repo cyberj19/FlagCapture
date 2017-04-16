@@ -9,8 +9,9 @@ class Controller {
 	const char *_layoutA, *_layoutB;
 	State *state;
 public:
-	void getInput();
+	Input getInput();
 	Controller(State *state, const char* layoutA, const char* layoutB);
+	void clearBuffer();
 private:
 	Input parse(char ch);
 };

@@ -48,9 +48,6 @@ void Soldier::setSymbol()
 void Soldier::control(Input input) {
 	if (input.player != _player) return;
 
-	_dir_x = 0;
-	_dir_y = 0;
-
 	if (input.action == Action::CHOOSE1)
 		isMoving = _type == SoldierType::S1;
 	else if (input.action == Action::CHOOSE2)
@@ -58,6 +55,8 @@ void Soldier::control(Input input) {
 	else if (input.action == Action::CHOOSE3)
 		isMoving = _type == SoldierType::S3;
 	else if (isMoving) {
+		_dir_x = 0;
+		_dir_y = 0;
 		switch (input.action) {
 		case Action::UP: _dir_y = -1; break;
 		case Action::DOWN: _dir_y = 1; break;
@@ -66,61 +65,56 @@ void Soldier::control(Input input) {
 		}
 	}
 }
+
+bool Soldier::isMyTurn() {
+	if (state->getClock() % 2 == 1 && _player == Player::A)
+		return true;
+	else if (state->getClock() % 2 == 0 && _player == Player::B) 
+		return true;
+	else
+		return false;
+}
 void Soldier::step()
 {
-	if (!isMoving || !isAlive()) return;
-	if (state->getClock() % 2 == 1 && _player == Player::A) {
-		stepLogic(Player::A);
-	}
-	else if (state->getClock() % 2 == 0 && _player == Player::B) {
-		stepLogic(Player::B);
-	}
+	if (!isMoving || !isAlive() || !isMyTurn()) return;
+	stepLogic();
 }
 
-void Soldier::stepLogic(Player player)
+bool Soldier::canMoveInSea() {
+	if (_player == Player::A) return _type == SoldierType::S2;
+	else return _type == SoldierType::S1 || _type == SoldierType::S3;
+}
+
+bool Soldier::canMoveInForest() {
+	if (_player == Player::A) return _type == SoldierType::S2 || _type == SoldierType::S3;
+	else return _type == SoldierType::S1;
+}
+void Soldier::stepLogic()
 {
-	// check direction on board
 	Position nextPos = this->nextPosition();
 	if (nextPos.x >= COLS || nextPos.x < 0 || nextPos.y >= ROWS || nextPos.y < 0) {
 		stop(); 
+		return;
 	}
-	//if forest or sea check type - if approved move else stop
-	else if (state->getCell(nextPos).getType() == CellType::FOREST) {
-		if (player == Player::A) {
-			if (_type == SoldierType::S2) move();
-			else stop();
-		}
-		else {
-			if (_type == SoldierType::S1 || _type == SoldierType::S2) move();
-			else stop();
-		}
-	} 
-	else if (state->getCell(nextPos).getType() == CellType::SEA) {
-		if (player == Player::A) {
-			if (_type == SoldierType::S2 || _type == SoldierType::S3) move();
-			else stop(); 
-		}
-		else {
-			if (_type == SoldierType::S1) move();
-			else stop();
-		}
-	}
-	//if myFlag -stop, if oppositeFlag move -end match - you're the winner
-	else if (state->getCell(nextPos).getType() == CellType::FLAG_A ) {
-		if (player == Player::B) win(player);
+	Cell nextCell = state->getCell(nextPos);
+	CellType cellType = nextCell.getType();
+	if (cellType == CellType::FLAG_A ) {
+		if (_player == Player::B) win(_player);
 		else stop();
 	}
-	else if (state->getCell(nextPos).getType() == CellType::FLAG_B) {
-		if (player == Player::A) win(player);
+	else if (cellType == CellType::FLAG_B) {
+		if (_player == Player::A) win(_player);
 		else stop();
 	}
+	else if (cellType == CellType::FOREST && !canMoveInForest())
+		stop();
+	else if (cellType == CellType::SEA && !canMoveInSea())
+		stop();
 	else {
-		//if empty - check if there is an other soldier on this cell
-		Soldier* cellSoldier = state->getCell(nextPos).getSoldier();
-		if (cellSoldier == nullptr) move(); //if there isnt - move
-		//if there is
-		else if (cellSoldier->getPlayer() == player) stop(); // if from myTeam -stop
-		else attack(*this, *cellSoldier); // if oppositeTeam -attack
+		Soldier* cellSoldier = nextCell.getSoldier();
+		if (cellSoldier == nullptr) move(); 
+		else if (cellSoldier->_player == _player) stop();
+		else attack(*cellSoldier);
 	}
 }
 
@@ -133,44 +127,44 @@ void Soldier::win(Player player) {
 // returns the winner of the battle
 Soldier & Soldier::battleWinner(Soldier & Attacker, Soldier & Defender, Position & battleCell)
 {
-	if (Attacker._player == Player::A)
-	{
-		if (Attacker._type == SoldierType::S1)
-			return (isMatchLines(battleCell.x, 9, 12) || isMatchLines(battleCell.y, 3, 3)) ? Defender : Attacker;
-		if (Attacker._type == SoldierType::S2) {
-			if (Defender._type == SoldierType::S3)
-				return Defender;
-			else {
-				return (isMatchLines(battleCell.x, 2, 3) || isMatchLines(battleCell.y, 10, 10)) ? Attacker : Defender;
-			}
+	Soldier & SoldierOfA = Attacker._player == Player::A ? Attacker : Defender;
+	Soldier & SoldierOfB = Attacker._player == Player::A ? Defender : Attacker;
+
+	if (SoldierOfA._type == SoldierType::S1)
+		return (isMatchLines(battleCell.x, 9, 12) || 
+				isMatchLines(battleCell.y, 3, 3)) ? SoldierOfB : SoldierOfA;
+	if (SoldierOfA._type == SoldierType::S2) {
+		if (SoldierOfB._type == SoldierType::S3)
+			return SoldierOfB;
+		else {
+			return (isMatchLines(battleCell.x, 2, 3) || 
+					isMatchLines(battleCell.y, 10, 10)) ? SoldierOfA : SoldierOfB;
 		}
-		else{ // if (Attacker._type == SoldierType::S3) 
-			return (isMatchLines(battleCell.x, 7, 7) || isMatchLines(battleCell.y, 6, 6)) ? Attacker : Defender;
-		}	
 	}
-	else{
-		return battleWinner(Defender, Attacker, battleCell); 
-	}
+	else{ // if (SoldierOfA._type == SoldierType::S3) 
+		return (isMatchLines(battleCell.x, 7, 7) || 
+				isMatchLines(battleCell.y, 6, 6)) ? SoldierOfA : SoldierOfB;
+	}	
 }
 
-void Soldier::attack(Soldier & Attacker, Soldier & Defender)
+void Soldier::attack(Soldier & Defender)
 {
 	Position battleCell;
 	battleCell = Defender.getCurrentPosition();
-	Soldier& winner = battleWinner(Attacker, Defender, battleCell);
-	if (winner._player == Attacker._player) {
+	Soldier& winner = battleWinner(*this, Defender, battleCell);
+	if (winner._player == _player) {
 		Defender.die();
-		Attacker.move();
+		move();
 	}
 	else {
-		Attacker.die();
+		die();
 	}
 }
 
 void Soldier::die()
 {
-	state->updateBoardSoldierDied(_currentPosition);
-	status = DEAD; 
+	state->notifySoldierDied(this);
+	status = SoldierStatus::DEAD; 
 }
 
 void Soldier::move()
@@ -178,16 +172,9 @@ void Soldier::move()
 	Position nextPos = nextPosition();
 	state->updateBoardSoldierMoved(_currentPosition, nextPos);
 	_currentPosition = nextPos;
-
-	
 }
 
 bool isMatchLines(int myLine, int startLine, int stopLine) {
-	for (int i = startLine; i <= stopLine; i++)
-	{
-		if (myLine == i)
-			return true;
-	}
-	return false;
+	return startLine <= myLine && myLine <= stopLine;
 }
 

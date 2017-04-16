@@ -2,14 +2,8 @@
 
 using namespace std;
 
-void setTextColor(int foreground_color, int background_color) {
-	int color = foreground_color | background_color * 16;
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
-}
+#define goto_scaled_position(x, y)  (gotoxy((y)*5 + 6, (x)*2 + 3))
 
-void setTextColor(int foreground_color) {
-	setTextColor(foreground_color, 0);
-}
 
 void setColorByEntity(const char* entity) {
 	if (!strcmp(entity, " FR ")) {
@@ -22,37 +16,14 @@ void setColorByEntity(const char* entity) {
 		setTextColor(YELLOW, BLACK);
 	}
 	else if (entity[1] >= '1' && entity[1] <= '9') {
-		setTextColor(RED, BLACK);
+		setTextColor(RED);
 	}
 	else{
-		setTextColor(BLACK, OLIVE);
+		setTextColor(BLACK, WHITE);
 	}
 }
 
-void clearScreen() {
-	system("cls");
-}
 
-// function definition -- requires windows.h
-void gotoxy(int x, int y)
-{
-	HANDLE hConsoleOutput;
-	COORD dwCursorPosition;
-	cout.flush();
-	dwCursorPosition.X = x;
-	dwCursorPosition.Y = y;
-	hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleCursorPosition(hConsoleOutput, dwCursorPosition);
-}
-
-void hideCursor()
-{
-	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_CURSOR_INFO info;
-	info.dwSize = 100;
-	info.bVisible = FALSE;
-	SetConsoleCursorInfo(consoleHandle, &info);
-}
 
 
 void Graphics::render() {
@@ -62,16 +33,17 @@ void Graphics::render() {
 
 void Graphics::renderChange(Position posToChange) {
 	if (posToChange.x == -1 || posToChange.y == -1) return;
-	gotoxy(posToChange.y * 5 + 6, posToChange.x * 2 + 3);
-	const char* entity = state->getCell(Position(posToChange.x, posToChange.y)).getSymbol();
+	goto_scaled_position(posToChange.x, posToChange.y);
+	const char* entity = state->getCell(posToChange).getSymbol();
 	setColorByEntity(entity);
-	cout << state->getCell(posToChange).getSymbol();
+	cout << entity;
 	setTextColor(WHITE, BLACK);
 }
 
 void Graphics::drawBoard()
 {
 	setTextColor(BLACK, GREY);
+	gotoxy(0, 1);
 	cout << "     | A  | B  | C  | D  | E  | F  | G  | H  | I  | J  | K  | L  | M   " << endl;
 	setTextColor(WHITE, BLACK);
 	for (int i = 0; i < ROWS; i++)
@@ -95,7 +67,7 @@ void Graphics::drawEnv()
 	for (int i = 0; i < ROWS; i++){
 		for (int j = 0; j < COLS; j++){
 			const char* entity = state->getCell(Position(i, j)).getSymbol();
-			gotoxy(j * 5 +6, i * 2 + 3);
+			goto_scaled_position(i, j);
 			setColorByEntity(entity);
 			cout << entity;
 			setTextColor(WHITE, BLACK);
@@ -107,6 +79,13 @@ void announceWinner(string winner)
 {
 	gotoxy(0, 29);
 	cout << "The winner is " << winner << endl;
+	Sleep(2000);
+}
+
+void announceGameStopped()
+{
+	gotoxy(0, 29);
+	cout << "Game was stopped" << endl;
 	Sleep(2000);
 }
 
@@ -127,4 +106,24 @@ void printScores(string userA, int scoreA, string userB, int scoreB) {
 
 	cout <<userB << ": " << scoreB << endl;
 	setTextColor(WHITE, BLACK);
+}
+
+void printSubMenu() {
+	gotoxy(11, 5);
+	cout <<                                              "=================SubMenu=================" << endl;
+	gotoxy(11, 6);
+	cout << "||" <<                                      " Please make your selection          ||" << endl;
+	gotoxy(11, 7);
+	cout << "||" << (int)SubMenuOptions::CONTINUE_GAME << " - Continue The Game -              ||" << endl;
+	gotoxy(11, 8);
+	cout << "||" << (int)SubMenuOptions::RESTART_GAME  << " - Restart Game -                   ||" << endl;
+	gotoxy(11, 9);
+	cout << "||" << (int)SubMenuOptions::MAIN_MENU     << " - Back To The Main Menu -          ||" << endl;
+	gotoxy(11, 10);
+	cout << "||" << (int)SubMenuOptions::EXIT_GAME     << " - Quit Game -                      ||" << endl;
+	gotoxy(11, 11);
+	cout <<                                              "=========================================" << endl;
+	gotoxy(11, 12);
+	cout << "Selection:                               ";
+	gotoxy(22, 12);
 }

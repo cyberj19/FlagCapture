@@ -1,67 +1,64 @@
 #include "GameManager.h"
 #include "Graphics.h"
-
+#include <sstream>
+#include "Utils.h"
 using namespace std;
 
-void GameManager::run() {
-	int choice;
-
-	do {
-		choice = getMenuChoice();
-
-		switch (choice) {
-		case SET_NAMES:
-			cout << "Setting User Name!" << endl;
-			Sleep(1000);
-			setUserNames();
-			break;
-		case REGULAR_GAME:
-			cout << "Starting Regular Game!" << endl;
-			Sleep(1000);
-			startMatch(REGULAR_GAME);
-			break;
-		case SWITCHED_GAME:
-			cout << "Starting Switched Game!" << endl;
-			Sleep(1000);
-			startMatch(SWITCHED_GAME);
-			break;
-		case RESET_SCORE:
-			cout << "reset score!" << endl;
-			Sleep(1000);
-			resetScore();
-			break;
-		case EXIT_MENU:
-			cout << "Goodbye!" << endl;
-			break;
-		default:
-			choice = getMenuChoice();
-		}
-	} while (choice != EXIT_MENU);
-	system("PAUSE");
-}
-
-int GameManager::getMenuChoice() {
-	int choice;
+void printMainMenu() {
 	clearScreen();
 	cout << "=================Main Menu=================" << endl;
 	cout << "Please make your selection" << endl;
-	cout << SET_NAMES << " - Choose Names (Optional)" << endl;
-	cout << REGULAR_GAME << " - Start Match" << endl;
-	cout << SWITCHED_GAME << " - Start Match With Switched Roles" << endl;
-	cout << RESET_SCORE << " - Reset Score" << endl;
-	cout << EXIT_MENU << " - Quit" << endl;
+	cout << (int)MenuOptions::SET_NAMES << " - Choose Names (Optional)" << endl;
+	cout << (int)MenuOptions::REGULAR_GAME << " - Start Match" << endl;
+	cout << (int)MenuOptions::SWITCHED_GAME << " - Start Match With Switched Roles" << endl;
+	cout << (int)MenuOptions::RESET_SCORE << " - Reset Score" << endl;
+	cout << (int)MenuOptions::EXIT_MENU << " - Quit" << endl;
 	cout << "===========================================" << endl;
 	cout << "Selection: ";
-	cin >> choice;
-	return choice;
 }
+void GameManager::run() {
+	MenuOptions choice;
+	do {
+		 choice = (MenuOptions)show_menu(printMainMenu, 1, 9);
+
+		switch (choice) {
+		case MenuOptions::SET_NAMES:
+			setUserNames();
+			break;
+		case MenuOptions::REGULAR_GAME:
+			startMatch(MenuOptions::REGULAR_GAME);
+			break;
+		case MenuOptions::SWITCHED_GAME:
+			startMatch(MenuOptions::SWITCHED_GAME);
+			break;
+		case MenuOptions::RESET_SCORE:
+			resetScore();
+			break;
+		case MenuOptions::EXIT_MENU:
+		default:
+			break;
+		}
+	} while (choice != MenuOptions::EXIT_MENU);
+	quitGame();
+}
+
 void GameManager::setUserNames() {
 	string user_A_name, user_B_name;
 	clearScreen();
 	cout << "================Choose Names================\n";
 	cout << "Please Enter a Name for User A\n";
+	/*int in = _kbhit();
+	while (in) {
+		_getch();
+		in = _kbhit();
+	}*/
 	cin >> user_A_name;
 	cout << "Please Enter a Name for User B\n";
+	/*in = _kbhit();
+	while (in) {
+		_getch();
+		in = _kbhit();
+	}*/
 	cin >> user_B_name;
 	UserA.setName(user_A_name);
 	UserB.setName(user_B_name);
@@ -73,31 +70,39 @@ void GameManager::resetScore()
 	UserB.resetScore();
 }
 
-void GameManager::startMatch(int GameType) {
-	Player winner;
+User& GameManager::getWinningUser(MenuOptions GameType, MatchOutput matchOutput) {
+	if (GameType == MenuOptions::REGULAR_GAME)
+		return matchOutput == MatchOutput::WINNER_A ? UserA : UserB;
+	else
+		return matchOutput == MatchOutput::WINNER_B ? UserA : UserB;
+}
+void GameManager::startMatch(MenuOptions GameType) {
+	
 	printScores(UserA.getName(), UserA.getScore(), UserB.getName(), UserB.getScore());
-	if (GameType == REGULAR_GAME) {
-		Match match = Match("123wxad", "789imjl");
-		winner = match.Play();
-		if (winner == Player::A) {
-			UserA.increaseScore();
-			announceWinner(UserA.getName());
-		}
-		else {
-			UserB.increaseScore();
-			announceWinner(UserB.getName());
-		}
+	/*const char *akeys = GameType == MenuOptions::REGULAR_GAME ? 
+		DEFAULT_PLAYER_A_KEY_LAYOUT : DEFAULT_PLAYER_B_KEY_LAYOUT;
+	const char *bkeys = GameType == MenuOptions::REGULAR_GAME ?
+		DEFAULT_PLAYER_B_KEY_LAYOUT : DEFAULT_PLAYER_A_KEY_LAYOUT;*/
+	Match match = Match(DEFAULT_PLAYER_A_KEY_LAYOUT, DEFAULT_PLAYER_B_KEY_LAYOUT);
+	MatchOutput matchOutput = match.Play();
+
+	if (matchOutput == MatchOutput::MATCH_TERMINATED) {
+		announceGameStopped();
 	}
-	else if (GameType == SWITCHED_GAME) {
-		Match match = Match("789imjl", "123wxad");
-		winner = match.Play();
-		if (winner == Player::B) {
-			UserA.increaseScore();
-			announceWinner(UserA.getName());
-		}
-		else {
-			UserB.increaseScore();
-			announceWinner(UserB.getName());
-		}
+	else if (matchOutput == MatchOutput::QUIT_GAME) {
+		quitGame();
 	}
+	else {
+		User &winnerUser = getWinningUser(GameType, matchOutput);
+		winnerUser.increaseScore();
+		announceWinner(winnerUser.getName());
+	}
+}
+
+void GameManager::quitGame()
+{
+	clearScreen();
+	cout << "Goodbye!";
+	Sleep(1000);
+	exit(0);
 }

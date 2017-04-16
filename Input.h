@@ -4,4 +4,4 @@
 typedef struct input {
 	Action action;
 	Player player;
-}Input;
+} Input;

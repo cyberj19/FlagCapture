@@ -9,6 +9,23 @@
 #define DEFAULT_PLAYER_A_KEY_LAYOUT "123wxad"
 #define DEFAULT_PLAYER_B_KEY_LAYOUT "789imjl"
 
+//TO DO: in c++
+//const string DEFAULT_PLAYER_A_KEY_LAYOUT = "123wxad;
+//const string DEFAULT_PLAYER_B_KEY_LAYOUT = "789imjl";
+
+//if it doesn't work, try:
+//maybe we can put all the constants here
+//class Constants {
+//   static const DefaultPlayerAKeyLayout = "123wxad";
+//   static const DefaultPlayerBKeyLayout = "789imjl";
+//};
+
+//cout << Constants::DefaultPlayerLayout << endl;
+
+//The first one is better, but we need to try what works
+
+
+
 void printMainMenu();
 
 class GameManager {

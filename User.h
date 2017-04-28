@@ -15,5 +15,9 @@ public:
 	void resetScore();
 	void increaseScore(){ score++; }
 	const int getScore() { return score; }
+	//TO DO:
+	//The function doesn't change the data member
+	//we need to change it in every "get" function
+	//int getScore() const {return score;}
 	const string getName() { return name; }
 };

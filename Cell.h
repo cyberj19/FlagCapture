@@ -11,10 +11,9 @@ class Cell {
 	Soldier* _soldier;
 public:
 	Cell(CellType type = CellType::EMPTY) : _type(type), _soldier(nullptr) {}
-	const char *getSymbol();
-
-	CellType getType() { return _type; }
-	Soldier * getSoldier() { return _soldier; }
+	char* getSymbol() const;
+	CellType getType() const { return _type; }
+	Soldier * getSoldier() const { return _soldier; }
 
 	void unsetSoldier() { _soldier = nullptr; }
 	void setSoldier(Soldier *soldier) { _soldier = soldier; }

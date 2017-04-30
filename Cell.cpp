@@ -1,6 +1,6 @@
 #include "Cell.h"
 #include "Soldier.h"
-const char* Cell::getSymbol()
+char* Cell::getSymbol() const
 {
 	if (_soldier != nullptr) return _soldier->getSymbol();
 	else {

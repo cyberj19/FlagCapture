@@ -12,7 +12,7 @@ bool isMatchLines(int myLine, int startLine, int stopLine);
 class Soldier {
 	Position _currentPosition;
 	int _dir_x, _dir_y;
-	const char* _symbol;
+	char* _symbol;
 	bool isMoving;
 	Player _player;
 	SoldierType _type;
@@ -28,15 +28,15 @@ public:
 	}
 
 	void setCurrentPosition(int x, int y) { _currentPosition.x=x;  _currentPosition.y = y; }
-	Position getCurrentPosition() { return _currentPosition; }
+	Position getCurrentPosition() const { return _currentPosition; }
 	void setState(State* state) { this->state = state; }
 	bool isAlive() { return (status == SoldierStatus::ALIVE); }
 	Position nextPosition();
-	const char* getSymbol();
+	char * Soldier::getSymbol() const {return _symbol;}
 	void control(Input input);
 	void setSymbol();
 	void step();
-	Player getPlayer() { return _player; }
+	Player getPlayer() const { return _player; }
 
 private:
 	void stepLogic();

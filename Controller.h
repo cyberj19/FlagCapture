@@ -3,14 +3,17 @@
 #include <conio.h>
 #include "enums.h"
 #include "Input.h"
+#include <string>
+using namespace std;
+
 class State;
 
 class Controller {
-	const char *_layoutA, *_layoutB;
+	const string _layoutA, _layoutB;
 	State *state;
 public:
 	Input getInput();
-	Controller(State *state, const char* layoutA, const char* layoutB);
+	Controller(State *state, const string layoutA, const string layoutB);
 	void clearBuffer();
 private:
 	Input parse(char ch);

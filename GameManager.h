@@ -6,25 +6,8 @@
 #include "Match.h"
 #include "enums.h"
 
-#define DEFAULT_PLAYER_A_KEY_LAYOUT "123wxad"
-#define DEFAULT_PLAYER_B_KEY_LAYOUT "789imjl"
-
-//TO DO: in c++
-//const string DEFAULT_PLAYER_A_KEY_LAYOUT = "123wxad;
-//const string DEFAULT_PLAYER_B_KEY_LAYOUT = "789imjl";
-
-//if it doesn't work, try:
-//maybe we can put all the constants here
-//class Constants {
-//   static const DefaultPlayerAKeyLayout = "123wxad";
-//   static const DefaultPlayerBKeyLayout = "789imjl";
-//};
-
-//cout << Constants::DefaultPlayerLayout << endl;
-
-//The first one is better, but we need to try what works
-
-
+const string DEFAULT_PLAYER_A_KEY_LAYOUT = "123wxad";
+const string DEFAULT_PLAYER_B_KEY_LAYOUT = "789imjl";
 
 void printMainMenu();
 
@@ -32,7 +15,7 @@ class GameManager {
 	User UserA = User("A"), UserB = User("B");
 	void setUserNames();
 	void resetScore();
-	User & getWinningUser(MenuOptions GameType, MatchOutput matchOutput);
+	const User & getWinningUser(MenuOptions GameType, MatchOutput matchOutput) const;
 	void startMatch(MenuOptions MatchType);
 	void quitGame();
 public:

@@ -12,13 +12,13 @@ Input Controller::getInput()
 	return input;
 }
 
-Controller::Controller(State * state, const char * layoutA, const char * layoutB)
+Controller::Controller(State * state, const string layoutA, const string layoutB)
 	: state(state), _layoutA(layoutA), _layoutB(layoutB)
 {
 }
 
-Input matchLayout(Player player, const char* layout, const char ch) {
-	int layoutLen = strlen(layout); 
+Input matchLayout(Player player, const string layout, const char ch) {
+	int layoutLen = layout.length(); 
 	for (int i = 0; i < layoutLen; i++)
 	{
 		if (ch == layout[i])

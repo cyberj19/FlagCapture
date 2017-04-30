@@ -47,7 +47,7 @@ void Match::initDraw()
 	stage = MatchStage::RUNNING;
 }
 
-Match::Match(const char * keyboardLayoutA, const char * keyboardLayoutB)
+Match::Match(const string keyboardLayoutA, const string keyboardLayoutB)
 	: stage(MatchStage::INIT_DRAW)
 {
 	state = new State();

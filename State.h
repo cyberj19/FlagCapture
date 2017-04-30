@@ -31,12 +31,12 @@ public:
 	void step();
 	void reset();
 	void control(Input input);
-	const int getClock() { return clock; }
+	int getClock() const { return clock; }
 	void updateBoardSoldierMoved(Position source, Position dest);
 	void notifySoldierDied(Soldier * soldier);
 	
-	Position getChanges(int index) { return boardChanges[index]; }
-	Cell getCell(Position cellPos) { return board[cellPos.x][cellPos.y]; }
+	Position getChanges(int index) const { return boardChanges[index]; }
+	Cell getCell(Position cellPos) const { return board[cellPos.x][cellPos.y]; }
 	void initBoardPosition(Soldier* soldier);
 private:
 	void soldiersFactory();

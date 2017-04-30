@@ -32,6 +32,6 @@ class Match{
 			return MatchOutput::WINNER_B;
 	}
 public:	
-	Match(const char* keyboardLayoutA, const char* keyboardLayoutB);
+	Match(const string keyboardLayoutA, const string keyboardLayoutB);
 	MatchOutput Play();
 };

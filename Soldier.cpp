@@ -8,10 +8,6 @@ Position Soldier::nextPosition()
 	return nextPos;
 }
 
-const char * Soldier::getSymbol()
-{
-	return _symbol;
-}
 
 void Soldier::setSymbol()
 {

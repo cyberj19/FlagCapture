@@ -47,18 +47,8 @@ void GameManager::setUserNames() {
 	clearScreen();
 	cout << "================Choose Names================\n";
 	cout << "Please Enter a Name for User A\n";
-	/*int in = _kbhit();
-	while (in) {
-		_getch();
-		in = _kbhit();
-	}*/
 	cin >> user_A_name;
 	cout << "Please Enter a Name for User B\n";
-	/*in = _kbhit();
-	while (in) {
-		_getch();
-		in = _kbhit();
-	}*/
 	cin >> user_B_name;
 	UserA.setName(user_A_name);
 	UserB.setName(user_B_name);
@@ -79,10 +69,6 @@ User& GameManager::getWinningUser(MenuOptions GameType, MatchOutput matchOutput)
 void GameManager::startMatch(MenuOptions GameType) {
 	
 	printScores(UserA.getName(), UserA.getScore(), UserB.getName(), UserB.getScore());
-	/*const char *akeys = GameType == MenuOptions::REGULAR_GAME ? 
-		DEFAULT_PLAYER_A_KEY_LAYOUT : DEFAULT_PLAYER_B_KEY_LAYOUT;
-	const char *bkeys = GameType == MenuOptions::REGULAR_GAME ?
-		DEFAULT_PLAYER_B_KEY_LAYOUT : DEFAULT_PLAYER_A_KEY_LAYOUT;*/
 	Match match = Match(DEFAULT_PLAYER_A_KEY_LAYOUT, DEFAULT_PLAYER_B_KEY_LAYOUT);
 	MatchOutput matchOutput = match.Play();
 

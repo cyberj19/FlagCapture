@@ -12,11 +12,11 @@ void setColorByEntity(const char* entity) {
 	else if (!strcmp(entity, "SEA ")) {
 		setTextColor(WHITE, DARK_BLUE);
 	}
-	else if (entity[0] == 'F') { // if it's a flag cell
-		setTextColor(YELLOW, BLACK);
-	}
-	else if (entity[1] >= '1' && entity[1] <= '9') {
+	else if ((entity[1] >= '1' && entity[1] <= '3') || (entity[0] == 'F' && entity[3]=='A')) {
 		setTextColor(RED);
+	}
+	else if ((entity[1] >= '7' && entity[1] <= '9') || (entity[0] == 'F' && entity[3] == 'B')) {
+		setTextColor(YELLOW);
 	}
 	else{
 		setTextColor(BLACK, WHITE);
@@ -42,21 +42,15 @@ void Graphics::renderChange(Position posToChange) {
 
 void Graphics::drawBoard()
 {
-	setTextColor(BLACK, GREY);
 	gotoxy(0, 1);
 	cout << "     | A  | B  | C  | D  | E  | F  | G  | H  | I  | J  | K  | L  | M   " << endl;
-	setTextColor(WHITE, BLACK);
 	for (int i = 0; i < ROWS; i++)
 	{
 		hideCursor();
 		cout << "-----------------------------------------------------------------------" << endl;
-		setTextColor(BLACK, GREY);
 		printf(" %2d  ", i + 1); 
-		setTextColor(WHITE, BLACK);
 		cout << "     |    |    |    |    |    |    |    |    |    |    |    |    |" << endl;
-		setTextColor(BLACK, OLIVE);
-		//cout << "                                                                  " << endl;
-		setTextColor(WHITE, BLACK);
+		
 
 	}
 	cout << "-----------------------------------------------------------------------" << endl;

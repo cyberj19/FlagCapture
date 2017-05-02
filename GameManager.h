@@ -7,8 +7,6 @@
 #include "enums.h"
 #include "GameSettingsGenerator.h"
 
-const char* DEFAULT_PLAYER_A_KEY_LAYOUT = "123wxad";
-const char* DEFAULT_PLAYER_B_KEY_LAYOUT = "789imjl";
 
 void printMainMenu();
 

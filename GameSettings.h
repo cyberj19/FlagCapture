@@ -1,58 +1,65 @@
+#pragma once
+#include<string>
 class GameSettings {
-	char *keyboardLayoutA;
-	char *keyboardLayoutB;
 
-	MovesSourceOptions movesOptions;
-	string _movesAInputFilePath;
-	string _movesBInputFilePath;
+	const char* _keyboardLayoutA = "123wxad";
+	const char* _keyboardLayoutB = "789imjl";
 
-	BoardInitOptions boardOptions;
-	string boardFilePath;
+	MovesSourceOptions _movesOptions;
+	std::string _movesAInputFilePath;
+	std::string _movesBInputFilePath;
 
-	bool recording;
-	string movesAOutputFilePath;
-	string movesBOutputFilePath;
+	BoardInitOptions _boardOptions;
+	std::string _boardFilePath;
+
+	bool _recording;
+	std::string _movesAOutputFilePath;
+	std::string _movesBOutputFilePath;
 	
-	int delay;
-	bool quiet;
+	int _delay;
+	bool _quiet;
 public:
-	GameSettings(char *keyboardLayoutA, char *keyboardLayoutB,
-		MovesSourceOptions movesOptions, 
-		string movesAInputFilePath,
-		string movesBInputFilePath,
-		BoardInitOptions boardOptions,
-		string boardFilePath,
-		bool recording,
-		string movesAOutputFilePath,
-		string movesBOutputFilePath,
-		int delay,
-		bool quiet)
-		: keyboardLayoutA(keyboardLayoutA), keyboardLayoutB(keyboardLayoutB),
-		movesOptions(movesOptions), 
-		_movesAInputFilePath(movesAInputFilePath), 
-		_movesBInputFilePath(movesBInputFilePath),
-		boardOptions(boardOptions), boardFilePath(boardFilePath),
-		recording(recording), 
-		movesAOutputFilePath(movesAOutputFilePath),
-		movesBOutputFilePath(movesBOutputFilePath),
-		delay(delay), quiet(quiet)
+	GameSettings(int delay, bool quiet)
+		: 
+		_movesOptions(MovesSourceOptions::Keyboard),
+		_boardOptions(BoardInitOptions::Randomized),
+		_recording(false),
+		_delay(delay), 
+		_quiet(quiet)
 	{}
 
-	const char *getKeyboardLayoutA() { return keyboardLayoutA; }
-	const char *getKeyboardLayoutB() { return keyboardLayoutB; }
+	void setMovesInputFiles(std::string movesAInputFilePath,
+							std::string movesBInputFilePath) {
+		_movesOptions = MovesSourceOptions::FromFile;
+		_movesAInputFilePath = movesAInputFilePath;
+		_movesBInputFilePath = movesBInputFilePath;
+	}
 
-	const MovesSourceOptions getMovesOptions() { return movesOptions; }
-	const string getMovesAInputFilePath() { return _movesAInputFilePath; }
-	const string getMovesBInputFilePath() { return _movesBInputFilePath; }
+	void setBoardInputFile(std::string boardInputFilePath) {
+		_boardOptions = BoardInitOptions::FromFile;
+		_boardFilePath = boardInputFilePath;
+	}
 
-	const BoardInitOptions getBoardOptions() { return boardOptions; }
-	const string getBoardFilePath() { return boardFilePath; }
+	void setRecordingOutputFiles(std::string movesAOutputFilePath,
+								 std::string movesBOutputFilePath) {
+		_recording = true;
+		_movesAOutputFilePath = movesAOutputFilePath;
+		_movesBOutputFilePath = movesBOutputFilePath;
+	}
 
-	const bool isRecording() { return recording; }
-	const string getMovesAOutputFilePath() { return movesAOutputFilePath; }
-	const string getMovesBOutputFilePath() { return movesBOutputFilePath; }
-	const int getDelay() { return delay; }
-	const bool isQuiet() { return quiet; }
+	const char *getKeyboardLayoutA() { return _keyboardLayoutA; }
+	const char *getKeyboardLayoutB() { return _keyboardLayoutB; }
 
-	void switchKeyboardLayouts();
+	const MovesSourceOptions getMovesOptions() { return _movesOptions; }
+	const std::string getMovesAInputFilePath() { return _movesAInputFilePath; }
+	const std::string getMovesBInputFilePath() { return _movesBInputFilePath; }
+
+	const BoardInitOptions getBoardOptions() { return _boardOptions; }
+	const std::string getBoardFilePath() { return _boardFilePath; }
+
+	const bool isRecording() { return _recording; }
+	const std::string getMovesAOutputFilePath() { return _movesAOutputFilePath; }
+	const std::string getMovesBOutputFilePath() { return _movesBOutputFilePath; }
+	const int getDelay() { return _delay; }
+	const bool isQuiet() { return _quiet; }
 };

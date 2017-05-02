@@ -26,7 +26,7 @@ void GameManager::run() {
 
 void GameManager::runUnattended() {
 	while (settingsGenerator.moreSettings()) {
-		GameSettings settings = settingsGenerator.getNextSettings(false, false);
+		GameSettings settings = settingsGenerator.getNextSettings(false);
 		MatchOutput matchOutput = Match(settings).Play();
 
 		if (matchOutput == MatchOutput::WINNER_A) UserA.increaseScore();
@@ -87,7 +87,7 @@ void GameManager::startAttendedMatch(MenuOptions GameType) {
 	
 	printScores(UserA.getName(), UserA.getScore(), UserB.getName(), UserB.getScore());
 
-	GameSettings settings = settingsGenerator.getNextSettings(GameType == MenuOptions::SWITCHED_GAME, recording);
+	GameSettings settings = settingsGenerator.getNextSettings(recording);
 	MatchOutput matchOutput = Match(settings).Play();
 
 	if (matchOutput == MatchOutput::MATCH_TERMINATED) {
@@ -112,4 +112,4 @@ void GameManager::quitGame()
 }
 
 GameManager::GameManager(GameSettingsGenerator settingsGeneator)
-	: settingsGenerator(settingsGeneator) {}
+	: settingsGenerator(settingsGeneator), recording(false) {}

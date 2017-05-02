@@ -16,14 +16,13 @@ class GameSettingsGenerator {
 	bool quiet;
 	int delay;
 public:
-	GameSettingsGenerator(char *argv[], int argc) 
-		: boardOptions(BoardInitOptions::Randomized), movesOptions(MovesSourceOptions::Keyboard), path(nullptr), quiet(false), delay(20) {}
+	GameSettingsGenerator(int argc, char *argv[]);
 	BoardInitOptions getBoard() const { return boardOptions; }
 	MovesSourceOptions getMoves() const { return movesOptions; }
 	string getPath() const { return path; }
 	bool getQuiet() const;
 	int getDelay() const;
 	bool isAttended() const;
-	GameSettings getNextSettings(bool switchKeyboardLayout, bool recording);
+	GameSettings getNextSettings(bool recording);
 	bool moreSettings();
 };

@@ -20,10 +20,10 @@ class Soldier {
 	SoldierStatus status;
 
 public:
-	Soldier(Player player, SoldierType type, State *state) 
-		: state(state), _player(player), _type(type), isMoving(false), status(SoldierStatus::ALIVE) 
+	Soldier(Player player, SoldierType type, State *state, Position pos) 
+		: state(state), _player(player), _type(type), isMoving(false), status(SoldierStatus::ALIVE),
+		_currentPosition(pos)
 	{ 
-		state->initBoardPosition(this); 
 		setSymbol(); 
 	}
 

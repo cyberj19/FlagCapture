@@ -1,5 +1,5 @@
 #include "GameManager.h"
-int main(char *argv[], int argc) {
-	GameSettingsGenerator settingsGenerator = GameSettingsGenerator(argv, argc);
+int main(int argc, char *argv[]) {
+	GameSettingsGenerator settingsGenerator = GameSettingsGenerator(argc, argv);
 	GameManager(settingsGenerator).run(); 
 }

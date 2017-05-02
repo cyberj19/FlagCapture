@@ -49,4 +49,5 @@ private:
 	bool canMoveInSea();
 	bool canMoveInForest();
 	bool isMyTurn();
+	int getId();
 };

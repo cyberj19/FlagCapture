@@ -9,7 +9,7 @@ void Match::handleRunning()
 		return;
 	}
 	state->step();
-	Sleep(100);
+	Sleep(delay);
 	graphics->render();
 	if (state->isFinished)
 		stage = MatchStage::GAME_OVER;
@@ -47,13 +47,15 @@ void Match::initDraw()
 	stage = MatchStage::RUNNING;
 }
 
-Match::Match(const char * keyboardLayoutA, const char * keyboardLayoutB)
-	: stage(MatchStage::INIT_DRAW)
+Match::Match(GameSettings settings) //const char * keyboardLayoutA, const char * keyboardLayoutB)
+	: stage(MatchStage::INIT_DRAW), delay(100)
 {
-	state = new State();
-
+	state = new State(settings);
 	graphics = new Graphics(state);
-	controller = new Controller(state, keyboardLayoutA, keyboardLayoutB);
+	controller = new Controller(state, settings);
+	/*controller = new Controller(state, 
+		settings.getKeyboardLayoutA(),
+		settings.getKeyboardLayoutB());*/
 }
 
 MatchOutput Match::Play()

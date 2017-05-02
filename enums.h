@@ -19,6 +19,6 @@ enum class SoldierStatus { ALIVE, DEAD };
 
 enum class CellType { EMPTY, FOREST, SEA, FLAG_A, FLAG_B };
 
-enum class Board { F, R };
+enum class BoardInitOptions { FromFile, Randomized };
 
-enum class Moves { F, K };
+enum class MovesSourceOptions { FromFile, Keyboard };

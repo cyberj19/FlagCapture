@@ -12,8 +12,10 @@ Input Controller::getInput()
 	return input;
 }
 
-Controller::Controller(State * state, const char * layoutA, const char * layoutB)
-	: state(state), _layoutA(layoutA), _layoutB(layoutB)
+Controller::Controller(State * state, GameSettings settings)
+	: state(state), 
+	_layoutA(settings.getKeyboardLayoutA()), 
+	_layoutB(settings.getKeyboardLayoutB())
 {
 }
 

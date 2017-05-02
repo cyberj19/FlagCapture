@@ -74,20 +74,43 @@ bool Soldier::isMyTurn() {
 	else
 		return false;
 }
+
+int Soldier::getId()
+{
+	int id;
+	switch (_type) {
+	case SoldierType::S1:
+		id = 1;
+		break;
+	case SoldierType::S2:
+		id = 2;
+		break;
+	case SoldierType::S3:
+	default:
+		id = 3;
+		break;
+	}
+	if (_player == Player::B) {
+		id += 6;
+	}
+
+	return id;
+}
 void Soldier::step()
 {
 	if (!isMoving || !isAlive() || !isMyTurn()) return;
+	state->updateLastStep(getId(), _dir_x, _dir_y);
 	stepLogic();
 }
 
 bool Soldier::canMoveInSea() {
 	if (_player == Player::A) return _type == SoldierType::S2;
-	else return _type == SoldierType::S1 || _type == SoldierType::S3;
+	else return _type == SoldierType::S1;
 }
 
 bool Soldier::canMoveInForest() {
 	if (_player == Player::A) return _type == SoldierType::S2 || _type == SoldierType::S3;
-	else return _type == SoldierType::S1;
+	else return _type == SoldierType::S1 || _type == SoldierType::S3;
 }
 void Soldier::stepLogic()
 {

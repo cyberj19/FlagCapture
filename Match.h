@@ -4,12 +4,15 @@
 #include "Controller.h"
 #include "State.h"
 #include "enums.h"
+#include "GameSettings.h"
 
 class State;
 class Controller;
 class Graphics;
 
 class Match{
+	int delay;
+
 	MatchStage stage;
 	Graphics *graphics;
 	Controller *controller;
@@ -32,6 +35,6 @@ class Match{
 			return MatchOutput::WINNER_B;
 	}
 public:	
-	Match(const char* keyboardLayoutA, const char* keyboardLayoutB);
+	Match(GameSettings settings); // const char* keyboardLayoutA, const char* keyboardLayoutB);
 	MatchOutput Play();
 };

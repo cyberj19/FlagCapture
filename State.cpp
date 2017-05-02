@@ -38,6 +38,7 @@ void State::reset()
 {
 	clock = 0;
 	isFinished = false;
+	stepsBuffer.clear();
 	initBoard();
 	initVectorFreePositions(freePositionsA, 0, 5);
 	initVectorFreePositions(freePositionsB, 8, 13);
@@ -81,6 +82,18 @@ void State::notifySoldierDied(Soldier *soldier) {
 			winner = Player::A;
 		}
 	}
+}
+void State::updateLastStep(int soldierId, int dirX, int dirY)
+{
+	//lastStep.clear();
+	char *newStep;
+	char dir;
+	if (dirX == 1) dir = 'R';
+	else if (dirX == -1) dir = 'L';
+	else if (dirY == 1) dir = 'U';
+	else if (dirY == -1) dir = 'D';
+	sprintf(newStep, "%d,%d,%c\n", clock, soldierId, dir);
+	stepsBuffer += newStep;
 }
 void State::updateBoardSoldierDied(Position placeOfDeath)
 {

@@ -16,7 +16,26 @@ void printMainMenu() {
 	cout << "===========================================" << endl;
 	cout << "Selection: ";
 }
+
 void GameManager::run() {
+	if (settingsGenerator.isAttended())
+		runAttended();
+	else
+		runUnattended();
+}
+
+void GameManager::runUnattended() {
+	while (settingsGenerator.moreSettings()) {
+		GameSettings settings = settingsGenerator.getNextSettings(false, false);
+		MatchOutput matchOutput = Match(settings).Play();
+
+		if (matchOutput == MatchOutput::WINNER_A) UserA.increaseScore();
+		else UserB.increaseScore();
+	}
+
+	// show scores
+}
+void GameManager::runAttended() {
 	MenuOptions choice;
 	do {
 		 choice = (MenuOptions)show_menu(printMainMenu, 1, 9);
@@ -26,10 +45,8 @@ void GameManager::run() {
 			setUserNames();
 			break;
 		case MenuOptions::REGULAR_GAME:
-			startMatch(MenuOptions::REGULAR_GAME);
-			break;
 		case MenuOptions::SWITCHED_GAME:
-			startMatch(MenuOptions::SWITCHED_GAME);
+			startAttendedMatch(choice);
 			break;
 		case MenuOptions::RESET_SCORE:
 			resetScore();
@@ -66,11 +83,12 @@ User& GameManager::getWinningUser(MenuOptions GameType, MatchOutput matchOutput)
 	else
 		return matchOutput == MatchOutput::WINNER_B ? UserA : UserB;
 }
-void GameManager::startMatch(MenuOptions GameType) {
+void GameManager::startAttendedMatch(MenuOptions GameType) {
 	
 	printScores(UserA.getName(), UserA.getScore(), UserB.getName(), UserB.getScore());
-	Match match = Match(DEFAULT_PLAYER_A_KEY_LAYOUT, DEFAULT_PLAYER_B_KEY_LAYOUT);
-	MatchOutput matchOutput = match.Play();
+
+	GameSettings settings = settingsGenerator.getNextSettings(GameType == MenuOptions::SWITCHED_GAME, recording);
+	MatchOutput matchOutput = Match(settings).Play();
 
 	if (matchOutput == MatchOutput::MATCH_TERMINATED) {
 		announceGameStopped();
@@ -92,3 +110,6 @@ void GameManager::quitGame()
 	Sleep(1000);
 	exit(0);
 }
+
+GameManager::GameManager(GameSettingsGenerator settingsGeneator)
+	: settingsGenerator(settingsGeneator) {}

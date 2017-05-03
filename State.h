@@ -35,7 +35,7 @@ class State {
 	Position boardChanges[2];
 	int clock;
 	std::vector<Position> freePositionsA, freePositionsB;
-	std::string stepsBuffer;
+	std::string stepsBufferA, stepsBufferB;
 public:
 	State(GameSettings settings);
  	Player winner;
@@ -54,7 +54,7 @@ public:
 	Position getChanges(int index) { return boardChanges[index]; }
 	Cell& getCell(Position cellPos) { return board[cellPos.y][cellPos.x]; }
 	Cell& getCell(int x, int y) { return board[y][x]; }
-	std::string getLastStep() { return stepsBuffer; }
+	std::string getStepBuffer(Player player);
 private:
 	void initSoldiers();
 	void addSoldiers(std::vector<Soldier>& soldiersVector, Player player, std::vector<Position> positions);

@@ -4,7 +4,7 @@
 #include "Utils.h"
 using namespace std;
 
-void printMainMenu() {
+/*void printMainMenu() {
 	clearScreen();
 	cout << "=================Main Menu=================" << endl;
 	cout << "Please make your selection" << endl;
@@ -12,10 +12,11 @@ void printMainMenu() {
 	cout << (int)MenuOptions::REGULAR_GAME << " - Start Match" << endl;
 	cout << (int)MenuOptions::SWITCHED_GAME << " - Start Match With Switched Roles" << endl;
 	cout << (int)MenuOptions::RESET_SCORE << " - Reset Score" << endl;
+	cout << (int)MenuOptions::TOGGLE_RECORDING << " - Enable Recording" << endl;
 	cout << (int)MenuOptions::EXIT_MENU << " - Quit" << endl;
 	cout << "===========================================" << endl;
 	cout << "Selection: ";
-}
+}*/
 
 void GameManager::run() {
 	if (settingsGenerator.isAttended())
@@ -35,10 +36,32 @@ void GameManager::runUnattended() {
 
 	// show scores
 }
+std::string GameManager::generateMenu()
+{
+	stringstream menustream = stringstream();
+
+	menustream << "=================Main Menu=================" << endl;
+	menustream << "Please make your selection" << endl;
+	menustream << (int)MenuOptions::SET_NAMES << " - Choose Names (Optional)" << endl;
+	menustream << (int)MenuOptions::REGULAR_GAME << " - Start Match" << endl;
+	menustream << (int)MenuOptions::SWITCHED_GAME << " - Start Match With Switched Roles" << endl;
+	menustream << (int)MenuOptions::RESET_SCORE << " - Reset Score" << endl;
+
+	if (!recording)
+		menustream << (int)MenuOptions::TOGGLE_RECORDING << " - Enable Recording" << endl;
+	else
+		menustream << (int)MenuOptions::TOGGLE_RECORDING << " - Disable Recording" << endl;
+
+	menustream << (int)MenuOptions::EXIT_MENU << " - Quit" << endl;
+	menustream << "===========================================" << endl;
+	menustream << "Selection: ";
+
+	return menustream.str();
+}
 void GameManager::runAttended() {
 	MenuOptions choice;
 	do {
-		 choice = (MenuOptions)show_menu(printMainMenu, 1, 9);
+		 choice = (MenuOptions)show_menu(generateMenu(), 1, 9);
 
 		switch (choice) {
 		case MenuOptions::SET_NAMES:
@@ -50,6 +73,9 @@ void GameManager::runAttended() {
 			break;
 		case MenuOptions::RESET_SCORE:
 			resetScore();
+			break;
+		case MenuOptions::TOGGLE_RECORDING:
+			recording = !recording;
 			break;
 		case MenuOptions::EXIT_MENU:
 		default:

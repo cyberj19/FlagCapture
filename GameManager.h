@@ -8,7 +8,7 @@
 #include "GameSettingsGenerator.h"
 
 
-void printMainMenu();
+//void printMainMenu();
 
 class GameManager {
 	User UserA = User("A"), UserB = User("B");
@@ -23,6 +23,8 @@ class GameManager {
 
 	void runAttended();
 	void runUnattended();
+
+	std::string generateMenu();
 public:
 	GameManager(GameSettingsGenerator settingsGeneator);
 	void run();

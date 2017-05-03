@@ -39,7 +39,7 @@ GameSettingsGenerator::GameSettingsGenerator(int argc, char *argv[])
 			}
 			i += 2;
 		}
-		else if (argv[i] == "-path") {
+		else if (strcmp(argv[i], "-path") == 0) {
 
 			if (i == argc - 1) {
 				//error;
@@ -49,12 +49,12 @@ GameSettingsGenerator::GameSettingsGenerator(int argc, char *argv[])
 			}
 			i += 2;
 		}
-		else if (argv[i] == "-quiet") {
+		else if (strcmp(argv[i], "-quiet") == 0) {
 			//quiet is active only if -board f -moves f
 			quiet = true;
 			i += 1;
 		}
-		else if (argv[i] == "-delay") {
+		else if (strcmp(argv[i], "-delay") == 0) {
 			//if quiet is active - delay is ignored
 			//default is 20 ms
 			if (i == argc - 1) {
@@ -105,7 +105,7 @@ GameSettings GameSettingsGenerator::getNextSettings(bool recording)
 	}
 
 	if (recording) {
-		settings.setRecordingOutputFiles("llll", "zzzz");
+		settings.setRecordingOutputFiles("", "llll", "zzzz");
 	}
 
 	return settings;

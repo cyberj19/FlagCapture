@@ -13,13 +13,15 @@ class State;
 
 class Graphics {
 	State* state;
+	bool _recording;
 public:
-	Graphics(State* state) : state(state) {}
+	Graphics(State* state, bool recording) 
+		: state(state), _recording(recording) {}
 	void render();
 	void renderChange(Position positionToChange);
 	void drawBoard();
 	void drawEnv();
-
+	void renderRecording();
 };		
 
 

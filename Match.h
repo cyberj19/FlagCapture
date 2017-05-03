@@ -12,7 +12,7 @@ class Graphics;
 
 class Match{
 	int delay;
-
+	GameSettings _settings;
 	MatchStage stage;
 	Graphics *graphics;
 	Controller *controller;
@@ -24,6 +24,7 @@ class Match{
 	void handleRunning();
 	void handleSubMenu();
 	MatchOutput handleEndGame();
+	void saveRecord();
 public:	
 	Match(GameSettings settings); // const char* keyboardLayoutA, const char* keyboardLayoutB);
 	MatchOutput Play();

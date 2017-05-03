@@ -1,15 +1,17 @@
 #include "State.h"
 #include "Soldier.h"
 #include <time.h>
-
+using namespace std;
 
 State::State(GameSettings settings)
 	: _settings(settings), forestPositions(), seaPositions() {
 	// do something with settings;
 	srand(time(NULL));
 
-	if (_settings.isRecording())
-		stepsBuffer = std::string();
+	if (_settings.isRecording()) {
+		stepsBufferA = string();
+		stepsBufferB = string();
+	}
 
 	if (_settings.getBoardOptions() == BoardInitOptions::FromFile) {
 		// load file from 
@@ -42,7 +44,8 @@ void State::reset()
 {
 	clock = 0;
 	isFinished = false;
-	stepsBuffer.clear();
+	stepsBufferA.clear();
+	stepsBufferB.clear();
 
 	for (int i = 0; i < ROWS; i++)
 		for (int j = 0; j < COLS; j++)
@@ -58,17 +61,17 @@ void State::reset()
 }
 
 void State::initSoldiers() {
-	soldiersA = std::vector<Soldier>();
+	soldiersA = vector<Soldier>();
 	addSoldiers(soldiersA, Player::A, soldierAPositions);
 	soldierCounterA = soldiersA.size();
 
-	soldiersB = std::vector<Soldier>();
+	soldiersB = vector<Soldier>();
 	addSoldiers(soldiersB, Player::B, soldierBPositions);
 	soldierCounterB = soldiersB.size();
 }
 
-void State::addSoldiers(std::vector<Soldier>& soldiersVector, Player player,
-	std::vector<Position> positions) {
+void State::addSoldiers(vector<Soldier>& soldiersVector, Player player,
+	vector<Position> positions) {
 	for (int s = 0; s < 3; ++s) {
 		Soldier soldier = Soldier(player, SoldierType(s), this, positions[s]);
 		soldiersVector.push_back(soldier);
@@ -132,14 +135,18 @@ void State::updateLastStep(int soldierId, int dirX, int dirY)
 {
 	if (!_settings.isRecording()) return;
 
-	char *newStep = new char[6];
+	char *newStep = new  char[6];
 	char dir;
 	if (dirX == 1) dir = 'R';
 	else if (dirX == -1) dir = 'L';
-	else if (dirY == 1) dir = 'U';
-	else if (dirY == -1) dir = 'D';
+	else if (dirY == 1) dir = 'D';
+	else if (dirY == -1) dir = 'U';
 	sprintf(newStep, "%d,%d,%c\n", clock, soldierId, dir);
-	stepsBuffer += newStep;
+
+	if (soldierId <= 3)
+		stepsBufferA += newStep;
+	else
+		stepsBufferB += newStep;
 }
 void State::updateBoardSoldierDied(Position placeOfDeath)
 {
@@ -153,6 +160,13 @@ void State::fillCells(const std::vector<Position>& positions, CellType type) {
 	for (auto& pos : positions) {
 		getCell(pos).setType(type);
 	}
+}
+
+string State::getStepBuffer(Player player) {
+	if (player == Player::A)
+		return stepsBufferA;
+	else
+		return stepsBufferB;
 }
 
 void randomCells(vector<Position>& positions, const Position UpperLeft, const Position BottomRight, const double prob)
@@ -170,7 +184,7 @@ void randomCells(vector<Position>& positions, const Position UpperLeft, const Po
 	}
 }
 
-std::vector<Position> selectCells(const Position UpperLeft, const Position BottomRight, int numToSelect)
+vector<Position> selectCells(const Position UpperLeft, const Position BottomRight, int numToSelect)
 {
 	std::vector<Position> positions = vector<Position>();
 	int minX = UpperLeft.x, minY = UpperLeft.y, 
@@ -199,7 +213,7 @@ vector<Position> selectCells(Position UpperLeft, Position BottomRight, GameBoard
 			int rx = minX + (rand() % (int)(maxX - minX + 1));
 			int ry = minY + (rand() % (int)(maxY - minY + 1));
 			pos = Position(rx, ry);
-		} while (std::find(positions.begin(), positions.end(), pos) != positions.end() ||
+		} while (find(positions.begin(), positions.end(), pos) != positions.end() ||
 			board[pos.y][pos.x].getType() != CellType::EMPTY);
 		positions.push_back(pos);
 		--numToSelect;

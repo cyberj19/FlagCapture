@@ -1,5 +1,5 @@
 #include "Graphics.h"
-
+#include <time.h>
 using namespace std;
 
 #define goto_scaled_position(x, y)  (gotoxy((y)*5 + 6, (x)*2 + 3))
@@ -29,6 +29,7 @@ void setColorByEntity(const char* entity) {
 void Graphics::render() {
 	renderChange(state->getChanges(0));
 	renderChange(state->getChanges(1));
+	renderRecording();
 }
 
 void Graphics::renderChange(Position posToChange) {
@@ -67,6 +68,22 @@ void Graphics::drawEnv()
 			setTextColor(WHITE, BLACK);
 		}
 	}
+}
+
+void Graphics::renderRecording()
+{
+	if (!_recording) return;
+	gotoxy(75, 0);
+	bool turnOnWidget = ((int)time(0)) % 2 == 0;
+	setTextColor(RED);
+	if (turnOnWidget) {
+		cout << "O";
+	}
+	else {
+		cout << " ";
+	}
+	cout << " REC";
+	setTextColor(WHITE, BLACK);
 }
 
 void announceWinner(string winner)

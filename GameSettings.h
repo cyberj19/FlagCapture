@@ -15,7 +15,8 @@ class GameSettings {
 	bool _recording;
 	std::string _movesAOutputFilePath;
 	std::string _movesBOutputFilePath;
-	
+	std::string _boardOutputFilePath;
+
 	int _delay;
 	bool _quiet;
 public:
@@ -40,9 +41,11 @@ public:
 		_boardFilePath = boardInputFilePath;
 	}
 
-	void setRecordingOutputFiles(std::string movesAOutputFilePath,
+	void setRecordingOutputFiles(std::string boardOutputFilePath,
+								 std::string movesAOutputFilePath,
 								 std::string movesBOutputFilePath) {
 		_recording = true;
+		_boardOutputFilePath = boardOutputFilePath;
 		_movesAOutputFilePath = movesAOutputFilePath;
 		_movesBOutputFilePath = movesBOutputFilePath;
 	}

@@ -1,6 +1,16 @@
 #include "Match.h"
 #include<stdio.h>
 #include "Utils.h"
+#include <iostream>
+#include <fstream>
+using namespace std;
+Match::Match(GameSettings settings) //const char * keyboardLayoutA, const char * keyboardLayoutB)
+	: _settings(settings), stage(MatchStage::INIT_DRAW), delay(settings.getDelay())
+{
+	state = new State(settings);
+	graphics = new Graphics(state, _settings.isRecording());
+	controller = new Controller(state, settings);
+}
 void Match::handleRunning() 
 {
 	Input input = controller->getInput();
@@ -47,13 +57,6 @@ void Match::initDraw()
 	stage = MatchStage::RUNNING;
 }
 
-Match::Match(GameSettings settings) //const char * keyboardLayoutA, const char * keyboardLayoutB)
-	: stage(MatchStage::INIT_DRAW), delay(100)
-{
-	state = new State(settings);
-	graphics = new Graphics(state);
-	controller = new Controller(state, settings);
-}
 
 MatchOutput Match::Play()
 {
@@ -84,8 +87,25 @@ MatchOutput Match::handleEndGame() {
 		return MatchOutput::QUIT_GAME;
 	else if (lastSubMenuChoice == SubMenuOptions::MAIN_MENU)
 		return MatchOutput::MATCH_TERMINATED;
-	else if (state->winner == Player::A)
-		return MatchOutput::WINNER_A;
-	else
-		return MatchOutput::WINNER_B;
+	else {
+		if (_settings.isRecording())
+			saveRecord();
+		if (state->winner == Player::A)
+			return MatchOutput::WINNER_A;
+		else
+			return MatchOutput::WINNER_B;
+	}
+}
+
+void Match::saveRecord() {
+	ofstream myfile;
+
+	myfile.open("lolA.txt");
+	myfile << state->getStepBuffer(Player::A);
+	myfile.close();
+
+
+	myfile.open("lolB.txt");
+	myfile << state->getStepBuffer(Player::B);
+	myfile.close();
 }

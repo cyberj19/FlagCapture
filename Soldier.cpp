@@ -3,8 +3,8 @@
 Position Soldier::nextPosition()
 {
 	Position nextPos = _currentPosition;
-	nextPos.x += _dir_y;
-	nextPos.y += _dir_x;
+	nextPos.x += _dir_x;
+	nextPos.y += _dir_y;
 	return nextPos;
 }
 
@@ -49,12 +49,12 @@ void Soldier::control(Input input) {
 	if (input.player != _player) return;
 
 	if (input.action == Action::CHOOSE1)
-		isMoving = _type == SoldierType::S1;
+		_moving = _type == SoldierType::S1;
 	else if (input.action == Action::CHOOSE2)
-		isMoving = _type == SoldierType::S2;
+		_moving = _type == SoldierType::S2;
 	else if (input.action == Action::CHOOSE3)
-		isMoving = _type == SoldierType::S3;
-	else if (isMoving) {
+		_moving = _type == SoldierType::S3;
+	else if (_moving) {
 		_dir_x = 0;
 		_dir_y = 0;
 		switch (input.action) {
@@ -98,7 +98,7 @@ int Soldier::getId()
 }
 void Soldier::step()
 {
-	if (!isMoving || !isAlive() || !isMyTurn()) return;
+	if (!isMoving() || !isAlive() || !isMyTurn()) return;
 	state->updateLastStep(getId(), _dir_x, _dir_y);
 	stepLogic();
 }

@@ -23,17 +23,7 @@ class Match{
 	void initDraw();
 	void handleRunning();
 	void handleSubMenu();
-	MatchOutput handleEndGame() {
-		controller->clearBuffer();
-		if (lastSubMenuChoice == SubMenuOptions::EXIT_GAME)
-			return MatchOutput::QUIT_GAME;
-		else if (lastSubMenuChoice == SubMenuOptions::MAIN_MENU)
-			return MatchOutput::MATCH_TERMINATED;
-		else if (state->winner == Player::A)
-			return MatchOutput::WINNER_A;
-		else
-			return MatchOutput::WINNER_B;
-	}
+	MatchOutput handleEndGame();
 public:	
 	Match(GameSettings settings); // const char* keyboardLayoutA, const char* keyboardLayoutB);
 	MatchOutput Play();

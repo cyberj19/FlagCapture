@@ -13,7 +13,7 @@ class Soldier {
 	Position _currentPosition;
 	int _dir_x, _dir_y;
 	const char* _symbol;
-	bool isMoving;
+	bool _moving;
 	Player _player;
 	SoldierType _type;
 	State* state;
@@ -21,7 +21,7 @@ class Soldier {
 
 public:
 	Soldier(Player player, SoldierType type, State *state, Position pos) 
-		: state(state), _player(player), _type(type), isMoving(false), status(SoldierStatus::ALIVE),
+		: state(state), _player(player), _type(type), _moving(false), status(SoldierStatus::ALIVE),
 		_currentPosition(pos)
 	{ 
 		setSymbol(); 
@@ -41,13 +41,17 @@ public:
 private:
 	void stepLogic();
 	Soldier& battleWinner(Soldier & Attacker, Soldier & Defender, Position & battleCell);
+	
 	void attack(Soldier& Defender);
 	void die();
 	void move();
 	void stop() { _dir_x = 0; _dir_y = 0; }
 	void win(Player player);
+
 	bool canMoveInSea();
 	bool canMoveInForest();
 	bool isMyTurn();
+	bool isMoving() { return _moving && (_dir_x != 0 || _dir_y != 0); }
+
 	int getId();
 };

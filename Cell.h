@@ -14,10 +14,10 @@ public:
 	const char *getSymbol();
 
 	CellType getType() { return _type; }
-	Soldier * getSoldier() { return _soldier; }
+	Soldier* getSoldier() { return _soldier; }
 
 	void unsetSoldier() { _soldier = nullptr; }
-	void setSoldier(Soldier *soldier) { _soldier = soldier; }
+	void setSoldier(Soldier* soldier) { _soldier = soldier; }
 	void setType(CellType type) { _type = type; }
 };
 

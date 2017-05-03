@@ -29,7 +29,7 @@ class State {
 	std::vector<Position> soldierAPositions;
 	std::vector<Position> soldierBPositions;
 
-	std::vector<Soldier*> soldiersA, soldiersB;
+	std::vector<Soldier> soldiersA, soldiersB;
 	int soldierCounterA, soldierCounterB;
 	GameBoard board;
 	Position boardChanges[2];
@@ -37,26 +37,11 @@ class State {
 	std::vector<Position> freePositionsA, freePositionsB;
 	std::string stepsBuffer;
 public:
-	State(GameSettings settings) : _settings(settings), forestPositions(), seaPositions() {
-		// do something with settings;
-		stepsBuffer = std::string();
-
-		if (_settings.getBoardOptions() == BoardInitOptions::FromFile) {
-			// load file from 
-			// settings.getBoardFilePath()
-		}
-		else {
-			randomCells(seaPositions, Position(7, 3), Position(11, 9), 0.5);
-			randomCells(forestPositions, Position(1, 3), Position(6, 9), 1);
-			flagAPosition = selectCells(Position(0, 11), Position(12, 12), 1).front();
-			flagBPosition = selectCells(Position(0, 0), Position(12, 1), 1).front();
-		}
-
-		initBoard();
-		reset();
-	}
+	State(GameSettings settings);
  	Player winner;
 	bool isFinished;
+
+	//Cell& getCell(Position pos) const;
 	void step();
 	void reset();
 	void control(Input input);
@@ -67,11 +52,12 @@ public:
 	void updateLastStep(int soldierId, int dirX, int dirY);
 
 	Position getChanges(int index) { return boardChanges[index]; }
-	Cell& getCell(Position cellPos) { return board[cellPos.x][cellPos.y]; }
+	Cell& getCell(Position cellPos) { return board[cellPos.y][cellPos.x]; }
+	Cell& getCell(int x, int y) { return board[y][x]; }
 	std::string getLastStep() { return stepsBuffer; }
 private:
 	void initSoldiers();
-	void addSoldiers(std::vector<Soldier*>& soldiersVector, Player player, std::vector<Position> positions);
+	void addSoldiers(std::vector<Soldier>& soldiersVector, Player player, std::vector<Position> positions);
 	void initBoard();
 	void fillCells(const std::vector<Position>& positions, CellType type);
 	void updateBoardSoldierDied(Position placeOfDeath);

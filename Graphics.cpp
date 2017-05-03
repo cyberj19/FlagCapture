@@ -3,7 +3,7 @@
 using namespace std;
 
 #define goto_scaled_position(x, y)  (gotoxy((y)*5 + 6, (x)*2 + 3))
-
+#define goto_scaled_position2(x, y)  (gotoxy((x)*2 + 3, (y)*5 + 6))
 
 void setColorByEntity(const char* entity) {
 	if (!strcmp(entity, " FR ")) {
@@ -33,7 +33,7 @@ void Graphics::render() {
 
 void Graphics::renderChange(Position posToChange) {
 	if (posToChange.x == -1 || posToChange.y == -1) return;
-	goto_scaled_position(posToChange.x, posToChange.y);
+	goto_scaled_position(posToChange.y, posToChange.x);
 	const char* entity = state->getCell(posToChange).getSymbol();
 	setColorByEntity(entity);
 	cout << entity;
@@ -58,10 +58,10 @@ void Graphics::drawBoard()
 
 void Graphics::drawEnv()
 {
-	for (int i = 0; i < ROWS; i++){
-		for (int j = 0; j < COLS; j++){
-			const char* entity = state->getCell(Position(i, j)).getSymbol();
-			goto_scaled_position(i, j);
+	for (int x = 0; x < COLS; x++) {
+		for (int y = 0; y < ROWS; y++){
+			const char* entity = state->getCell(x, y).getSymbol();
+			goto_scaled_position(y, x);
 			setColorByEntity(entity);
 			cout << entity;
 			setTextColor(WHITE, BLACK);

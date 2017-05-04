@@ -11,7 +11,7 @@ bool isMatchLines(int myLine, int startLine, int stopLine);
 
 class Soldier {
 	Position _currentPosition;
-	Position _direction;
+	//Position _direction;
 
 	int _dir_x, _dir_y;
 	const char* _symbol;
@@ -27,7 +27,7 @@ public:
 	void step();
 	Position nextPosition();
 
-	Position getDirection() { return _direction; }
+	//Position getDirection() { return _direction; }
 	void setCurrentPosition(int x, int y) { _currentPosition.x=x;  _currentPosition.y = y; }
 	Position getCurrentPosition() { return _currentPosition; }
 	bool isAlive() { return status == SoldierStatus::ALIVE; }

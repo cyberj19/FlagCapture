@@ -1,16 +1,18 @@
 #include "Soldier.h"
 
+Soldier::Soldier(State *state, Player player, SoldierType type, Position pos)
+	: state(state), _player(player), _type(type), _moving(false), status(SoldierStatus::ALIVE),
+	_currentPosition(pos)
+{
+	setSymbol();
+}
+
 Position Soldier::nextPosition()
 {
 	Position nextPos = _currentPosition;
 	nextPos.x += _dir_x;
 	nextPos.y += _dir_y;
 	return nextPos;
-}
-
-const char * Soldier::getSymbol()
-{
-	return _symbol;
 }
 
 void Soldier::setSymbol()

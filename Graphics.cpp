@@ -3,28 +3,6 @@
 using namespace std;
 
 #define goto_scaled_position(x, y)  (gotoxy((y)*5 + 6, (x)*2 + 3))
-#define goto_scaled_position2(x, y)  (gotoxy((x)*2 + 3, (y)*5 + 6))
-
-void setColorByEntity(const char* entity) {
-	if (!strcmp(entity, " FR ")) {
-		setTextColor(WHITE, DARK_GREEN);
-	}
-	else if (!strcmp(entity, "SEA ")) {
-		setTextColor(WHITE, DARK_BLUE);
-	}
-	else if ((entity[1] >= '1' && entity[1] <= '3') || (entity[0] == 'F' && entity[3]=='A')) {
-		setTextColor(RED);
-	}
-	else if ((entity[1] >= '7' && entity[1] <= '9') || (entity[0] == 'F' && entity[3] == 'B')) {
-		setTextColor(YELLOW);
-	}
-	else{
-		setTextColor(BLACK, WHITE);
-	}
-}
-
-
-
 
 void Graphics::render() {
 	renderChange(state->getChanges(0));
@@ -117,6 +95,24 @@ void printScores(string userA, int scoreA, string userB, int scoreB) {
 
 	cout <<userB << ": " << scoreB << endl;
 	setTextColor(WHITE, BLACK);
+}
+
+void setColorByEntity(const char* entity) {
+	if (!strcmp(entity, " FR ")) {
+		setTextColor(WHITE, DARK_GREEN);
+	}
+	else if (!strcmp(entity, "SEA ")) {
+		setTextColor(WHITE, DARK_BLUE);
+	}
+	else if ((entity[1] >= '1' && entity[1] <= '3') || (entity[0] == 'F' && entity[3] == 'A')) {
+		setTextColor(RED);
+	}
+	else if ((entity[1] >= '7' && entity[1] <= '9') || (entity[0] == 'F' && entity[3] == 'B')) {
+		setTextColor(YELLOW);
+	}
+	else {
+		setTextColor(BLACK, WHITE);
+	}
 }
 
 void printSubMenu() {

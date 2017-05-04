@@ -70,10 +70,9 @@ void State::initSoldiers() {
 	soldierCounterB = soldiersB.size();
 }
 
-void State::addSoldiers(vector<Soldier>& soldiersVector, Player player,
-	vector<Position> positions) {
+void State::addSoldiers(vector<Soldier>& soldiersVector, Player player, vector<Position> positions) {
 	for (int s = 0; s < 3; ++s) {
-		Soldier soldier = Soldier(player, SoldierType(s), this, positions[s]);
+		Soldier soldier = Soldier(this, player, SoldierType(s), positions[s]);
 		soldiersVector.push_back(soldier);
 	}
 

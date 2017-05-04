@@ -12,4 +12,9 @@ public:
 	bool operator == (Position p) {
 		return x == p.x && y == p.y;
 	}
+
+	/*const static Position UP = Position(0, 1);
+	const static Position DOWN = Position(0, -1);
+	const static Position LEFT = Position(-1, 0);
+	const static Position RIGHT = Position(1, 0);*/
 };

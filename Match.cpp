@@ -3,7 +3,9 @@
 #include "Utils.h"
 #include <iostream>
 #include <fstream>
+
 using namespace std;
+
 Match::Match(GameSettings settings) //const char * keyboardLayoutA, const char * keyboardLayoutB)
 	: _settings(settings), stage(MatchStage::INIT_DRAW), delay(settings.getDelay())
 {
@@ -11,52 +13,6 @@ Match::Match(GameSettings settings) //const char * keyboardLayoutA, const char *
 	graphics = new Graphics(state, _settings.isRecording());
 	controller = new Controller(state, settings);
 }
-void Match::handleRunning() 
-{
-	Input input = controller->getInput();
-	if (input.action == Action::ESC) {
-		stage = MatchStage::SUB_MENU;
-		return;
-	}
-	state->step();
-	Sleep(delay);
-	graphics->render();
-	if (state->isFinished)
-		stage = MatchStage::GAME_OVER;
-}
-void Match::handleSubMenu()
-{
-	lastSubMenuChoice = (SubMenuOptions)show_menu(printSubMenu, 1, 9);	
-	
-	switch (lastSubMenuChoice) {
-	case SubMenuOptions::CONTINUE_GAME:
-		stage = MatchStage::INIT_DRAW;
-		break;
-	case SubMenuOptions::RESTART_GAME:
-		stage = MatchStage::START;
-		break;
-	case SubMenuOptions::MAIN_MENU:
-	case SubMenuOptions::EXIT_GAME:
-		stage = MatchStage::GAME_OVER;
-		break;
-	}
-	Sleep(100);
-}
-void Match::handleStart()
-{
-	state->reset();
-	controller->clearBuffer();
-	stage = MatchStage::INIT_DRAW;
-}
-
-void Match::initDraw()
-{
-	graphics->drawBoard();
-	graphics->drawEnv();
-
-	stage = MatchStage::RUNNING;
-}
-
 
 MatchOutput Match::Play()
 {
@@ -80,6 +36,55 @@ MatchOutput Match::Play()
 		}
 	}
 }
+
+void Match::handleRunning() 
+{
+	Input input = controller->getInput();
+	if (input.action == Action::ESC) {
+		stage = MatchStage::SUB_MENU;
+		return;
+	}
+	state->step();
+	Sleep(delay);
+	graphics->render();
+	if (state->isFinished)
+		stage = MatchStage::GAME_OVER;
+}
+
+void Match::handleSubMenu()
+{
+	lastSubMenuChoice = (SubMenuOptions)show_menu(printSubMenu, 1, 9);	
+	
+	switch (lastSubMenuChoice) {
+	case SubMenuOptions::CONTINUE_GAME:
+		stage = MatchStage::INIT_DRAW;
+		break;
+	case SubMenuOptions::RESTART_GAME:
+		stage = MatchStage::START;
+		break;
+	case SubMenuOptions::MAIN_MENU:
+	case SubMenuOptions::EXIT_GAME:
+		stage = MatchStage::GAME_OVER;
+		break;
+	}
+	Sleep(100);
+}
+
+void Match::handleStart()
+{
+	state->reset();
+	controller->clearBuffer();
+	stage = MatchStage::INIT_DRAW;
+}
+
+void Match::initDraw()
+{
+	graphics->drawBoard();
+	graphics->drawEnv();
+
+	stage = MatchStage::RUNNING;
+}
+
 
 MatchOutput Match::handleEndGame() {
 	controller->clearBuffer();

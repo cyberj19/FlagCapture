@@ -14,13 +14,6 @@ std::vector<Position> selectCells(Position UpperLeft, Position BottomRight, Game
 
 
 class State {
-	/*const static int forest_positions[22];
-	const static int sea_positions[28];
-	const static int forest_size;
-	const static int sea_size;
-	const static int flgAPos[2];
-	const static int flgBPos[2];
-	*/
 	GameSettings _settings;
 
 	std::vector<Position> seaPositions;
@@ -34,7 +27,6 @@ class State {
 	GameBoard board;
 	Position boardChanges[2];
 	int clock;
-	std::vector<Position> freePositionsA, freePositionsB;
 	std::string stepsBufferA, stepsBufferB;
 public:
 	State(GameSettings settings);

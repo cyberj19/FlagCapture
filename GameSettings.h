@@ -10,7 +10,7 @@ class GameSettings {
 	std::string _movesBInputFilePath;
 
 	BoardInitOptions _boardOptions;
-	std::string _boardFilePath;
+	std::string _boardInputFilePath;
 
 	bool _recording;
 	std::string _movesAOutputFilePath;
@@ -38,7 +38,7 @@ public:
 
 	void setBoardInputFile(std::string boardInputFilePath) {
 		_boardOptions = BoardInitOptions::FromFile;
-		_boardFilePath = boardInputFilePath;
+		_boardInputFilePath = boardInputFilePath;
 	}
 
 	void setRecordingOutputFiles(std::string boardOutputFilePath,
@@ -58,11 +58,13 @@ public:
 	const std::string getMovesBInputFilePath() { return _movesBInputFilePath; }
 
 	const BoardInitOptions getBoardOptions() { return _boardOptions; }
-	const std::string getBoardFilePath() { return _boardFilePath; }
+	const std::string getBoardInputFilePath() { return _boardInputFilePath; }
 
 	const bool isRecording() { return _recording; }
 	const std::string getMovesAOutputFilePath() { return _movesAOutputFilePath; }
 	const std::string getMovesBOutputFilePath() { return _movesBOutputFilePath; }
+	const std::string getBoardOutputFilePath() { return _boardOutputFilePath; }
+
 	const int getDelay() { return _delay; }
 	const bool isQuiet() { return _quiet; }
 };

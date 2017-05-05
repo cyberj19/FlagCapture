@@ -15,7 +15,7 @@ State::State(GameSettings settings)
 
 	if (_settings.getBoardOptions() == BoardInitOptions::FromFile) {
 		// load file from 
-		// settings.getBoardFilePath()
+		// settings.getBoardInputFilePath()
 	}
 	else {
 		randomCells(seaPositions, Position(7, 3), Position(11, 9), 0.5);

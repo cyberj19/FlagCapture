@@ -178,8 +178,8 @@ void Soldier::attack(Soldier & Defender)
 	battleCell = Defender.getCurrentPosition();
 	Soldier& winner = battleWinner(*this, Defender, battleCell);
 	if (winner._player == _player) {
-		Defender.die();
 		move();
+		Defender.die();
 	}
 	else {
 		die();

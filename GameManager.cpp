@@ -4,20 +4,6 @@
 #include "Utils.h"
 using namespace std;
 
-/*void printMainMenu() {
-	clearScreen();
-	cout << "=================Main Menu=================" << endl;
-	cout << "Please make your selection" << endl;
-	cout << (int)MenuOptions::SET_NAMES << " - Choose Names (Optional)" << endl;
-	cout << (int)MenuOptions::REGULAR_GAME << " - Start Match" << endl;
-	cout << (int)MenuOptions::SWITCHED_GAME << " - Start Match With Switched Roles" << endl;
-	cout << (int)MenuOptions::RESET_SCORE << " - Reset Score" << endl;
-	cout << (int)MenuOptions::TOGGLE_RECORDING << " - Enable Recording" << endl;
-	cout << (int)MenuOptions::EXIT_MENU << " - Quit" << endl;
-	cout << "===========================================" << endl;
-	cout << "Selection: ";
-}*/
-
 void GameManager::run() {
 	if (settingsGenerator.isAttended())
 		runAttended();
@@ -34,34 +20,49 @@ void GameManager::runUnattended() {
 		else UserB.increaseScore();
 	}
 
-	// show scores
+	// TODO: show scores
 }
-std::string GameManager::generateMenu()
+void GameManager::buildMenu()
 {
+	gameMenu.setHeader("Main Menu");
+	gameMenu.setFooter("=");
+	gameMenu.setClearScreen(true);
 	stringstream menustream = stringstream();
+	
+	gameMenu.addSimpleItem("Please make your selection:");
+	
+	menustream << (int)MenuOptions::SET_NAMES << " - Choose Names (Optional)";
+	gameMenu.addSimpleItem(menustream.str());
+	menustream.str(std::string());
 
-	menustream << "=================Main Menu=================" << endl;
-	menustream << "Please make your selection" << endl;
-	menustream << (int)MenuOptions::SET_NAMES << " - Choose Names (Optional)" << endl;
-	menustream << (int)MenuOptions::REGULAR_GAME << " - Start Match" << endl;
-	menustream << (int)MenuOptions::SWITCHED_GAME << " - Start Match With Switched Roles" << endl;
-	menustream << (int)MenuOptions::RESET_SCORE << " - Reset Score" << endl;
+	menustream << (int)MenuOptions::REGULAR_GAME << " - Start Match";
+	gameMenu.addSimpleItem(menustream.str());
+	menustream.str(std::string());
 
-	if (!recording)
-		menustream << (int)MenuOptions::TOGGLE_RECORDING << " - Enable Recording" << endl;
-	else
-		menustream << (int)MenuOptions::TOGGLE_RECORDING << " - Disable Recording" << endl;
+	menustream << (int)MenuOptions::SWITCHED_GAME << " - Start Match With Switched Roles";
+	gameMenu.addSimpleItem(menustream.str());
+	menustream.str(std::string());
 
-	menustream << (int)MenuOptions::EXIT_MENU << " - Quit" << endl;
-	menustream << "===========================================" << endl;
-	menustream << "Selection: ";
+	menustream << (int)MenuOptions::RESET_SCORE << " - Reset Score";
+	gameMenu.addSimpleItem(menustream.str());
+	menustream.str(std::string());
 
-	return menustream.str();
+	menustream << (int)MenuOptions::TOGGLE_RECORDING << " - Enable Recording";
+	string temp = menustream.str();
+	menustream.str(std::string());
+	menustream << (int)MenuOptions::TOGGLE_RECORDING << " - Disable Recording";
+	gameMenu.addToggledItem(menustream.str(), temp, &recording);
+	menustream.str(std::string());
+
+	menustream << (int)MenuOptions::EXIT_MENU << " - Quit";
+	gameMenu.addSimpleItem(menustream.str());
+	menustream.str(std::string());
+
 }
 void GameManager::runAttended() {
 	MenuOptions choice;
 	do {
-		 choice = (MenuOptions)show_menu(generateMenu(), 1, 9);
+		 choice = (MenuOptions)show_menu(gameMenu, Position(0, 0), 1, 9);
 
 		switch (choice) {
 		case MenuOptions::SET_NAMES:
@@ -138,4 +139,6 @@ void GameManager::quitGame()
 }
 
 GameManager::GameManager(GameSettingsGenerator settingsGeneator)
-	: settingsGenerator(settingsGeneator), recording(false) {}
+	: settingsGenerator(settingsGeneator), recording(false), gameMenu() {
+	buildMenu();
+}

@@ -18,8 +18,15 @@ State::State(GameSettings settings)
 		// settings.getBoardInputFilePath()
 	}
 	else {
-		randomCells(seaPositions, Position(7, 3), Position(11, 9), 0.5);
-		randomCells(forestPositions, Position(1, 3), Position(6, 9), 0.5);
+		if (rand() % 2 == 0) {
+			randomCells(seaPositions, Position(7, 3), Position(11, 9), 0.5);
+			randomCells(forestPositions, Position(1, 3), Position(7, 9), 0.5);
+		}
+		else {
+			randomCells(forestPositions, Position(7, 3), Position(11, 9), 0.5);
+			randomCells(seaPositions, Position(1, 3), Position(7, 9), 0.5);
+		}
+
 		flagBPosition = selectCells(Position(0, 11), Position(12, 12), 1).front();
 		flagAPosition = selectCells(Position(0, 0), Position(12, 1), 1).front();
 	}
@@ -170,9 +177,9 @@ string State::getStepBuffer(Player player) {
 
 void randomCells(vector<Position>& positions, const Position UpperLeft, const Position BottomRight, const double prob)
 {
-	for (auto i = UpperLeft.x; i < BottomRight.x; ++i)
+	for (auto i = UpperLeft.x; i <= BottomRight.x; ++i)
 	{
-		for (auto j = UpperLeft.y; j < BottomRight.y; ++j)
+		for (auto j = UpperLeft.y; j <= BottomRight.y; ++j)
 		{
 			double r = ((double)rand()) / RAND_MAX;
 			r = r < 0 ? -r : r;

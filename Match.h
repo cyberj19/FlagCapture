@@ -5,6 +5,7 @@
 #include "State.h"
 #include "enums.h"
 #include "GameSettings.h"
+#include "Menu.h"
 
 class State;
 class Controller;
@@ -18,6 +19,7 @@ class Match{
 	Controller *controller;
 	State *state;
 	SubMenuOptions lastSubMenuChoice;
+	Menu subMenu;
 
 	void handleStart();
 	void initDraw();
@@ -25,6 +27,7 @@ class Match{
 	void handleSubMenu();
 	MatchOutput handleEndGame();
 	void saveRecord();
+	void buildSubMenu();
 public:	
 	Match(GameSettings settings); // const char* keyboardLayoutA, const char* keyboardLayoutB);
 	MatchOutput Play();

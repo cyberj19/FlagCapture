@@ -114,23 +114,3 @@ void setColorByEntity(const char* entity) {
 		setTextColor(BLACK, WHITE);
 	}
 }
-
-void printSubMenu() {
-	gotoxy(11, 5);
-	cout <<                                              "=================SubMenu=================" << endl;
-	gotoxy(11, 6);
-	cout << "||" <<                                      " Please make your selection          ||" << endl;
-	gotoxy(11, 7);
-	cout << "||" << (int)SubMenuOptions::CONTINUE_GAME << " - Continue The Game -              ||" << endl;
-	gotoxy(11, 8);
-	cout << "||" << (int)SubMenuOptions::RESTART_GAME  << " - Restart Game -                   ||" << endl;
-	gotoxy(11, 9);
-	cout << "||" << (int)SubMenuOptions::MAIN_MENU     << " - Back To The Main Menu -          ||" << endl;
-	gotoxy(11, 10);
-	cout << "||" << (int)SubMenuOptions::EXIT_GAME     << " - Quit Game -                      ||" << endl;
-	gotoxy(11, 11);
-	cout <<                                              "=========================================" << endl;
-	gotoxy(11, 12);
-	cout << "Selection:                               ";
-	gotoxy(22, 12);
-}

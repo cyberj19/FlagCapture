@@ -6,13 +6,14 @@
 #include "Match.h"
 #include "enums.h"
 #include "GameSettingsGenerator.h"
-
+#include "Menu.h"
 
 //void printMainMenu();
 
 class GameManager {
 	User UserA = User("A"), UserB = User("B");
 	GameSettingsGenerator settingsGenerator;
+	Menu gameMenu;
 	bool recording;
 
 	void setUserNames();
@@ -23,8 +24,7 @@ class GameManager {
 
 	void runAttended();
 	void runUnattended();
-
-	std::string generateMenu();
+	void buildMenu();
 public:
 	GameManager(GameSettingsGenerator settingsGeneator);
 	void run();

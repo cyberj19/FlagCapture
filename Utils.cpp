@@ -5,27 +5,12 @@
 #include <iostream>
 using namespace std;
 
-int show_menu(string menu, int minChoice, int maxChoice)
+int show_menu(Menu & menu, Position pos, int minChoice, int maxChoice)
 {
 	string input;
 	int choice = minChoice - 1;
 	do {
-		clearScreen();
-		cout << menu;
-		while (_kbhit()) _getch();
-		getline(cin, input);
-		stringstream mstream(input);
-		if (!(mstream >> choice))
-			choice = minChoice - 1;
-	} while (choice < minChoice || choice > maxChoice);
-	return choice;
-}
-int show_menu(void (*printMenu)(void), int minChoice, int maxChoice)
-{
-	string input;
-	int choice = minChoice - 1;
-	do {
-		printMenu();
+		menu.printAtPosition(pos.x, pos.y);
 		while (_kbhit()) _getch();
 		getline(cin, input);
 		stringstream mstream(input);

@@ -3,15 +3,16 @@
 #include "Utils.h"
 #include <iostream>
 #include <fstream>
-
+#include <sstream>
 using namespace std;
 
 Match::Match(GameSettings settings) //const char * keyboardLayoutA, const char * keyboardLayoutB)
-	: _settings(settings), stage(MatchStage::INIT_DRAW), delay(settings.getDelay())
+	: _settings(settings), stage(MatchStage::INIT_DRAW), delay(settings.getDelay()), subMenu()
 {
 	state = new State(settings);
 	graphics = new Graphics(state, _settings.isRecording());
 	controller = new Controller(state, settings);
+	buildSubMenu();
 }
 
 MatchOutput Match::Play()
@@ -53,7 +54,7 @@ void Match::handleRunning()
 
 void Match::handleSubMenu()
 {
-	lastSubMenuChoice = (SubMenuOptions)show_menu(printSubMenu, 1, 9);	
+	lastSubMenuChoice = (SubMenuOptions)show_menu(subMenu, Position(11, 5), 1, 9);	
 	
 	switch (lastSubMenuChoice) {
 	case SubMenuOptions::CONTINUE_GAME:
@@ -113,4 +114,31 @@ void Match::saveRecord() {
 	myfile.open("lolB.txt");
 	myfile << state->getStepBuffer(Player::B);
 	myfile.close();
+}
+
+void Match::buildSubMenu()
+{
+	subMenu.setHeader("Sub Menu");
+	subMenu.setFooter("=");
+	subMenu.setClearScreen(false);
+
+	stringstream menustream = stringstream();
+
+	subMenu.addSimpleItem("Please make your selection:");
+
+	menustream << (int)SubMenuOptions::CONTINUE_GAME << " - Continue The Game";
+	subMenu.addSimpleItem(menustream.str());
+	menustream.str(std::string());
+
+	menustream << (int)SubMenuOptions::RESTART_GAME << " - Restart The Game";
+	subMenu.addSimpleItem(menustream.str());
+	menustream.str(std::string());
+
+	menustream << (int)SubMenuOptions::MAIN_MENU << " - Back To The Main Menu";
+	subMenu.addSimpleItem(menustream.str());
+	menustream.str(std::string());
+
+	menustream << (int)SubMenuOptions::EXIT_GAME << " - Quit Game";
+	subMenu.addSimpleItem(menustream.str());
+	menustream.str(std::string());
 }

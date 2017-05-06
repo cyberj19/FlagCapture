@@ -3,34 +3,32 @@
 #include <time.h>
 using namespace std;
 
-BoardConfiguration::BoardConfiguration(GameSettings settings, GameBoard &board)
-	: _boardInitOptions(settings.getBoardInitOptions()),
-	  _board(board)
+BoardConfiguration::BoardConfiguration() {}
+
+int BoardConfiguration::loadSettings(GameSettings settings)
 {
-	srand(time(NULL));
-	if (_boardInitOptions == BoardInitOptions::FromFile) {
-		//loadPositionsFromFile();
-		// load file from 
-		// settings.getBoardInputFilePath()
-	}
+	_boardInitOptions = settings.getBoardInitOptions();
+	if (_boardInitOptions == BoardInitOptions::FromFile)
+		return loadPositionsFromFile(settings.getBoardInputFilePath());
 	else
 		generateRandomPositions();
+	return 0;
 }
 
-std::vector<Position> BoardConfiguration::getSoldiersAPositions() const
+std::vector<Position> BoardConfiguration::getSoldiersAPositions()
 {
 	if (_boardInitOptions == BoardInitOptions::FromFile)
 		return _soldierAPositions;
 	else
-		return selectCells(Position(0, 0), Position(12, 5), _board, 3);
+		return selectFreePositions(Position(0, 0), Position(12, 5), 3);
 }
 
-std::vector<Position> BoardConfiguration::getSoldiersBPositions() const
+std::vector<Position> BoardConfiguration::getSoldiersBPositions()
 {
 	if (_boardInitOptions == BoardInitOptions::FromFile)
 		return _soldierAPositions;
 	else
-		return selectCells(Position(0, 8), Position(12, 12), _board, 3);
+		return selectFreePositions(Position(0, 8), Position(12, 12), 3);
 }
 
 void BoardConfiguration::generateRandomPositions() {
@@ -47,8 +45,16 @@ void BoardConfiguration::generateRandomPositions() {
 	_flagAPosition = selectCells(Position(0, 0), Position(12, 1), 1).front();
 }
 
-void BoardConfiguration::loadPositionsFromFile()
+int BoardConfiguration::loadPositionsFromFile(string inputFile)
 {
+	// go over input file
+	// push relevat positions to vectors:
+	// forestPosition, seaPosition, flagA,
+	// flagB, SoldierAPositions, SoldierBPos
+	// (;
+	// Hint:: use split from Utils.h
+	// if any error return !0
+	return 0;
 }
 
 Position randomPosition(const Position& UpperLeft, const Position& BottomRight) {
@@ -59,6 +65,23 @@ Position randomPosition(const Position& UpperLeft, const Position& BottomRight) 
 
 	return Position(rx, ry);
 }
+std::vector<Position> BoardConfiguration::selectFreePositions(Position UpperLeft, Position BottomRight, int num)
+{
+	vector<Position> positions = vector<Position>();
+	while (num) {
+		Position pos;
+		do {
+			pos = randomPosition(UpperLeft, BottomRight);
+		} while (find(positions.begin(), positions.end(), pos) != positions.end() ||
+			find(_seaPositions.begin(), _seaPositions.end(), pos) != _seaPositions.end() ||
+			find(_forestPositions.begin(), _forestPositions.end(), pos) != _forestPositions.end() ||
+			_flagAPosition == pos || _flagBPosition == pos);
+		positions.push_back(pos);
+		--num;
+	}
+	return positions;
+}
+
 vector<Position> selectCells(const Position UpperLeft, const Position BottomRight, int numToSelect)
 {
 	std::vector<Position> positions = vector<Position>();
@@ -71,36 +94,6 @@ vector<Position> selectCells(const Position UpperLeft, const Position BottomRigh
 		--numToSelect;
 	}
 	return positions;
-}
-
-vector<Position> selectCells(Position UpperLeft, Position BottomRight, GameBoard board, int numToSelect)
-{
-	vector<Position> positions = vector<Position>();
-	while (numToSelect) {
-		Position pos;
-		do {
-			pos = randomPosition(UpperLeft, BottomRight);
-		} while (find(positions.begin(), positions.end(), pos) != positions.end() ||
-			board[pos.getY()][pos.getX()].getType() != CellType::EMPTY);
-		positions.push_back(pos);
-		--numToSelect;
-	}
-	return positions;
-}
-
-vector<Position> selectPredicateCells(Position UpperLeft, Position BottomRight, int numToSelect,
-	bool(*predicate)(Position pos) = [](Position pos) {return true; }) {
-	vector<Position> positions = vector<Position>();
-	while (numToSelect) {
-		Position pos;
-		do {
-			pos = randomPosition(UpperLeft, BottomRight);
-		} while (find(positions.begin(), positions.end(), pos) != positions.end() || !predicate(pos));
-		positions.push_back(pos);
-		--numToSelect;
-	}
-	return positions;
-
 }
 
 void randomCells(vector<Position>& positions, const Position UpperLeft, const Position BottomRight, const double prob)

@@ -1,7 +1,8 @@
 #include "GameManager.h"
+#include <time.h>
 
-int main(int argc, char *argv[]) {
+void main(int argc, char *argv[]) {
+	srand(time(NULL));
 	GameSettingsGenerator settingsGenerator = GameSettingsGenerator(argc, argv);
 	GameManager(settingsGenerator).run(); 
-	return 0;
 }

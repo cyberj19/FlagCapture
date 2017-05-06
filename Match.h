@@ -12,6 +12,8 @@ class Controller;
 class Graphics;
 
 class Match{
+	bool error;
+
 	int delay;
 	GameSettings _settings;
 	MatchStage stage;

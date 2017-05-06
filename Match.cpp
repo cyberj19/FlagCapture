@@ -7,25 +7,36 @@
 
 using namespace std;
 
-Match::Match(GameSettings settings) //const char * keyboardLayoutA, const char * keyboardLayoutB)
-	: _settings(settings), stage(MatchStage::INIT_DRAW), delay(settings.getDelay()), subMenu()
+Match::Match(GameSettings settings)
+	: _settings(settings), 
+	stage(MatchStage::INIT_DRAW), 
+	delay(settings.getDelay()), 
+	subMenu(),
+	error(false)
 {
-	state = new State(settings);
-	graphics = new Graphics(state, _settings.isRecording());
+	BoardConfiguration boardConfig = BoardConfiguration();
+	if (boardConfig.loadSettings(_settings))
+		error = true;
+
+	state = new State(settings, boardConfig);
 	controller = new Controller(state, settings);
 
+	if (!settings.isQuiet())
+		graphics = new Graphics(state, _settings.isRecording());
 	if (settings.isAttended())
 		buildSubMenu();
 }
 
 Match::~Match() {
-	delete graphics;
+	if (_settings.isQuiet())
+		delete graphics;
 	delete controller;
 	delete state;
 }
 
 MatchOutput Match::Play()
 {
+	if (error) return MatchOutput::MATCH_TERMINATED;
 	while (true) {
 		switch (stage) {
 		case MatchStage::START:
@@ -56,7 +67,10 @@ void Match::handleRunning()
 	}
 	state->step();
 	Sleep(delay);
-	graphics->render();
+
+	if (!_settings.isQuiet())
+		graphics->render();
+
 	if (state->isFinished)
 		stage = MatchStage::GAME_OVER;
 }
@@ -89,9 +103,10 @@ void Match::handleStart()
 
 void Match::initDraw()
 {
-	graphics->drawBoard();
-	graphics->drawEnv();
-
+	if (!_settings.isQuiet()) {
+		graphics->drawBoard();
+		graphics->drawEnv();
+	}
 	stage = MatchStage::RUNNING;
 }
 

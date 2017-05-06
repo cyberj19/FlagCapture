@@ -27,7 +27,7 @@ class State {
 	int clock;
 	std::string stepsBufferA, stepsBufferB;
 public:
-	State(GameSettings settings);
+	State(GameSettings settings, BoardConfiguration boardConfig);
 	Player winner;
 	bool isFinished;
 

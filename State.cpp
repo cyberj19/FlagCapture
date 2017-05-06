@@ -2,11 +2,10 @@
 #include "Soldier.h"
 using namespace std;
 
-State::State(GameSettings settings)
-	: _settings(settings), _boardConfig(settings, board),
+State::State(GameSettings settings, BoardConfiguration boardConfig)
+	: _settings(settings), _boardConfig(boardConfig),
 	  _changeBuffer(), forestPositions(), seaPositions(),
 	  clock(0), isFinished(false) {
-
 	initRecorder();
 	initGameObjects();
 }

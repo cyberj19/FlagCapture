@@ -15,7 +15,9 @@ class GameManager {
 	User UserA = User("A"), UserB = User("B");
 	GameSettingsGenerator settingsGenerator;
 	Menu gameMenu;
+	MenuOptions _lastChoice;
 	bool recording;
+
 
 	void setUserNames();
 	void resetScore();

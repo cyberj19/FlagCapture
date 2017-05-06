@@ -60,17 +60,16 @@ void GameManager::buildMenu()
 
 }
 void GameManager::runAttended() {
-	MenuOptions choice;
 	do {
-		 choice = (MenuOptions)show_menu(gameMenu, Position(0, 0), 1, 9);
+		 _lastChoice = (MenuOptions)show_menu(gameMenu, Position(0, 0), 1, 9);
 
-		switch (choice) {
+		switch (_lastChoice) {
 		case MenuOptions::SET_NAMES:
 			setUserNames();
 			break;
 		case MenuOptions::REGULAR_GAME:
 		case MenuOptions::SWITCHED_GAME:
-			startAttendedMatch(choice);
+			startAttendedMatch(_lastChoice);
 			break;
 		case MenuOptions::RESET_SCORE:
 			resetScore();
@@ -82,7 +81,7 @@ void GameManager::runAttended() {
 		default:
 			break;
 		}
-	} while (choice != MenuOptions::EXIT_MENU);
+	} while (_lastChoice != MenuOptions::EXIT_MENU);
 	quitGame();
 }
 
@@ -121,7 +120,7 @@ void GameManager::startAttendedMatch(MenuOptions GameType) {
 		announceGameStopped();
 	}
 	else if (matchOutput == MatchOutput::QUIT_GAME) {
-		quitGame();
+		_lastChoice = MenuOptions::EXIT_MENU;
 	}
 	else {
 		User &winnerUser = getWinningUser(GameType, matchOutput);
@@ -135,7 +134,6 @@ void GameManager::quitGame()
 	clearScreen();
 	cout << "Goodbye!";
 	Sleep(1000);
-	exit(0);
 }
 
 GameManager::GameManager(GameSettingsGenerator settingsGeneator)

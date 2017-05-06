@@ -38,7 +38,7 @@ public:
 
 	void updateBoardSoldierMoved(Position source, Position dest);
 	void notifySoldierDied(Soldier * soldier);
-	void updateLastStep(int soldierId, int dirX, int dirY);
+	void recordAction(int soldierId, Action action);
 
 	Position popChange();
 	bool hasChanges() { return !_changeBuffer.empty(); }

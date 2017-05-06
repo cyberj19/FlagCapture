@@ -5,19 +5,18 @@ using namespace std;
 
 void getFilesList(string filePath, string extension, vector<string> & returnFileName)
 {
-	/*WIN32_FIND_DATA fileInfo;
+	WIN32_FIND_DATA fileInfo;
 	HANDLE hFind;
-	string fullPath = filePath + extension;
+	string fullPath = filePath + "\\" + extension;
 	hFind = FindFirstFile(fullPath.c_str(), &fileInfo);
 	if (hFind != INVALID_HANDLE_VALUE) {
-	returnFileName.push_back(filePath + fileInfo.cFileName);
-	while (FindNextFile(hFind, &fileInfo) != 0) {
-	returnFileName.push_back(filePath + fileInfo.cFileName);
-	}
+		returnFileName.push_back(filePath + "\\" + fileInfo.cFileName);
+		while (FindNextFile(hFind, &fileInfo) != 0) {
+			returnFileName.push_back(filePath + "\\" + fileInfo.cFileName);
+		}
 	}
 
-	sort(begin(returnFileName), end(returnFileName));*/
-
+	sort(begin(returnFileName), end(returnFileName));
 }
 
 bool doesFileExist(const std::string& name) {
@@ -72,7 +71,7 @@ bool GameSettingsGenerator::isAttended() const
 
 GameSettings GameSettingsGenerator::getNextSettings(bool recording, int round)
 {
-	GameSettings settings = GameSettings(delay, quiet);
+	GameSettings settings = GameSettings(delay, quiet, isAttended());
 
 	if (_boardOptions == BoardInitOptions::FromFile) {
 		settings.setBoardInputFile(_boardFileNames[_currentSetting]);
@@ -117,7 +116,7 @@ void GameSettingsGenerator::parseInputArguments(int argc, char * argv[])
 			}
 			i += 2;
 		}
-		else if (argv[i] == "-moves") {
+		else if (strcmp(argv[i], "-moves") == 0) {
 			if (i == argc - 1) {
 				//error;
 			}

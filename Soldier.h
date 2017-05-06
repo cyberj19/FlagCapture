@@ -51,4 +51,6 @@ private:
 
 	int getId();
 	void setSymbol();
+
+	void parseAction(Action action);
 };

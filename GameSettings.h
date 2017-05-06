@@ -4,8 +4,8 @@
 
 class GameSettings {
 
-	const char* _keyboardLayoutA = "123wxad";
-	const char* _keyboardLayoutB = "789imjl";
+	const std::string _keyboardLayoutA = "123wxad";
+	const std::string _keyboardLayoutB = "789imjl";
 
 	MovesSourceOptions _movesOptions;
 	std::string _movesAInputFilePath;
@@ -21,14 +21,16 @@ class GameSettings {
 
 	int _delay;
 	bool _quiet;
+	bool _attended;
 public:
-	GameSettings(int delay, bool quiet)
+	GameSettings(int delay, bool quiet, bool attended)
 		: 
 		_movesOptions(MovesSourceOptions::Keyboard),
 		_boardOptions(BoardInitOptions::Randomized),
 		_recording(false),
 		_delay(delay), 
-		_quiet(quiet)
+		_quiet(quiet),
+		_attended(attended)
 	{}
 
 	void setMovesInputFiles(std::string movesAInputFilePath,
@@ -52,8 +54,9 @@ public:
 		_movesBOutputFilePath = movesBOutputFilePath;
 	}
 
-	const char *getKeyboardLayoutA() { return _keyboardLayoutA; }
-	const char *getKeyboardLayoutB() { return _keyboardLayoutB; }
+	const bool isAttended() { return _attended; }
+	const std::string getKeyboardLayoutA() { return _keyboardLayoutA; }
+	const std::string getKeyboardLayoutB() { return _keyboardLayoutB; }
 
 	const MovesSourceOptions getMovesOptions() { return _movesOptions; }
 	const std::string getMovesAInputFilePath() { return _movesAInputFilePath; }

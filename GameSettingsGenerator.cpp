@@ -167,7 +167,8 @@ void GameSettingsGenerator::parseInputArguments(int argc, char * argv[])
 
 std::string GameSettingsGenerator::getAvailableOutputFileName(int round)
 {
-	string new_name = "record-" + round;
+	
+	string new_name = "record-" + to_string(round);;
 	while (doesFileExist(new_name + ".gboard") ||
 		doesFileExist(new_name + ".moves-a") ||
 		doesFileExist(new_name + ".moves-b"))

@@ -35,3 +35,5 @@ private:
 	void parseInputArguments(int argc, char *argv[]);
 	std::string getAvailableOutputFileName(int round);
 };
+
+bool doesFileExist(const std::string& name);

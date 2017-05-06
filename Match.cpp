@@ -112,12 +112,11 @@ MatchOutput Match::handleEndGame() {
 
 void Match::saveRecord() {
 	ofstream myfile;
-
-	myfile.open("lolA.txt");
+	myfile.open(_settings.getMovesAOutputFilePath());
 	myfile << state->getStepBuffer(Player::A);
 	myfile.close();
 
-	myfile.open("lolB.txt");
+	myfile.open(_settings.getMovesBOutputFilePath());
 	myfile << state->getStepBuffer(Player::B);
 	myfile.close();
 }

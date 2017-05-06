@@ -8,7 +8,7 @@
 
 class Soldier;
 
-void randomCells(std::vector<Position>& positions,Position UpperLeft, Position BottomRight, double prob);
+void randomCells(std::vector<Position>& positions, Position UpperLeft, Position BottomRight, double prob);
 std::vector<Position> selectCells(Position UpperLeft, Position BottomRight, int num);
 std::vector<Position> selectCells(Position UpperLeft, Position BottomRight, GameBoard board, int num);
 
@@ -25,12 +25,13 @@ class State {
 	std::vector<Soldier> soldiersA, soldiersB;
 	int soldierCounterA, soldierCounterB;
 	GameBoard board;
-	Position boardChanges[2];
+
+	std::vector<Position> _changeBuffer;
 	int clock;
 	std::string stepsBufferA, stepsBufferB;
 public:
 	State(GameSettings settings);
- 	Player winner;
+	Player winner;
 	bool isFinished;
 
 	//Cell& getCell(Position pos) const;
@@ -43,7 +44,14 @@ public:
 	void notifySoldierDied(Soldier * soldier);
 	void updateLastStep(int soldierId, int dirX, int dirY);
 
-	Position getChanges(int index) { return boardChanges[index]; }
+	Position popChange() {
+		Position back = _changeBuffer.back();
+		_changeBuffer.pop_back();
+		return back;
+	}
+	bool hasChanges() {
+		return !_changeBuffer.empty();
+	}
 	Cell& getCell(Position cellPos) { return board[cellPos.getY()][cellPos.getX()]; }
 	Cell& getCell(int x, int y) { return board[y][x]; }
 	std::string getStepBuffer(Player player);

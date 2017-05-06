@@ -5,8 +5,8 @@ using namespace std;
 #define goto_scaled_position(x, y)  (gotoxy((y)*5 + 6, (x)*2 + 3))
 
 void Graphics::render() {
-	renderChange(state->getChanges(0));
-	renderChange(state->getChanges(1));
+	while (state->hasChanges())
+		renderChange(state->popChange());
 	renderRecording();
 }
 
@@ -27,9 +27,9 @@ void Graphics::drawBoard()
 	{
 		hideCursor();
 		cout << "-----------------------------------------------------------------------" << endl;
-		printf(" %2d  ", i + 1); 
+		printf(" %2d  ", i + 1);
 		cout << "     |    |    |    |    |    |    |    |    |    |    |    |    |" << endl;
-		
+
 
 	}
 	cout << "-----------------------------------------------------------------------" << endl;
@@ -38,7 +38,7 @@ void Graphics::drawBoard()
 void Graphics::drawEnv()
 {
 	for (int x = 0; x < COLS; x++) {
-		for (int y = 0; y < ROWS; y++){
+		for (int y = 0; y < ROWS; y++) {
 			const char* entity = state->getCell(x, y).getSymbol();
 			goto_scaled_position(y, x);
 			setColorByEntity(entity);
@@ -85,7 +85,7 @@ void printScores(string userA, int scoreA, string userB, int scoreB) {
 	setTextColor(DARK_RED, GREY);
 	cout << userA << ": " << scoreA;
 	int usersNamesNScoresLen = userA.length() + userB.length() + (to_string(scoreA)).length() + (to_string(scoreB)).length();
-	for (int i = 0; i < floor((56 - usersNamesNScoresLen)/2.0); i++)
+	for (int i = 0; i < floor((56 - usersNamesNScoresLen) / 2.0); i++)
 		cout << " ";
 	setTextColor(BLUE, GREY);
 	cout << "FlagCapture";
@@ -93,7 +93,7 @@ void printScores(string userA, int scoreA, string userB, int scoreB) {
 	for (int i = 0; i < ceil((56 - usersNamesNScoresLen) / 2.0); i++)
 		cout << " ";
 
-	cout <<userB << ": " << scoreB << endl;
+	cout << userB << ": " << scoreB << endl;
 	setTextColor(WHITE, BLACK);
 }
 

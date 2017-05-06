@@ -3,11 +3,11 @@
 #include "Utils.h"
 using namespace std;
 
-void Menu::addSimpleItem(std::string label) {
+void Menu::addSimpleItem(string label) {
 	menuItems.push_back(MenuItem(label));
 }
 
-void Menu::addToggledItem(std::string labelIfTrue, std::string labelIfFalse, bool *bind)
+void Menu::addToggledItem(string labelIfTrue, string labelIfFalse, bool *bind)
 {
 	menuItems.push_back(MenuItem(labelIfTrue, labelIfFalse, bind));
 }
@@ -33,7 +33,7 @@ void Menu::printAtPosition(int x, int y) {
 	gotoxy(x + pleaseSelect.length() + 2, y - 1);
 }
 
-void Menu::printString(std::string str, int x, int y, int maxLine) {
+void Menu::printString(string str, int x, int y, int maxLine) {
 	gotoxy(x, y);
 	printPaddedString(str, maxLine, Alignment::LEFT, ' ', true);
 }
@@ -46,7 +46,7 @@ void Menu::printHeader(int x, int y, int maxLine)
 	}
 }
 
-void Menu::printItems(std::vector<std::string>& itemStrings, int x, int y, int maxLine)
+void Menu::printItems(vector<string>& itemStrings, int x, int y, int maxLine)
 {
 	if (!itemStrings.empty()) {
 		for (auto item : itemStrings) {
@@ -92,7 +92,7 @@ void printPostPad(int &numPads, char padChar, Alignment alignment, bool printBor
 	if (printBorder)
 		cout << " |";
 }
-void printPaddedString(std::string str, int padSize, Alignment alignment, char padChar, bool printBorder) {
+void printPaddedString(string str, int padSize, Alignment alignment, char padChar, bool printBorder) {
 	int numSpaces = padSize - str.length();
 
 	printPrePad(numSpaces, padChar, alignment, printBorder);

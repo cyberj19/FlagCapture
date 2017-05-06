@@ -5,9 +5,9 @@ using namespace std;
 
 void getFilesList(string filePath, string extension, vector<string> & returnFileName)
 {
-	WIN32_FIND_DATA fileInfo;
+	/*WIN32_FIND_DATA fileInfo;
 	HANDLE hFind;
-	string  fullPath = filePath + extension;
+	string fullPath = filePath + extension;
 	hFind = FindFirstFile(fullPath.c_str(), &fileInfo);
 	if (hFind != INVALID_HANDLE_VALUE) {
 		returnFileName.push_back(filePath + fileInfo.cFileName);
@@ -16,7 +16,8 @@ void getFilesList(string filePath, string extension, vector<string> & returnFile
 		}
 	}
 
-	std::sort(begin(returnFileName), end(returnFileName));
+	sort(begin(returnFileName), end(returnFileName));*/
+
 }
 
 bool doesFileExist(const std::string& name) {

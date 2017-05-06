@@ -4,7 +4,7 @@
 using namespace std;
 
 State::State(GameSettings settings)
-	: _settings(settings), forestPositions(), seaPositions() {
+	: _settings(settings), _changeBuffer(), forestPositions(), seaPositions() {
 	// do something with settings;
 	srand(time(NULL));
 
@@ -63,8 +63,8 @@ void State::reset()
 		soldierAPositions = selectCells(Position(0, 0), Position(12, 5), board, 3);
 		soldierBPositions = selectCells(Position(0, 8), Position(12, 12), board, 3);
 
-//		soldierAPositions = selectPredicateCells(Position(0, 0), Position(12, 5), 3,
-//			[this](Position pos) {return this->getCell(pos).getType() == CellType::EMPTY; }
+		//		soldierAPositions = selectPredicateCells(Position(0, 0), Position(12, 5), 3,
+		//			[this](Position pos) {return this->getCell(pos).getType() == CellType::EMPTY; }
 	}
 
 	initSoldiers();
@@ -96,7 +96,7 @@ void State::step()
 	for (auto& soldier : soldiersA) {
 		soldier.step();
 	}
-	
+
 	for (auto& soldier : soldiersB) {
 		soldier.step();
 	}
@@ -116,10 +116,12 @@ void State::control(Input input)
 void State::updateBoardSoldierMoved(Position source, Position dest)
 {
 	if (source == dest) return;
+
 	getCell(dest).setSoldier(getCell(source).getSoldier());
-	boardChanges[0] = dest;
 	getCell(source).unsetSoldier();
-	boardChanges[1] = source;
+
+	_changeBuffer.push_back(dest);
+	_changeBuffer.push_back(source);
 }
 
 void State::notifySoldierDied(Soldier *soldier) {
@@ -160,8 +162,7 @@ void State::updateLastStep(int soldierId, int dirX, int dirY)
 void State::updateBoardSoldierDied(Position placeOfDeath)
 {
 	getCell(placeOfDeath).unsetSoldier();
-	boardChanges[0] = placeOfDeath;
-	boardChanges[1] = placeOfDeath;
+	_changeBuffer.push_back(placeOfDeath);
 }
 
 
@@ -186,7 +187,7 @@ void randomCells(vector<Position>& positions, const Position UpperLeft, const Po
 		{
 			double r = ((double)rand()) / RAND_MAX;
 			r = r < 0 ? -r : r;
-			if( r < prob) {
+			if (r < prob) {
 				positions.push_back(Position(i, j));
 			}
 		}

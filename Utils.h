@@ -10,4 +10,6 @@ void setTextColor(int foreground_color, int background_color);
 void setTextColor(int foreground_color);
 void clearScreen();
 void gotoxy(int x, int y);
-void hideCursor();
+void hideCursor(); 
+
+std::vector<std::string> split(std::string input, std::string delims);

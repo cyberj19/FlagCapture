@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include <iostream>
+#include <sstream>
 #include "Utils.h"
 using namespace std;
 
@@ -63,6 +64,23 @@ void Menu::printFooter(int x, int y, int maxLine)
 		gotoxy(x, y);
 		printPaddedString(_footer, maxLine, Alignment::CENTER, '=', false);
 	}
+}
+
+void Menu::addFormattedSimpleItem(int option, string label) {
+	stringstream menustream = stringstream();
+	menustream << option << " - " << label;
+	addSimpleItem(menustream.str());
+}
+
+void Menu::addFormattedToggledItem(int option, string labelIfTrue,
+	string labelIfFalse, bool* flag) {
+	stringstream menustream1 = stringstream();
+	menustream1 << option << " - " << labelIfTrue;
+
+	stringstream menustream2 = stringstream();
+	menustream2 << option << " - " << labelIfTrue;
+
+	addToggledItem(menustream1.str(), menustream2.str(), flag);
 }
 
 void printPrePad(int &numPads, char padChar, Alignment alignment, bool printBorder) {

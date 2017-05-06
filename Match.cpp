@@ -117,7 +117,6 @@ void Match::saveRecord() {
 	myfile << state->getStepBuffer(Player::A);
 	myfile.close();
 
-
 	myfile.open("lolB.txt");
 	myfile << state->getStepBuffer(Player::B);
 	myfile.close();
@@ -128,24 +127,10 @@ void Match::buildSubMenu()
 	subMenu.setHeader("Sub Menu");
 	subMenu.setFooter("=");
 	subMenu.setClearScreen(false);
-
-	stringstream menustream = stringstream();
-
+	
 	subMenu.addSimpleItem("Please make your selection:");
-
-	menustream << (int)SubMenuOptions::CONTINUE_GAME << " - Continue The Game";
-	subMenu.addSimpleItem(menustream.str());
-	menustream.str(std::string());
-
-	menustream << (int)SubMenuOptions::RESTART_GAME << " - Restart The Game";
-	subMenu.addSimpleItem(menustream.str());
-	menustream.str(std::string());
-
-	menustream << (int)SubMenuOptions::MAIN_MENU << " - Back To The Main Menu";
-	subMenu.addSimpleItem(menustream.str());
-	menustream.str(std::string());
-
-	menustream << (int)SubMenuOptions::EXIT_GAME << " - Quit Game";
-	subMenu.addSimpleItem(menustream.str());
-	menustream.str(std::string());
+	subMenu.addFormattedSimpleItem((int)SubMenuOptions::CONTINUE_GAME, "Continue The Game");
+	subMenu.addFormattedSimpleItem((int)SubMenuOptions::RESTART_GAME, "Restart The Game");
+	subMenu.addFormattedSimpleItem((int)SubMenuOptions::MAIN_MENU, "Back To The Main Menu");
+	subMenu.addFormattedSimpleItem((int)SubMenuOptions::EXIT_GAME, "Quit Game");
 }

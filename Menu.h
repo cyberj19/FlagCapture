@@ -16,7 +16,9 @@ public:
 	void setClearScreen(bool clearScreen) { _clearScreen = clearScreen; }
 	void setHeader(std::string header) { _header = header; }
 	void setFooter(std::string footer) { _footer = footer; }
+	void addFormattedSimpleItem(int option, std::string label);
 	void addSimpleItem(std::string label);
+	void addFormattedToggledItem(int option, std::string labelIfTrue, std::string labelIfFalse, bool *flag);
 	void addToggledItem(std::string labelIfTrue, std::string labelIfFalse, bool *flag);
 	void printAtPosition(int x = 0, int y = 0);
 private:

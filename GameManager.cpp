@@ -22,42 +22,20 @@ void GameManager::runUnattended() {
 
 	// TODO: show scores
 }
+
 void GameManager::buildMenu()
 {
 	gameMenu.setHeader("Main Menu");
 	gameMenu.setFooter("=");
-	gameMenu.setClearScreen(true);
-	stringstream menustream = stringstream();
-	
+	gameMenu.setClearScreen(true);	
 	gameMenu.addSimpleItem("Please make your selection:");
-	
-	menustream << (int)MenuOptions::SET_NAMES << " - Choose Names (Optional)";
-	gameMenu.addSimpleItem(menustream.str());
-	menustream.str(std::string());
-
-	menustream << (int)MenuOptions::REGULAR_GAME << " - Start Match";
-	gameMenu.addSimpleItem(menustream.str());
-	menustream.str(std::string());
-
-	menustream << (int)MenuOptions::SWITCHED_GAME << " - Start Match With Switched Roles";
-	gameMenu.addSimpleItem(menustream.str());
-	menustream.str(std::string());
-
-	menustream << (int)MenuOptions::RESET_SCORE << " - Reset Score";
-	gameMenu.addSimpleItem(menustream.str());
-	menustream.str(std::string());
-
-	menustream << (int)MenuOptions::TOGGLE_RECORDING << " - Enable Recording";
-	string temp = menustream.str();
-	menustream.str(std::string());
-	menustream << (int)MenuOptions::TOGGLE_RECORDING << " - Disable Recording";
-	gameMenu.addToggledItem(menustream.str(), temp, &recording);
-	menustream.str(std::string());
-
-	menustream << (int)MenuOptions::EXIT_MENU << " - Quit";
-	gameMenu.addSimpleItem(menustream.str());
-	menustream.str(std::string());
-
+	gameMenu.addFormattedSimpleItem((int) MenuOptions::SET_NAMES, "Choose names (optional)");
+	gameMenu.addFormattedSimpleItem((int)MenuOptions::REGULAR_GAME, "Start Match");
+	gameMenu.addFormattedSimpleItem((int)MenuOptions::SWITCHED_GAME, "Start Match With Switched Roles");
+	gameMenu.addFormattedSimpleItem((int)MenuOptions::RESET_SCORE, "Reset Score");
+	gameMenu.addFormattedToggledItem((int)MenuOptions::TOGGLE_RECORDING, "Disable Recording",
+		"Enable Recording", &recording);
+	gameMenu.addFormattedSimpleItem((int)MenuOptions::EXIT_MENU, "Quit");
 }
 void GameManager::runAttended() {
 	do {

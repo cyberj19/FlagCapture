@@ -136,29 +136,33 @@ void State::notifySoldierDied(Soldier *soldier) {
 		}
 	}
 }
-void State::updateLastStep(int soldierId, int dirX, int dirY)
+void State::recordAction(int soldierId, Action action)
 {
 	if (!_settings.isRecording()) return;
 
-	char *newStep = new  char[6];
-	char dir;
-	if (dirX == 1) dir = 'R';
-	else if (dirX == -1) dir = 'L';
-	else if (dirY == 1) dir = 'D';
-	else if (dirY == -1) dir = 'U';
-	else dir = 'N';
-	sprintf(newStep, "%d,%d,%c\n", clock, soldierId, dir);
+	string newStep = string();
+
+	newStep += to_string(clock) + "," + to_string(soldierId) + ",";
+
+	switch (action) {
+	case Action::UP: newStep += 'U'; break;
+	case Action::DOWN: newStep += 'D'; break;
+	case Action::RIGHT: newStep += 'R'; break;
+	case Action::LEFT: default: newStep += 'L'; break;
+	}
 
 	if (soldierId <= 3)
 		stepsBufferA += newStep;
 	else
 		stepsBufferB += newStep;
 }
+
 Position State::popChange() {
 	Position back = _changeBuffer.back();
 	_changeBuffer.pop_back();
 	return back;
 }
+
 void State::updateBoardSoldierDied(Position placeOfDeath)
 {
 	getCell(placeOfDeath).unsetSoldier();

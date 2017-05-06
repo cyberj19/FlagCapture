@@ -57,15 +57,24 @@ void Soldier::control(Input input) {
 	else if (input.action == Action::CHOOSE3)
 		_moving = _type == SoldierType::S3;
 	else if (_moving) {
-		_dir_x = 0;
-		_dir_y = 0;
-		switch (input.action) {
-		case Action::UP: _dir_y = -1; break;
-		case Action::DOWN: _dir_y = 1; break;
-		case Action::LEFT: _dir_x = -1; break;
-		case Action::RIGHT: _dir_x = 1; break;
-		}
+		parseAction(input.action);
 	}
+}
+
+void Soldier::parseAction(Action action) {
+	int _old_dir_x = _dir_x;
+	int _old_dir_y = _dir_y;
+
+	_dir_x = _dir_y = 0;
+	switch (action) {
+	case Action::UP: _dir_y = -1; break;
+	case Action::DOWN: _dir_y = 1; break;
+	case Action::LEFT: _dir_x = -1; break;
+	case Action::RIGHT: _dir_x = 1; break;
+	}
+
+	if (_dir_x != _old_dir_x || _dir_y != _old_dir_y)
+		state->recordAction(getId(), action);
 }
 
 bool Soldier::isMyTurn() {
@@ -101,7 +110,6 @@ int Soldier::getId()
 void Soldier::step()
 {
 	if (!isMoving() || !isAlive() || !isMyTurn()) return;
-	state->updateLastStep(getId(), _dir_x, _dir_y);
 	stepLogic();
 }
 

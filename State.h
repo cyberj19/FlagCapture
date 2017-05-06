@@ -15,7 +15,7 @@ std::vector<Position> selectCells(Position UpperLeft, Position BottomRight, Game
 
 class State {
 	GameSettings _settings;
-
+	
 	std::vector<Position> seaPositions;
 	std::vector<Position> forestPositions;
 	Position flagAPosition, flagBPosition;

@@ -182,7 +182,6 @@ void Soldier::attack(Soldier & Defender)
 		move();
 	}
 	else {
-
 		die();
 	}
 }

@@ -68,7 +68,7 @@ void Menu::printFooter(int x, int y, int maxLine)
 void printPrePad(int &numPads, char padChar, Alignment alignment, bool printBorder) {
 	if (printBorder) {
 		cout << "| ";
-		numPads-=2;
+		numPads -= 2;
 	}
 	if (alignment == Alignment::RIGHT) {
 		for (int i = 0; i < numPads; i++) cout << padChar;

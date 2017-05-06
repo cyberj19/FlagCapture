@@ -62,6 +62,9 @@ void State::reset()
 	{
 		soldierAPositions = selectCells(Position(0, 0), Position(12, 5), board, 3);
 		soldierBPositions = selectCells(Position(0, 8), Position(12, 12), board, 3);
+
+//		soldierAPositions = selectPredicateCells(Position(0, 0), Position(12, 5), 3,
+//			[this](Position pos) {return this->getCell(pos).getType() == CellType::EMPTY; }
 	}
 
 	initSoldiers();
@@ -112,7 +115,7 @@ void State::control(Input input)
 
 void State::updateBoardSoldierMoved(Position source, Position dest)
 {
-	if (source.x == dest.x && source.y == dest.y) return;
+	if (source == dest) return;
 	getCell(dest).setSoldier(getCell(source).getSoldier());
 	boardChanges[0] = dest;
 	getCell(source).unsetSoldier();
@@ -177,9 +180,9 @@ string State::getStepBuffer(Player player) {
 
 void randomCells(vector<Position>& positions, const Position UpperLeft, const Position BottomRight, const double prob)
 {
-	for (auto i = UpperLeft.x; i <= BottomRight.x; ++i)
+	for (auto i = UpperLeft.getX(); i <= BottomRight.getX(); ++i)
 	{
-		for (auto j = UpperLeft.y; j <= BottomRight.y; ++j)
+		for (auto j = UpperLeft.getY(); j <= BottomRight.getY(); ++j)
 		{
 			double r = ((double)rand()) / RAND_MAX;
 			r = r < 0 ? -r : r;
@@ -190,17 +193,21 @@ void randomCells(vector<Position>& positions, const Position UpperLeft, const Po
 	}
 }
 
+Position randomPosition(const Position& UpperLeft, const Position& BottomRight) {
+	int minX = UpperLeft.getX(), minY = UpperLeft.getY(),
+		maxX = BottomRight.getX(), maxY = BottomRight.getY();
+	int rx = minX + (rand() % (int)(maxX - minX + 1));
+	int ry = minY + (rand() % (int)(maxY - minY + 1));
+
+	return Position(rx, ry);
+}
 vector<Position> selectCells(const Position UpperLeft, const Position BottomRight, int numToSelect)
 {
 	std::vector<Position> positions = vector<Position>();
-	int minX = UpperLeft.x, minY = UpperLeft.y, 
-		maxX = BottomRight.x, maxY = BottomRight.y;
 	while (numToSelect) {
 		Position pos;
 		do {
-			int rx = minX + (rand() % (int)(maxX - minX + 1));
-			int ry = minY + (rand() % (int)(maxY - minY + 1));
-			pos = Position(rx, ry);
+			pos = randomPosition(UpperLeft, BottomRight);
 		} while (std::find(positions.begin(), positions.end(), pos) != positions.end());
 		positions.push_back(pos);
 		--numToSelect;
@@ -211,18 +218,29 @@ vector<Position> selectCells(const Position UpperLeft, const Position BottomRigh
 vector<Position> selectCells(Position UpperLeft, Position BottomRight, GameBoard board, int numToSelect)
 {
 	vector<Position> positions = vector<Position>();
-	int minX = UpperLeft.x, minY = UpperLeft.y,
-		maxX = BottomRight.x, maxY = BottomRight.y;
 	while (numToSelect) {
 		Position pos;
 		do {
-			int rx = minX + (rand() % (int)(maxX - minX + 1));
-			int ry = minY + (rand() % (int)(maxY - minY + 1));
-			pos = Position(rx, ry);
+			pos = randomPosition(UpperLeft, BottomRight);
 		} while (find(positions.begin(), positions.end(), pos) != positions.end() ||
-			board[pos.y][pos.x].getType() != CellType::EMPTY);
+			board[pos.getY()][pos.getX()].getType() != CellType::EMPTY);
 		positions.push_back(pos);
 		--numToSelect;
 	}
 	return positions;
+}
+
+vector<Position> selectPredicateCells(Position UpperLeft, Position BottomRight, int numToSelect,
+	bool(*predicate)(Position pos) = [](Position pos) {return true; }) {
+	vector<Position> positions = vector<Position>();
+	while (numToSelect) {
+		Position pos;
+		do {
+			pos = randomPosition(UpperLeft, BottomRight);
+		} while (find(positions.begin(), positions.end(), pos) != positions.end() || !predicate(pos));
+		positions.push_back(pos);
+		--numToSelect;
+	}
+	return positions;
+
 }

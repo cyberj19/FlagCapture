@@ -11,8 +11,8 @@ void Graphics::render() {
 }
 
 void Graphics::renderChange(Position posToChange) {
-	if (posToChange.x == -1 || posToChange.y == -1) return;
-	goto_scaled_position(posToChange.y, posToChange.x);
+	if (posToChange.getX() == -1 || posToChange.getY() == -1) return;
+	goto_scaled_position(posToChange.getY(), posToChange.getX());
 	const char* entity = state->getCell(posToChange).getSymbol();
 	setColorByEntity(entity);
 	cout << entity;

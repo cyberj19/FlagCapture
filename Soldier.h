@@ -28,7 +28,7 @@ public:
 	Position nextPosition();
 
 	//Position getDirection() { return _direction; }
-	void setCurrentPosition(int x, int y) { _currentPosition.x=x;  _currentPosition.y = y; }
+	void setCurrentPosition(int x, int y) { _currentPosition.setX(x);  _currentPosition.setY(y); }
 	Position getCurrentPosition() { return _currentPosition; }
 	bool isAlive() { return status == SoldierStatus::ALIVE; }
 	const char* getSymbol() { return _symbol; }

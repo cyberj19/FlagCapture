@@ -10,7 +10,7 @@ int show_menu(Menu & menu, Position pos, int minChoice, int maxChoice)
 	string input;
 	int choice = minChoice - 1;
 	do {
-		menu.printAtPosition(pos.x, pos.y);
+		menu.printAtPosition(pos.getX(), pos.getY());
 		while (_kbhit()) _getch();
 		getline(cin, input);
 		stringstream mstream(input);

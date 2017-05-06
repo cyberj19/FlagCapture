@@ -11,6 +11,7 @@
 //void printMainMenu();
 
 class GameManager {
+	int _round;
 	User UserA = User("A"), UserB = User("B");
 	GameSettingsGenerator settingsGenerator;
 	Menu gameMenu;

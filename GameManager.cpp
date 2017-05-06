@@ -111,10 +111,10 @@ User& GameManager::getWinningUser(MenuOptions GameType, MatchOutput matchOutput)
 		return matchOutput == MatchOutput::WINNER_B ? UserA : UserB;
 }
 void GameManager::startAttendedMatch(MenuOptions GameType) {
-	
+	++_round;
 	printScores(UserA.getName(), UserA.getScore(), UserB.getName(), UserB.getScore());
 
-	GameSettings settings = settingsGenerator.getNextSettings(recording);
+	GameSettings settings = settingsGenerator.getNextSettings(recording, _round);
 	MatchOutput matchOutput = Match(settings).Play();
 
 	if (matchOutput == MatchOutput::MATCH_TERMINATED) {
@@ -139,6 +139,6 @@ void GameManager::quitGame()
 }
 
 GameManager::GameManager(GameSettingsGenerator settingsGeneator)
-	: settingsGenerator(settingsGeneator), recording(false), gameMenu() {
+	: settingsGenerator(settingsGeneator), recording(false), gameMenu(), _round(0) {
 	buildMenu();
 }

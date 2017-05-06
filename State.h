@@ -44,7 +44,7 @@ public:
 	void updateLastStep(int soldierId, int dirX, int dirY);
 
 	Position getChanges(int index) { return boardChanges[index]; }
-	Cell& getCell(Position cellPos) { return board[cellPos.y][cellPos.x]; }
+	Cell& getCell(Position cellPos) { return board[cellPos.getY()][cellPos.getX()]; }
 	Cell& getCell(int x, int y) { return board[y][x]; }
 	std::string getStepBuffer(Player player);
 private:

@@ -28,7 +28,7 @@ bool doesFileExist(const std::string& name) {
 GameSettingsGenerator::GameSettingsGenerator(int argc, char *argv[])
 	: _boardOptions(BoardInitOptions::Randomized),
 	_movesOptions(MovesSourceOptions::Keyboard),
-	path(),
+	path(""),
 	quiet(false),
 	delay(20),
 	_boardFileNames(),
@@ -139,6 +139,17 @@ void GameSettingsGenerator::parseInputArguments(int argc, char * argv[])
 			}
 			else {
 				path = std::string(argv[i + 1]);
+				if (path.front() == '\"' || path.back() == '\"') {
+					if (path.back() != path.front()) {
+						// error
+					}
+					else {
+						path.pop_back();
+						path.erase(0, 1);
+					}
+				}
+				if (path.back() == '\\')
+					path.pop_back();
 			}
 			i += 2;
 		}
@@ -168,7 +179,7 @@ void GameSettingsGenerator::parseInputArguments(int argc, char * argv[])
 std::string GameSettingsGenerator::getAvailableOutputFileName(int round)
 {
 	
-	string new_name = "record-" + to_string(round);;
+	string new_name = path + "\\record-" + to_string(round);;
 	while (doesFileExist(new_name + ".gboard") ||
 		doesFileExist(new_name + ".moves-a") ||
 		doesFileExist(new_name + ".moves-b"))

@@ -8,7 +8,11 @@
 class State;
 
 class Controller {
-	const char *_layoutA, *_layoutB;
+	std::string _layoutA, _layoutB;
+
+	std::vector<std::string> _movesAList, _movesBList;
+	int _nextMoveA, _nextMoveB;
+
 	State *state;
 	MovesSourceOptions _movesOptions;
 	bool _recording;
@@ -23,4 +27,12 @@ private:
 	Input parse(char ch);
 	void loadMovesFiles(std::string movesAInputFilePath, 
 		std::string movesBInputFilePath);
+
+	Input getInputFromFiles();
+	Input getInputFromKeyboard();
+	Input applyMove(std::string moveString);
+
+	void getNextMoves();
 };
+
+int parseClock(std::string moveString);

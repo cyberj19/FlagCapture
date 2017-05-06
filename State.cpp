@@ -14,6 +14,7 @@ State::State(GameSettings settings)
 	}
 
 	if (_settings.getBoardOptions() == BoardInitOptions::FromFile) {
+		//loadBoardFromFile();
 		// load file from 
 		// settings.getBoardInputFilePath()
 	}
@@ -37,9 +38,9 @@ State::State(GameSettings settings)
 
 void State::initBoard()
 {
-	for (int i = 0; i < ROWS; i++)
-		for (int j = 0; j < COLS; j++)
-			board[i][j] = Cell();
+	for (int y = 0; y < ROWS; ++y)
+		for (int x = 0; x < COLS; ++x)
+			board[y][x] = Cell();
 
 	getCell(flagAPosition).setType(CellType::FLAG_A);
 	getCell(flagBPosition).setType(CellType::FLAG_B);
@@ -54,9 +55,9 @@ void State::reset()
 	stepsBufferA.clear();
 	stepsBufferB.clear();
 
-	for (int i = 0; i < ROWS; i++)
-		for (int j = 0; j < COLS; j++)
-			board[i][j].unsetSoldier();
+	for (int y = 0; y < ROWS; ++y)
+		for (int x = 0; x < COLS; ++x)
+			board[y][x].unsetSoldier();
 
 	if (_settings.getBoardOptions() != BoardInitOptions::FromFile)
 	{
@@ -86,7 +87,7 @@ void State::addSoldiers(vector<Soldier>& soldiersVector, Player player, vector<P
 		soldiersVector.push_back(soldier);
 	}
 
-	for (int s = 0; s < 3; s++)
+	for (int s = 0; s < 3; ++s)
 		getCell(positions[s]).setSoldier(&soldiersVector[s]);
 }
 

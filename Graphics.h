@@ -28,4 +28,3 @@ void setColorByEntity(const char* entity);
 void announceWinner(string winner);
 void announceGameStopped();
 void printScores(string userA, int scoreA, string userB, int scoreB);
-void printSubMenu();

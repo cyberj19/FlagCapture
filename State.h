@@ -5,8 +5,7 @@
 #include "Position.h"
 #include "Input.h"
 #include "GameSettings.h"
-
-class Soldier;
+#include "Soldier.h"
 
 void randomCells(std::vector<Position>& positions, Position UpperLeft, Position BottomRight, double prob);
 std::vector<Position> selectCells(Position UpperLeft, Position BottomRight, int num);
@@ -34,7 +33,6 @@ public:
 	Player winner;
 	bool isFinished;
 
-	//Cell& getCell(Position pos) const;
 	void step();
 	void reset();
 	void control(Input input);

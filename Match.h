@@ -30,10 +30,6 @@ class Match{
 	void buildSubMenu();
 public:	
 	Match(GameSettings settings); // const char* keyboardLayoutA, const char* keyboardLayoutB);
-	~Match() {
-		delete graphics;
-		delete controller;
-		delete state;
-	}
+	~Match();
 	MatchOutput Play();
 };

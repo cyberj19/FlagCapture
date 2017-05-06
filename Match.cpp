@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
 using namespace std;
 
 Match::Match(GameSettings settings) //const char * keyboardLayoutA, const char * keyboardLayoutB)
@@ -13,6 +14,12 @@ Match::Match(GameSettings settings) //const char * keyboardLayoutA, const char *
 	graphics = new Graphics(state, _settings.isRecording());
 	controller = new Controller(state, settings);
 	buildSubMenu();
+}
+
+Match::~Match() {
+	delete graphics;
+	delete controller;
+	delete state;
 }
 
 MatchOutput Match::Play()

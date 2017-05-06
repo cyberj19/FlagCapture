@@ -13,7 +13,9 @@ Match::Match(GameSettings settings) //const char * keyboardLayoutA, const char *
 	state = new State(settings);
 	graphics = new Graphics(state, _settings.isRecording());
 	controller = new Controller(state, settings);
-	buildSubMenu();
+
+	if (settings.isAttended())
+		buildSubMenu();
 }
 
 Match::~Match() {

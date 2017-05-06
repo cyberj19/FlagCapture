@@ -4,7 +4,7 @@
 using namespace std;
 
 State::State(GameSettings settings)
-	: _settings(settings), forestPositions(), seaPositions() {
+	: _settings(settings), _changeBuffer(), forestPositions(), seaPositions() {
 	// do something with settings;
 	srand(time(NULL));
 
@@ -116,10 +116,12 @@ void State::control(Input input)
 void State::updateBoardSoldierMoved(Position source, Position dest)
 {
 	if (source == dest) return;
+
 	getCell(dest).setSoldier(getCell(source).getSoldier());
-	boardChanges[0] = dest;
 	getCell(source).unsetSoldier();
-	boardChanges[1] = source;
+
+	_changeBuffer.push_back(dest);
+	_changeBuffer.push_back(source);
 }
 
 void State::notifySoldierDied(Soldier *soldier) {
@@ -160,8 +162,7 @@ void State::updateLastStep(int soldierId, int dirX, int dirY)
 void State::updateBoardSoldierDied(Position placeOfDeath)
 {
 	getCell(placeOfDeath).unsetSoldier();
-	boardChanges[0] = placeOfDeath;
-	boardChanges[1] = placeOfDeath;
+	_changeBuffer.push_back(placeOfDeath);
 }
 
 

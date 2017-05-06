@@ -5,18 +5,19 @@ using namespace std;
 
 void getFilesList(string filePath, string extension, vector<string> & returnFileName)
 {
-	WIN32_FIND_DATA fileInfo;
+	/*WIN32_FIND_DATA fileInfo;
 	HANDLE hFind;
-	string  fullPath = filePath + extension;
+	string fullPath = filePath + extension;
 	hFind = FindFirstFile(fullPath.c_str(), &fileInfo);
 	if (hFind != INVALID_HANDLE_VALUE) {
-		returnFileName.push_back(filePath + fileInfo.cFileName);
-		while (FindNextFile(hFind, &fileInfo) != 0) {
-			returnFileName.push_back(filePath + fileInfo.cFileName);
-		}
+	returnFileName.push_back(filePath + fileInfo.cFileName);
+	while (FindNextFile(hFind, &fileInfo) != 0) {
+	returnFileName.push_back(filePath + fileInfo.cFileName);
+	}
 	}
 
-	std::sort(begin(returnFileName), end(returnFileName));
+	sort(begin(returnFileName), end(returnFileName));*/
+
 }
 
 bool doesFileExist(const std::string& name) {
@@ -37,7 +38,7 @@ GameSettingsGenerator::GameSettingsGenerator(int argc, char *argv[])
 	_maxSettings(0)
 {
 	parseInputArguments(argc, argv);
-	
+
 	if (_boardOptions == BoardInitOptions::FromFile)
 		getFilesList(path, "*.gboard", _boardFileNames);
 
@@ -61,7 +62,7 @@ bool GameSettingsGenerator::getQuiet() const
 int GameSettingsGenerator::getDelay() const
 {
 	//if quiet is active (true) - delay is ignored
-	return (quiet) ? 0 : delay; 
+	return (quiet) ? 0 : delay;
 }
 
 bool GameSettingsGenerator::isAttended() const
@@ -84,9 +85,9 @@ GameSettings GameSettingsGenerator::getNextSettings(bool recording, int round)
 
 	if (recording) {
 		string fname = getAvailableOutputFileName(round);
-		settings.setRecordingOutputFiles(fname + ".gboard", 
-										fname + ".moves-a", 
-										fname + ".moves-b");
+		settings.setRecordingOutputFiles(fname + ".gboard",
+			fname + ".moves-a",
+			fname + ".moves-b");
 	}
 	++_currentSetting;
 

@@ -156,19 +156,19 @@ Soldier & Soldier::battleWinner(Soldier & Attacker, Soldier & Defender, Position
 	Soldier & SoldierOfB = Attacker._player == Player::A ? Defender : Attacker;
 
 	if (SoldierOfA._type == SoldierType::S1)
-		return (isMatchLines(battleCell.getX(), 9, 12) || 
-				isMatchLines(battleCell.getY(), 3, 3)) ? SoldierOfB : SoldierOfA;
+		return (isMatchLines(battleCell.getY(), 9, 12) || 
+				isMatchLines(battleCell.getX(), 3, 3)) ? SoldierOfB : SoldierOfA;
 	if (SoldierOfA._type == SoldierType::S2) {
 		if (SoldierOfB._type == SoldierType::S3)
 			return SoldierOfB;
 		else {
-			return (isMatchLines(battleCell.getX(), 2, 3) || 
-					isMatchLines(battleCell.getY(), 10, 10)) ? SoldierOfA : SoldierOfB;
+			return (isMatchLines(battleCell.getY(), 2, 3) || 
+					isMatchLines(battleCell.getX(), 10, 10)) ? SoldierOfA : SoldierOfB;
 		}
 	}
 	else{ // if (SoldierOfA._type == SoldierType::S3) 
-		return (isMatchLines(battleCell.getX(), 7, 7) || 
-				isMatchLines(battleCell.getY(), 6, 6)) ? SoldierOfA : SoldierOfB;
+		return (isMatchLines(battleCell.getY(), 7, 7) || 
+				isMatchLines(battleCell.getX(), 6, 6)) ? SoldierOfA : SoldierOfB;
 	}	
 }
 
@@ -178,11 +178,10 @@ void Soldier::attack(Soldier & Defender)
 	battleCell = Defender.getCurrentPosition();
 	Soldier& winner = battleWinner(*this, Defender, battleCell);
 	if (winner._player == _player) {
-		move();
 		Defender.die();
+		move();
 	}
 	else {
-
 		die();
 	}
 }

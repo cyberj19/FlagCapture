@@ -5,8 +5,8 @@ using namespace std;
 #define goto_scaled_position(x, y)  (gotoxy((y)*5 + 6, (x)*2 + 3))
 
 void Graphics::render() {
-	renderChange(state->getChanges(0));
-	renderChange(state->getChanges(1));
+	while (state->hasChanges())
+		renderChange(state->popChange());
 	renderRecording();
 }
 

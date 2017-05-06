@@ -115,6 +115,10 @@ void GameManager::quitGame()
 }
 
 GameManager::GameManager(GameSettingsGenerator settingsGeneator)
-	: settingsGenerator(settingsGeneator), recording(false), gameMenu(), _round(0) {
-	buildMenu();
+	: settingsGenerator(settingsGeneator), 
+	recording(false), gameMenu(), _round(0),
+	UserA("A"), UserB("B") {
+
+	if (settingsGenerator.isAttended())
+		buildMenu();
 }

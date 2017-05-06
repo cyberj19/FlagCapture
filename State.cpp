@@ -153,6 +153,7 @@ void State::updateLastStep(int soldierId, int dirX, int dirY)
 	else if (dirX == -1) dir = 'L';
 	else if (dirY == 1) dir = 'D';
 	else if (dirY == -1) dir = 'U';
+	else dir = 'N';
 	sprintf(newStep, "%d,%d,%c\n", clock, soldierId, dir);
 
 	if (soldierId <= 3)

@@ -78,7 +78,7 @@ void Menu::addFormattedToggledItem(int option, string labelIfTrue,
 	menustream1 << option << " - " << labelIfTrue;
 
 	stringstream menustream2 = stringstream();
-	menustream2 << option << " - " << labelIfTrue;
+	menustream2 << option << " - " << labelIfFalse;
 
 	addToggledItem(menustream1.str(), menustream2.str(), flag);
 }

@@ -1,5 +1,7 @@
 #pragma once
 #include<string>
+#include "enums.h"
+
 class GameSettings {
 
 	const char* _keyboardLayoutA = "123wxad";
@@ -57,7 +59,7 @@ public:
 	const std::string getMovesAInputFilePath() { return _movesAInputFilePath; }
 	const std::string getMovesBInputFilePath() { return _movesBInputFilePath; }
 
-	const BoardInitOptions getBoardOptions() { return _boardOptions; }
+	const BoardInitOptions getBoardInitOptions() { return _boardOptions; }
 	const std::string getBoardInputFilePath() { return _boardInputFilePath; }
 
 	const bool isRecording() { return _recording; }

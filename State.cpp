@@ -1,39 +1,14 @@
 #include "State.h"
 #include "Soldier.h"
-#include <time.h>
 using namespace std;
 
 State::State(GameSettings settings)
-	: _settings(settings), _changeBuffer(), forestPositions(), seaPositions() {
-	// do something with settings;
-	srand(time(NULL));
+	: _settings(settings), _boardConfig(settings, board),
+	  _changeBuffer(), forestPositions(), seaPositions(),
+	  clock(0), isFinished(false) {
 
-	if (_settings.isRecording()) {
-		stepsBufferA = string();
-		stepsBufferB = string();
-	}
-
-	if (_settings.getBoardOptions() == BoardInitOptions::FromFile) {
-		//loadBoardFromFile();
-		// load file from 
-		// settings.getBoardInputFilePath()
-	}
-	else {
-		if (rand() % 2 == 0) {
-			randomCells(seaPositions, Position(7, 3), Position(11, 9), 0.5);
-			randomCells(forestPositions, Position(1, 3), Position(7, 9), 0.5);
-		}
-		else {
-			randomCells(forestPositions, Position(7, 3), Position(11, 9), 0.5);
-			randomCells(seaPositions, Position(1, 3), Position(7, 9), 0.5);
-		}
-
-		flagBPosition = selectCells(Position(0, 11), Position(12, 12), 1).front();
-		flagAPosition = selectCells(Position(0, 0), Position(12, 1), 1).front();
-	}
-
-	initBoard();
-	reset();
+	initRecorder();
+	initGameObjects();
 }
 
 void State::initBoard()
@@ -42,42 +17,60 @@ void State::initBoard()
 		for (int x = 0; x < COLS; ++x)
 			board[y][x] = Cell();
 
-	getCell(flagAPosition).setType(CellType::FLAG_A);
-	getCell(flagBPosition).setType(CellType::FLAG_B);
-	fillCells(seaPositions, CellType::SEA);
-	fillCells(forestPositions, CellType::FOREST);
+	getCell(_boardConfig.getFlagAPosition()).setType(CellType::FLAG_A);
+	getCell(_boardConfig.getFlagBPosition()).setType(CellType::FLAG_B);
+	fillCells(_boardConfig.getSeaPositions(), CellType::SEA);
+	fillCells(_boardConfig.getForestPositions(), CellType::FOREST);
+}
+
+void State::resetRecorder()
+{
+	if (_settings.isRecording()) {
+		stepsBufferA.clear();
+		stepsBufferB.clear();
+	}
+}
+
+void State::resetGameObjects()
+{
+
+	for (int y = 0; y < ROWS; ++y)
+		for (int x = 0; x < COLS; ++x)
+			board[y][x].unsetSoldier();
+
+	initSoldiers();
 }
 
 void State::reset()
 {
 	clock = 0;
 	isFinished = false;
-	stepsBufferA.clear();
-	stepsBufferB.clear();
 
-	for (int y = 0; y < ROWS; ++y)
-		for (int x = 0; x < COLS; ++x)
-			board[y][x].unsetSoldier();
+	resetRecorder();
+	resetGameObjects();
+}
 
-	if (_settings.getBoardOptions() != BoardInitOptions::FromFile)
-	{
-		soldierAPositions = selectCells(Position(0, 0), Position(12, 5), board, 3);
-		soldierBPositions = selectCells(Position(0, 8), Position(12, 12), board, 3);
-
-		//		soldierAPositions = selectPredicateCells(Position(0, 0), Position(12, 5), 3,
-		//			[this](Position pos) {return this->getCell(pos).getType() == CellType::EMPTY; }
+void State::initRecorder()
+{
+	if (_settings.isRecording()) {
+		stepsBufferA = string();
+		stepsBufferB = string();
 	}
+}
 
+void State::initGameObjects()
+{
+	initBoard();
 	initSoldiers();
 }
 
 void State::initSoldiers() {
 	soldiersA = vector<Soldier>();
-	addSoldiers(soldiersA, Player::A, soldierAPositions);
+	addSoldiers(soldiersA, Player::A, _boardConfig.getSoldiersAPositions());
 	soldierCounterA = soldiersA.size();
 
 	soldiersB = vector<Soldier>();
-	addSoldiers(soldiersB, Player::B, soldierBPositions);
+	addSoldiers(soldiersB, Player::B, _boardConfig.getSoldiersBPositions());
 	soldierCounterB = soldiersB.size();
 }
 
@@ -161,6 +154,11 @@ void State::updateLastStep(int soldierId, int dirX, int dirY)
 	else
 		stepsBufferB += newStep;
 }
+Position State::popChange() {
+	Position back = _changeBuffer.back();
+	_changeBuffer.pop_back();
+	return back;
+}
 void State::updateBoardSoldierDied(Position placeOfDeath)
 {
 	getCell(placeOfDeath).unsetSoldier();
@@ -179,71 +177,4 @@ string State::getStepBuffer(Player player) {
 		return stepsBufferA;
 	else
 		return stepsBufferB;
-}
-
-void randomCells(vector<Position>& positions, const Position UpperLeft, const Position BottomRight, const double prob)
-{
-	for (auto i = UpperLeft.getX(); i <= BottomRight.getX(); ++i)
-	{
-		for (auto j = UpperLeft.getY(); j <= BottomRight.getY(); ++j)
-		{
-			double r = ((double)rand()) / RAND_MAX;
-			r = r < 0 ? -r : r;
-			if (r < prob) {
-				positions.push_back(Position(i, j));
-			}
-		}
-	}
-}
-
-Position randomPosition(const Position& UpperLeft, const Position& BottomRight) {
-	int minX = UpperLeft.getX(), minY = UpperLeft.getY(),
-		maxX = BottomRight.getX(), maxY = BottomRight.getY();
-	int rx = minX + (rand() % (int)(maxX - minX + 1));
-	int ry = minY + (rand() % (int)(maxY - minY + 1));
-
-	return Position(rx, ry);
-}
-vector<Position> selectCells(const Position UpperLeft, const Position BottomRight, int numToSelect)
-{
-	std::vector<Position> positions = vector<Position>();
-	while (numToSelect) {
-		Position pos;
-		do {
-			pos = randomPosition(UpperLeft, BottomRight);
-		} while (std::find(positions.begin(), positions.end(), pos) != positions.end());
-		positions.push_back(pos);
-		--numToSelect;
-	}
-	return positions;
-}
-
-vector<Position> selectCells(Position UpperLeft, Position BottomRight, GameBoard board, int numToSelect)
-{
-	vector<Position> positions = vector<Position>();
-	while (numToSelect) {
-		Position pos;
-		do {
-			pos = randomPosition(UpperLeft, BottomRight);
-		} while (find(positions.begin(), positions.end(), pos) != positions.end() ||
-			board[pos.getY()][pos.getX()].getType() != CellType::EMPTY);
-		positions.push_back(pos);
-		--numToSelect;
-	}
-	return positions;
-}
-
-vector<Position> selectPredicateCells(Position UpperLeft, Position BottomRight, int numToSelect,
-	bool(*predicate)(Position pos) = [](Position pos) {return true; }) {
-	vector<Position> positions = vector<Position>();
-	while (numToSelect) {
-		Position pos;
-		do {
-			pos = randomPosition(UpperLeft, BottomRight);
-		} while (find(positions.begin(), positions.end(), pos) != positions.end() || !predicate(pos));
-		positions.push_back(pos);
-		--numToSelect;
-	}
-	return positions;
-
 }

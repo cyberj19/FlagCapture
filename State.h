@@ -6,15 +6,13 @@
 #include "Input.h"
 #include "GameSettings.h"
 #include "Soldier.h"
-
-void randomCells(std::vector<Position>& positions, Position UpperLeft, Position BottomRight, double prob);
-std::vector<Position> selectCells(Position UpperLeft, Position BottomRight, int num);
-std::vector<Position> selectCells(Position UpperLeft, Position BottomRight, GameBoard board, int num);
-
+#include "BoardConfiguration.h"
 
 class State {
 	GameSettings _settings;
 	
+	BoardConfiguration _boardConfig;
+
 	std::vector<Position> seaPositions;
 	std::vector<Position> forestPositions;
 	Position flagAPosition, flagBPosition;
@@ -42,21 +40,21 @@ public:
 	void notifySoldierDied(Soldier * soldier);
 	void updateLastStep(int soldierId, int dirX, int dirY);
 
-	Position popChange() {
-		Position back = _changeBuffer.back();
-		_changeBuffer.pop_back();
-		return back;
-	}
-	bool hasChanges() {
-		return !_changeBuffer.empty();
-	}
+	Position popChange();
+	bool hasChanges() { return !_changeBuffer.empty(); }
 	Cell& getCell(Position cellPos) { return board[cellPos.getY()][cellPos.getX()]; }
 	Cell& getCell(int x, int y) { return board[y][x]; }
 	std::string getStepBuffer(Player player);
 private:
+	void initRecorder();
+	void initGameObjects();
 	void initSoldiers();
-	void addSoldiers(std::vector<Soldier>& soldiersVector, Player player, std::vector<Position> positions);
 	void initBoard();
+
+	void resetRecorder();
+	void resetGameObjects();
+
+	void addSoldiers(std::vector<Soldier>& soldiersVector, Player player, std::vector<Position> positions);
 	void fillCells(const std::vector<Position>& positions, CellType type);
 	void updateBoardSoldierDied(Position placeOfDeath);
 };

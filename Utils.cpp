@@ -3,29 +3,17 @@
 #include <stdio.h>
 #include <conio.h>
 #include <iostream>
+#include <string>
+#include <vector>
+#include <iterator>
 using namespace std;
 
-int show_menu(string menu, int minChoice, int maxChoice)
+int show_menu(Menu & menu, Position pos, int minChoice, int maxChoice)
 {
 	string input;
 	int choice = minChoice - 1;
 	do {
-		clearScreen();
-		cout << menu;
-		while (_kbhit()) _getch();
-		getline(cin, input);
-		stringstream mstream(input);
-		if (!(mstream >> choice))
-			choice = minChoice - 1;
-	} while (choice < minChoice || choice > maxChoice);
-	return choice;
-}
-int show_menu(void (*printMenu)(void), int minChoice, int maxChoice)
-{
-	string input;
-	int choice = minChoice - 1;
-	do {
-		printMenu();
+		menu.printAtPosition(pos.getX(), pos.getY());
 		while (_kbhit()) _getch();
 		getline(cin, input);
 		stringstream mstream(input);
@@ -68,4 +56,29 @@ void hideCursor()
 	info.dwSize = 100;
 	info.bVisible = FALSE;
 	SetConsoleCursorInfo(consoleHandle, &info);
+}
+
+
+vector<string> split(string input, string delims) {
+	vector<string> output = vector<string>();
+	string word;
+	char c;
+
+	stringstream stream = stringstream(input);
+
+	c = stream.get();
+	while (stream) {
+		word.clear();
+		while (c != EOF && delims.find(c) == string::npos) {
+			word.push_back(c);
+			c = stream.get();
+		}
+
+		if (!word.empty()) output.push_back(word);
+		while (c != EOF && delims.find(c) != string::npos) {
+			c = stream.get();
+		}
+	}
+
+	return output;
 }

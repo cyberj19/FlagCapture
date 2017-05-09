@@ -20,5 +20,3 @@ public:
 	void setSoldier(Soldier* soldier) { _soldier = soldier; }
 	void setType(CellType type) { _type = type; }
 };
-
-typedef Cell GameBoard[ROWS][COLS];

@@ -24,3 +24,5 @@ enum class CellType { EMPTY, FOREST, SEA, FLAG_A, FLAG_B };
 enum class BoardInitOptions { FromFile, Randomized };
 
 enum class MovesSourceOptions { FromFile, Keyboard };
+
+enum class errorMsg { WRONG_TOOL_PLAYER_A, WRONG_TOOL_PLAYER_B, WRONG_CHAR };

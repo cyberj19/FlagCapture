@@ -1,22 +1,9 @@
+#pragma once
 #include "GameManager.h"
 #include "Graphics.h"
 #include <sstream>
 #include "Utils.h"
 using namespace std;
-
-/*void printMainMenu() {
-	clearScreen();
-	cout << "=================Main Menu=================" << endl;
-	cout << "Please make your selection" << endl;
-	cout << (int)MenuOptions::SET_NAMES << " - Choose Names (Optional)" << endl;
-	cout << (int)MenuOptions::REGULAR_GAME << " - Start Match" << endl;
-	cout << (int)MenuOptions::SWITCHED_GAME << " - Start Match With Switched Roles" << endl;
-	cout << (int)MenuOptions::RESET_SCORE << " - Reset Score" << endl;
-	cout << (int)MenuOptions::TOGGLE_RECORDING << " - Enable Recording" << endl;
-	cout << (int)MenuOptions::EXIT_MENU << " - Quit" << endl;
-	cout << "===========================================" << endl;
-	cout << "Selection: ";
-}*/
 
 void GameManager::run() {
 	if (settingsGenerator.isAttended())
@@ -34,42 +21,34 @@ void GameManager::runUnattended() {
 		else UserB.increaseScore();
 	}
 
-	// show scores
+	// TODO: show scores
 }
-std::string GameManager::generateMenu()
+
+void GameManager::buildMenu()
 {
-	stringstream menustream = stringstream();
-
-	menustream << "=================Main Menu=================" << endl;
-	menustream << "Please make your selection" << endl;
-	menustream << (int)MenuOptions::SET_NAMES << " - Choose Names (Optional)" << endl;
-	menustream << (int)MenuOptions::REGULAR_GAME << " - Start Match" << endl;
-	menustream << (int)MenuOptions::SWITCHED_GAME << " - Start Match With Switched Roles" << endl;
-	menustream << (int)MenuOptions::RESET_SCORE << " - Reset Score" << endl;
-
-	if (!recording)
-		menustream << (int)MenuOptions::TOGGLE_RECORDING << " - Enable Recording" << endl;
-	else
-		menustream << (int)MenuOptions::TOGGLE_RECORDING << " - Disable Recording" << endl;
-
-	menustream << (int)MenuOptions::EXIT_MENU << " - Quit" << endl;
-	menustream << "===========================================" << endl;
-	menustream << "Selection: ";
-
-	return menustream.str();
+	gameMenu.setHeader("Main Menu");
+	gameMenu.setFooter("=");
+	gameMenu.setClearScreen(true);	
+	gameMenu.addSimpleItem("Please make your selection:");
+	gameMenu.addFormattedSimpleItem((int) MenuOptions::SET_NAMES, "Choose names (optional)");
+	gameMenu.addFormattedSimpleItem((int)MenuOptions::REGULAR_GAME, "Start Match");
+	gameMenu.addFormattedSimpleItem((int)MenuOptions::SWITCHED_GAME, "Start Match With Switched Roles");
+	gameMenu.addFormattedSimpleItem((int)MenuOptions::RESET_SCORE, "Reset Score");
+	gameMenu.addFormattedToggledItem((int)MenuOptions::TOGGLE_RECORDING, "Disable Recording",
+		"Enable Recording", &recording);
+	gameMenu.addFormattedSimpleItem((int)MenuOptions::EXIT_MENU, "Quit");
 }
 void GameManager::runAttended() {
-	MenuOptions choice;
 	do {
-		 choice = (MenuOptions)show_menu(generateMenu(), 1, 9);
+		 _lastChoice = (MenuOptions)show_menu(gameMenu, Position(0, 0), 1, 9);
 
-		switch (choice) {
+		switch (_lastChoice) {
 		case MenuOptions::SET_NAMES:
 			setUserNames();
 			break;
 		case MenuOptions::REGULAR_GAME:
 		case MenuOptions::SWITCHED_GAME:
-			startAttendedMatch(choice);
+			startAttendedMatch(_lastChoice);
 			break;
 		case MenuOptions::RESET_SCORE:
 			resetScore();
@@ -81,7 +60,7 @@ void GameManager::runAttended() {
 		default:
 			break;
 		}
-	} while (choice != MenuOptions::EXIT_MENU);
+	} while (_lastChoice != MenuOptions::EXIT_MENU);
 	quitGame();
 }
 
@@ -110,17 +89,17 @@ User& GameManager::getWinningUser(MenuOptions GameType, MatchOutput matchOutput)
 		return matchOutput == MatchOutput::WINNER_B ? UserA : UserB;
 }
 void GameManager::startAttendedMatch(MenuOptions GameType) {
-	
+	++_round;
 	printScores(UserA.getName(), UserA.getScore(), UserB.getName(), UserB.getScore());
 
-	GameSettings settings = settingsGenerator.getNextSettings(recording);
+	GameSettings settings = settingsGenerator.getNextSettings(recording, _round);
 	MatchOutput matchOutput = Match(settings).Play();
 
 	if (matchOutput == MatchOutput::MATCH_TERMINATED) {
 		announceGameStopped();
 	}
 	else if (matchOutput == MatchOutput::QUIT_GAME) {
-		quitGame();
+		_lastChoice = MenuOptions::EXIT_MENU;
 	}
 	else {
 		User &winnerUser = getWinningUser(GameType, matchOutput);
@@ -134,8 +113,13 @@ void GameManager::quitGame()
 	clearScreen();
 	cout << "Goodbye!";
 	Sleep(1000);
-	exit(0);
 }
 
 GameManager::GameManager(GameSettingsGenerator settingsGeneator)
-	: settingsGenerator(settingsGeneator), recording(false) {}
+	: settingsGenerator(settingsGeneator), 
+	recording(false), gameMenu(), _round(0),
+	UserA("A"), UserB("B") {
+
+	if (settingsGenerator.isAttended())
+		buildMenu();
+}

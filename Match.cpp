@@ -1,65 +1,43 @@
+#pragma once
 #include "Match.h"
 #include<stdio.h>
 #include "Utils.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
+
 using namespace std;
-Match::Match(GameSettings settings) //const char * keyboardLayoutA, const char * keyboardLayoutB)
-	: _settings(settings), stage(MatchStage::INIT_DRAW), delay(settings.getDelay())
+
+Match::Match(GameSettings settings)
+	: _settings(settings), 
+	stage(MatchStage::INIT_DRAW), 
+	delay(settings.getDelay()), 
+	subMenu(),
+	error(false)
 {
-	state = new State(settings);
-	graphics = new Graphics(state, _settings.isRecording());
+	BoardConfiguration boardConfig = BoardConfiguration();
+	if (boardConfig.loadSettings(_settings))
+		error = true;
+
+	state = new State(settings, boardConfig);
 	controller = new Controller(state, settings);
-}
-void Match::handleRunning() 
-{
-	Input input = controller->getInput();
-	if (input.action == Action::ESC) {
-		stage = MatchStage::SUB_MENU;
-		return;
-	}
-	state->step();
-	Sleep(delay);
-	graphics->render();
-	if (state->isFinished)
-		stage = MatchStage::GAME_OVER;
-}
-void Match::handleSubMenu()
-{
-	lastSubMenuChoice = (SubMenuOptions)show_menu(printSubMenu, 1, 9);	
-	
-	switch (lastSubMenuChoice) {
-	case SubMenuOptions::CONTINUE_GAME:
-		stage = MatchStage::INIT_DRAW;
-		break;
-	case SubMenuOptions::RESTART_GAME:
-		stage = MatchStage::START;
-		break;
-	case SubMenuOptions::MAIN_MENU:
-	case SubMenuOptions::EXIT_GAME:
-		stage = MatchStage::GAME_OVER;
-		break;
-	}
-	Sleep(100);
-}
-void Match::handleStart()
-{
-	state->reset();
-	controller->clearBuffer();
-	stage = MatchStage::INIT_DRAW;
+
+	if (!settings.isQuiet())
+		graphics = new Graphics(state, _settings.isRecording());
+	if (settings.isAttended())
+		buildSubMenu();
 }
 
-void Match::initDraw()
-{
-	graphics->drawBoard();
-	graphics->drawEnv();
-
-	stage = MatchStage::RUNNING;
+Match::~Match() {
+	if (_settings.isQuiet())
+		delete graphics;
+	delete controller;
+	delete state;
 }
-
 
 MatchOutput Match::Play()
 {
+	if (error) return MatchOutput::MATCH_TERMINATED;
 	while (true) {
 		switch (stage) {
 		case MatchStage::START:
@@ -81,6 +59,59 @@ MatchOutput Match::Play()
 	}
 }
 
+void Match::handleRunning() 
+{
+	Input input = controller->getInput();
+	if (input.action == Action::ESC) {
+		stage = MatchStage::SUB_MENU;
+		return;
+	}
+	state->step();
+	Sleep(delay);
+
+	if (!_settings.isQuiet())
+		graphics->render();
+
+	if (state->isFinished)
+		stage = MatchStage::GAME_OVER;
+}
+
+void Match::handleSubMenu()
+{
+	lastSubMenuChoice = (SubMenuOptions)show_menu(subMenu, Position(11, 5), 1, 9);	
+	
+	switch (lastSubMenuChoice) {
+	case SubMenuOptions::CONTINUE_GAME:
+		stage = MatchStage::INIT_DRAW;
+		break;
+	case SubMenuOptions::RESTART_GAME:
+		stage = MatchStage::START;
+		break;
+	case SubMenuOptions::MAIN_MENU:
+	case SubMenuOptions::EXIT_GAME:
+		stage = MatchStage::GAME_OVER;
+		break;
+	}
+	Sleep(100);
+}
+
+void Match::handleStart()
+{
+	state->reset();
+	controller->clearBuffer();
+	stage = MatchStage::INIT_DRAW;
+}
+
+void Match::initDraw()
+{
+	if (!_settings.isQuiet()) {
+		graphics->drawBoard();
+		graphics->drawEnv();
+	}
+	stage = MatchStage::RUNNING;
+}
+
+
 MatchOutput Match::handleEndGame() {
 	controller->clearBuffer();
 	if (lastSubMenuChoice == SubMenuOptions::EXIT_GAME)
@@ -99,13 +130,24 @@ MatchOutput Match::handleEndGame() {
 
 void Match::saveRecord() {
 	ofstream myfile;
-
-	myfile.open("lolA.txt");
+	myfile.open(_settings.getMovesAOutputFilePath());
 	myfile << state->getStepBuffer(Player::A);
 	myfile.close();
 
-
-	myfile.open("lolB.txt");
+	myfile.open(_settings.getMovesBOutputFilePath());
 	myfile << state->getStepBuffer(Player::B);
 	myfile.close();
+}
+
+void Match::buildSubMenu()
+{
+	subMenu.setHeader("Sub Menu");
+	subMenu.setFooter("=");
+	subMenu.setClearScreen(false);
+	
+	subMenu.addSimpleItem("Please make your selection:");
+	subMenu.addFormattedSimpleItem((int)SubMenuOptions::CONTINUE_GAME, "Continue The Game");
+	subMenu.addFormattedSimpleItem((int)SubMenuOptions::RESTART_GAME, "Restart The Game");
+	subMenu.addFormattedSimpleItem((int)SubMenuOptions::MAIN_MENU, "Back To The Main Menu");
+	subMenu.addFormattedSimpleItem((int)SubMenuOptions::EXIT_GAME, "Quit Game");
 }

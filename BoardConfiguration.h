@@ -25,6 +25,10 @@ class BoardConfiguration {
 	std::vector<Position> _soldierAPositions;
 	std::vector<Position> _soldierBPositions;
 
+	std::vector<std::string> _errors;
+	std::map<char, int> _toolsValidation;
+	std::map<char, int> _illegalChars;
+
 public:
 	BoardConfiguration();
 	
@@ -41,11 +45,11 @@ public:
 private:
 	void generateRandomPositions();
 
-	std::vector<std::string> loadPositionsFromFile(std::string inputFile);
-	void initializeValidationToolsMap(std::map<char, int>& validationToolsMap);
+	void loadPositionsFromFile(std::string inputFile);
+	void initializeValidationMaps();
 	std::string readLineFromFile(std::ifstream &file);
-	int updatePositions(std::string line, std::map<char, int>& wrongCharsMap, std::map<char, int>& validationToolsMap);
-	void updateErrorMessagesVec(std::map<char, int> wrongCharsMap, std::map<char, int> validationToolsMap, std::vector<std::string>& errorMessages, std::string fileName);
+	void updatePositions(std::string line, int row);
+	void updateErrorMessagesVec(std::string fileName);
 
 	std::vector<Position> selectFreePositions(Position UpperLeft, Position BottomRight, int num);
 };

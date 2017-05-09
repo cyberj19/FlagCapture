@@ -1,19 +1,26 @@
 #include "BoardConfiguration.h"
 #include <time.h>
-
+#include <algorithm> 
+#include <functional> 
+#include <cctype>
+#include <locale>
 
 using namespace std;
 
-BoardConfiguration::BoardConfiguration() {}
+BoardConfiguration::BoardConfiguration()
+	: _errors(), _toolsValidation(), _illegalChars(), _soldierAPositions(),
+		_soldierBPositions(), _seaPositions(), _forestPositions()
+{}
 
 int BoardConfiguration::loadSettings(GameSettings settings)
 {
 	_boardInitOptions = settings.getBoardInitOptions();
+	_errors.clear();
 	if (_boardInitOptions == BoardInitOptions::FromFile)
-		return  0;//loadPositionsFromFile(settings.getBoardInputFilePath());
+		loadPositionsFromFile(settings.getBoardInputFilePath());
 	else
 		generateRandomPositions();
-	return 0;
+	return _errors.size() == 0;
 }
 
 std::vector<Position> BoardConfiguration::getSoldiersAPositions()
@@ -47,125 +54,138 @@ void BoardConfiguration::generateRandomPositions() {
 }
 
 
-std::vector<std::string> BoardConfiguration::loadPositionsFromFile(std::string inputFile) {
-
-	vector<string> errorMessages;      // errorMessages.size() == 0
-
+void BoardConfiguration::loadPositionsFromFile(std::string inputFile) {
 	ifstream file(inputFile);    //open file for reading
 	if (!file.is_open()) {
-		errorMessages.push_back("Error opening file: " + inputFile);
-		return errorMessages;
+		_errors.push_back("Error opening file: " + inputFile);
+		return;
 	}
 
 	bool ifFinished = true;
-	map<char, int> wrongCharsMap;   //such as:  4,5,C,J,^,&, etc.
-	map<char, int> validationToolsMap;  //settings validation for players A, B
-	initializeValidationToolsMap(validationToolsMap);
+	initializeValidationMaps();
 
-	string line = readLineFromFile(file);   //read a whole line until \n or \r\n  or EOF
-	while (!file.eof() && ifFinished) {
-		if (updatePositions(line, wrongCharsMap, validationToolsMap) <= ROWS) {      //read 13 lines
-			string line = readLineFromFile(file);
+	int rowCount = 0;
+	while (rowCount < ROWS) {
+		string line = readLineFromFile(file);
+		if (line == "") {
+			_errors.push_back("Not enough rows in board: " + inputFile);
+			break;
+		}
+		updatePositions(line, rowCount++);
+	}
+	updateErrorMessagesVec(inputFile);
+	file.close();
+}
+
+void BoardConfiguration::initializeValidationMaps() {
+	_illegalChars.clear();
+	_toolsValidation.clear();
+	for (char ch = '1'; ch <= '3'; ch++) _toolsValidation[ch] = 0;
+	for (char ch = '7'; ch <= '9'; ch++) _toolsValidation[ch] = 0;
+	_toolsValidation['A'] = 0;
+	_toolsValidation['B'] = 0;
+}
+
+string formatToolErrorMessage(char tool, string fileName) {
+	string error = "Wrong settings for player ";
+	error += (tool >= '1' && tool <= '3') || tool == 'A' ? 'A' : 'B';
+	error += " tools in file " + fileName;
+	return error;
+}
+
+string formatIllegalCharErrorMessage(char ch, string fileName) {
+	string error = "Wrong character on board: " + string(1, ch);
+	error += " in file " + fileName + "\n";
+	return error;
+}
+
+void BoardConfiguration::updateErrorMessagesVec(string fileName) {
+	
+	for (auto &k : _toolsValidation) {
+		if (k.second != 1)
+			_errors.push_back(formatToolErrorMessage(k.first, fileName));
+	}
+
+	for (auto& k : _illegalChars) {
+		if (k.second == 1)
+			_errors.push_back(formatIllegalCharErrorMessage(k.first, fileName));
+	}
+}
+
+void BoardConfiguration::updatePositions(string line, int row) {
+	int numCols = line.size();
+
+	if (numCols != COLS) {
+		//error
+	}
+	for (int col = 0; col < numCols; ++col) {
+		char ch = line[col];
+
+		if (ch >= '1' && ch <= '3') {
+			_toolsValidation[ch]++;
+			_soldierAPositions[ch - '1'] = Position(row, col);
+		}
+		else if (ch >= '7' && ch <= '9') {
+			_toolsValidation[ch]++;
+			_soldierBPositions[ch - '7'] = Position(row, col);
+		}
+		else if (ch == 'A') {
+			_toolsValidation[ch]++;
+			_flagAPosition = Position(row, col);
+		}
+		else if (ch == 'B') {
+			_toolsValidation[ch]++;
+			_flagBPosition = Position(row, col);
+		}
+		else if (ch == 'S') {
+			_seaPositions.push_back(Position(row, col));
+		}
+		else if (ch == 'T') {
+			_forestPositions.push_back(Position(row, col));
 		}
 		else {
-			ifFinished = false;
-		}
-	}
-	
-	updateErrorMessagesVec(wrongCharsMap, validationToolsMap, errorMessages, inputFile);
-
-	if (errorMessages.size()) {
-		return errorMessages;
-	}
-	errorMessages.push_back("No errors, file is valid");
-	return errorMessages;
-}
-
-void BoardConfiguration::initializeValidationToolsMap(map<char, int>& validationToolsMap) {
-	//wrong tools A
-	validationToolsMap['1'] = 0;
-	validationToolsMap['2'] = 0;
-	validationToolsMap['3'] = 0;
-	validationToolsMap['A'] = 0;
-	//wrong tools B
-	validationToolsMap['7'] = 0;
-	validationToolsMap['8'] = 0;
-	validationToolsMap['9'] = 0;
-	validationToolsMap['B'] = 0;
-
-}
-
-void BoardConfiguration::updateErrorMessagesVec(map<char, int> wrongCharsMap, map<char, int> validationToolsMap, vector<string>& errorMessages, string fileName) {
-	
-	for (auto &k : validationToolsMap) {
-		if (k.second != 1) {  //if 0 or greater than 1  -  wrong tool
-			if ((k.first >= '1' && k.first <= '3') || k.first == 'A') {
-				errorMessages.push_back("Wrong settings for player A tools in file " + fileName + "\n");
-				
-			}
-			else {
-				errorMessages.push_back("Wrong settings for player B tools in file " + fileName + "\n");
-			}
-		}
-	}
-
-	for (auto& k : wrongCharsMap) {
-		if (k.second == 1) {
-			string error = "Wrong character on board: " + string(1, k.first);
-			error += " in file " + fileName + "\n";
-			errorMessages.push_back(error);
+			if (_illegalChars.count(ch) == 0)
+				_illegalChars.insert(pair<char, int>(ch, 0));
+			_illegalChars[ch]++;
 		}
 	}
 }
 
-int BoardConfiguration::updatePositions(string line, map<char, int>& wrongCharsMap, map<char, int>& validationToolsMap) {
+string trim(string str) {
 
-	static int rowIndex = 0;    //read only 13 first rows
-	int colIndex = 0;
-
-	                                                                  //read first 13 characters
-	for (std::string::iterator it = line.begin(); it != line.end() && colIndex < COLS; ++it) {
-
-		if (*it >= '1' && *it <= '3') {
-			validationToolsMap[*it]++;
-			_soldierAPositions.push_back(Position(rowIndex, colIndex));
-		}
-		else if (*it >= '7' && *it <= '9') {
-			validationToolsMap[*it]++;
-			_soldierBPositions.push_back(Position(rowIndex, colIndex));
-		}
-		else if (*it == 'A') {
-			validationToolsMap[*it]++;
-			_flagAPosition = (rowIndex, colIndex);
-		}
-		else if (*it == 'B') {
-			validationToolsMap[*it]++;
-			_flagBPosition = (rowIndex, colIndex);
-		}
-		else if (*it == 'S') {
-			_seaPositions.push_back(Position(rowIndex, colIndex));
-		}
-		else if (*it == 'T') {
-			_forestPositions.push_back(Position(rowIndex, colIndex));
-		}
-		else {
-			//wrong char
-			if (!wrongCharsMap[*it]) {   //only if the char hasn't shown yet
-				wrongCharsMap[*it]++;     //count char frequency
-			}
-		}
-		colIndex++;
+	size_t endpos = str.find_last_not_of(" \t\r\n");
+	if (string::npos != endpos)
+	{
+		str = str.substr(0, endpos + 1);
 	}
-	rowIndex++;
-	return rowIndex;
-}
 
+	size_t startpos = str.find_first_not_of(" \t\r\n");
+	if (string::npos != startpos)
+	{
+		str = str.substr(startpos);
+	}
+
+	return str;
+}
 string BoardConfiguration::readLineFromFile(ifstream &file) {
+	string line = "";
+	if (file.eof()) return line;
+	do {
+		file >> line;
+		line = trim(line);
+	} while (line == string("") && !file.eof());
+	if (file.eof()) return string("");
+
+	size_t commentChar = line.find_first_of("#", 0);
+	line = line.substr(0, commentChar);
+	line = trim(line);
+	return line;
+	/*
 	//read line from text file until   '\r\n'  || '\n'  only
 
 	string str = "";
 	char ch, prevCh = ' ';
-
+	
 	file.get(ch);
 	while (ch != EOF && str.size() <= maxCharPerLine) {
 		//if prev == '\r' && ch == '\n'  :: we don't want '\r' to get into the string
@@ -181,7 +201,7 @@ string BoardConfiguration::readLineFromFile(ifstream &file) {
 		prevCh = ch;
 		file.get(ch);
 	}
-	return str;
+	return str;*/
 }
 
 Position randomPosition(const Position& UpperLeft, const Position& BottomRight) {

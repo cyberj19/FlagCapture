@@ -110,6 +110,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BasicSettings.cpp" />
     <ClCompile Include="BoardConfiguration.cpp" />
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="Controller.cpp" />
@@ -125,11 +126,12 @@
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BasicSettings.h" />
     <ClInclude Include="BoardConfiguration.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="enums.h" />
-    <ClInclude Include="GameBoard.h" />
+    <ClInclude Include="Board.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameSettings.h" />
     <ClInclude Include="GameSettingsGenerator.h" />
@@ -143,6 +145,9 @@
     <ClInclude Include="State.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="Utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

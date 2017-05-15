@@ -29,8 +29,9 @@ public:
 	GameSettingsGenerator(const BasicSettings& baseSettings);
 	bool isAttended() const { return _baseSettings.getInputOptions() == InputOptions::Keyboard; }
 	GameSettings getNextSettings(bool recording, int round = 0);
-	bool moreSettings() { return _currentBoardIndex < _numSettings; }
-	bool isQuiet() { return _baseSettings.isQuiet(); }
+	bool moreSettings() const { return _currentBoardIndex < _numSettings; }
+	bool isQuiet() const { return _baseSettings.isQuiet(); }
+	int getNumSettings() const { return _numSettings; }
 private:
 	std::string getAvailableOutputFileName(int round);
 	std::string getNextMoveFile(int& currMoveFileIndex, 

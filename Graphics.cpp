@@ -8,6 +8,7 @@ void Graphics::render() {
 	while (state->hasChanges())
 		renderChange(state->popChange());
 	renderRecording();
+	renderClock();
 }
 
 void Graphics::renderChange(Position posToChange) {
@@ -54,6 +55,13 @@ void Graphics::renderRecording()
 	setTextColor(WHITE, BLACK);
 }
 
+void Graphics::renderClock() {
+	gotoxy(75, 1);
+	setTextColor(BLUE);
+	cout << state->getClock();
+	setTextColor(WHITE, BLACK);
+}
+
 void announceWinner(string winner)
 {
 	gotoxy(0, 29);
@@ -68,22 +76,31 @@ void announceGameStopped()
 	Sleep(2000);
 }
 
-void printScores(User userA, User userB) {
+void printMany(int howMany, char ch) {
+	for (int i = 0; i < howMany; i++)
+		cout << ch;
+}
+
+int userLabelLength(User user) {
+	return (int)(user.getName().length() + to_string(user.getScore()).length());
+}
+void printUserLabel(User user) {
+	cout << user.getName() << ": " << user.getScore();
+}
+void printScoresHeader(User userA, User userB) {
 	clearScreen();
+
+	int usersNamesNScoresLen = userLabelLength(userA) + userLabelLength(userB);
 
 	gotoxy(0, 0);
 	setTextColor(DARK_RED, GREY);
-	cout << userA.getName() << ": " << userA.getScore();
-	int usersNamesNScoresLen = userA.getName().length() + userB.getName().length() +
-		(to_string(userA.getScore())).length() + (to_string(userB.getScore())).length();
-	for (int i = 0; i < floor((56 - usersNamesNScoresLen) / 2.0); i++)
-		cout << " ";
+	printUserLabel(userA);
+	printMany((int) floor((56 - usersNamesNScoresLen) / 2.0), ' ');
 	setTextColor(BLUE, GREY);
 	cout << "FlagCapture";
 	setTextColor(DARK_RED, GREY);
-	for (int i = 0; i < ceil((56 - usersNamesNScoresLen) / 2.0); i++)
-		cout << " ";
-	cout << userB.getName() << ": " << userB.getScore();
+	printMany((int) ceil((56 - usersNamesNScoresLen) / 2.0), ' ');
+	printUserLabel(userB);
 	setTextColor(WHITE, BLACK);
 }
 
@@ -125,6 +142,7 @@ void showMatchResults(int round, int numMoves, MatchOutput result)
 	cout << "Winner: " <<
 		(result == MatchOutput::WINNER_A ? "A" :
 		result == MatchOutput::WINNER_B ? "B" : "NONE") << endl;
+	cout << "----------------------" << endl;
 }
 
 

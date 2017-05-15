@@ -9,16 +9,17 @@ string fullPath(string dirPath, string fileName) {
 	return dirPath + (dirPath == "" ? "" : "\\") + fileName;
 }
 
-void getFilesList(string filePath, string extension, vector<string> & returnFileName)
+void getFilesList(string filePath, string extension, 
+	vector<string> & returnFileName)
 {
 	WIN32_FIND_DATA fileInfo;
 	HANDLE hFind;
 	string fileTemplate = fullPath(filePath, string("*.") + extension);
-	hFind = FindFirstFile(fileTemplate.c_str(), &fileInfo);
+	hFind = FindFirstFileA(fileTemplate.c_str(), &fileInfo);
 	if (hFind != INVALID_HANDLE_VALUE) {
 		do {
 			returnFileName.push_back(fullPath(filePath, fileInfo.cFileName));
-		} while (FindNextFile(hFind, &fileInfo) != 0); 
+		} while (FindNextFileA(hFind, &fileInfo) != 0); 
 	}
 
 	sort(begin(returnFileName), end(returnFileName));
@@ -80,9 +81,9 @@ GameSettings GameSettingsGenerator::getNextSettings(bool recording, int round) {
 
 std::string GameSettingsGenerator::getAvailableOutputFileName(int round) {
 	string new_name = fullPath(_baseSettings.getPath(), string("record-") + to_string(round));
-	while (doesFileExist(new_name + "." +  boardFileExtension) ||
-		doesFileExist(new_name + "." + movesAFileExtension) ||
-		doesFileExist(new_name + "." + movesBFileExtension))
+	while (	doesFileExist(new_name + "." +  boardFileExtension) ||
+			doesFileExist(new_name + "." + movesAFileExtension) ||
+			doesFileExist(new_name + "." + movesBFileExtension))
 		new_name += "-new";
 	return new_name;
 }
@@ -90,9 +91,11 @@ std::string GameSettingsGenerator::getAvailableOutputFileName(int round) {
 string GameSettingsGenerator::getNextMoveFile(int& currMoveFileIndex, 
 	const std::vector<std::string>& moveFileNames)
 {
+	// find next move file which's name matches the current board file
 	string ref = stripExtension(_boardFileNames[_currentBoardIndex]);
 	for (; currMoveFileIndex < moveFileNames.size(); currMoveFileIndex++) {
 		string curr = stripExtension(moveFileNames[currMoveFileIndex]);
+
 		if (curr == ref)
 			return moveFileNames[currMoveFileIndex];
 		else if (curr > ref)

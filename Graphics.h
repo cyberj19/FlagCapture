@@ -23,12 +23,13 @@ public:
 	void drawBoard();
 	void drawEnv();
 	void renderRecording();
+	void renderClock();
 };		
 
 void setColorByEntity(std::string entity);
 void announceWinner(string winner);
 void announceGameStopped();
-void printScores(User userA, User userB);
+void printScoresHeader(User userA, User userB);
 void showErrors(vector<string> errors, bool isQuiet);
 void showFinalResults(User userA, User userB, bool isQuiet);
 void showMatchResults(int round, int numMoves, MatchOutput result);

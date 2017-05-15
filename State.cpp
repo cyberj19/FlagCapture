@@ -64,9 +64,12 @@ void State::initGameObjects()
 }
 
 void State::initTeams() {
-	if (_settings.getBoardInitOptions() == BoardOptions::Randomized)
+	if (_settings.getBoardInitOptions() == BoardOptions::Randomized) {
+		getCell(_boardConfig.getFlagAPosition()).setType(CellType::EMPTY);
+		getCell(_boardConfig.getFlagBPosition()).setType(CellType::EMPTY);
 		_boardConfig.randomizeTeamsPositions();
-
+	}
+	
 	createSoldiers(soldiersA, Player::A, _boardConfig.getSoldiersAPositions());
 	soldierCounterA = (int) soldiersA.size();
 	getCell(_boardConfig.getFlagAPosition()).setType(CellType::FLAG_A);
@@ -155,7 +158,14 @@ void State::recordAction(int soldierId, Action action)
 
 	string newStep = string();
 
-	newStep += to_string(clock) + "," + to_string(soldierId) + ",";
+	// if a soldier's move is not recorded on its
+	// "correct" clock cycle, fix it by rounding
+	// to the correct parity
+	bool fixClock = soldierId > 3 && clock % 2 == 1 ||
+					soldierId <= 3 && clock % 2 == 0;
+
+	newStep += to_string(clock - fixClock ? 1 : 0);
+	newStep += "," + to_string(soldierId) + ",";
 
 	switch (action) {
 	case Action::UP: newStep += 'U'; break;

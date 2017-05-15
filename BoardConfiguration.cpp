@@ -73,6 +73,7 @@ void BoardConfiguration::randomizeTeamsPositions(){
 }
 
 void BoardConfiguration::generateRandomPositions() {
+	// switch sides of forest and sea randomly
 	if (rand() % 2 == 0) {
 		randomCells(_seaPositions, Position(7, 3), Position(11, 9), 0.5);
 		randomCells(_forestPositions, Position(1, 3), Position(7, 9), 0.5);
@@ -97,8 +98,7 @@ void BoardConfiguration::loadPositionsFromFile(std::string inputFile) {
 	
 	for (int rowCount = 0; rowCount < Board::Rows; rowCount++) {
 		string line = readLineFromFile(file);
-		if (line == "#") break;
-
+		if (line == "#") break; // # indicates eof in our function
 		updatePositions(line, rowCount);
 	}	
 	
@@ -211,14 +211,18 @@ Position randomPosition(const Position& UpperLeft, const Position& BottomRight) 
 
 	return Position(rx, ry);
 }
-std::vector<Position> BoardConfiguration::selectFreePositions(Position UpperLeft, Position BottomRight, int num)
+std::vector<Position> BoardConfiguration::selectFreePositions(Position UpperLeft, 
+	Position BottomRight, int num)
 {
 	vector<Position> positions = vector<Position>();
 	while (num) {
 		Position pos;
 		do {
 			pos = randomPosition(UpperLeft, BottomRight);
-		} while (find(positions.begin(), positions.end(), pos) != positions.end() ||
+		} 
+		//check if pos is already contained in selected positions, or in 
+		// forest or in sea, or occupied by flags
+		while (find(positions.begin(), positions.end(), pos) != positions.end() ||
 			find(_seaPositions.begin(), _seaPositions.end(), pos) != _seaPositions.end() ||
 			find(_forestPositions.begin(), _forestPositions.end(), pos) != _forestPositions.end() ||
 			_flagAPosition == pos || _flagBPosition == pos);
@@ -231,13 +235,10 @@ std::vector<Position> BoardConfiguration::selectFreePositions(Position UpperLeft
 
 void randomCells(vector<Position>& positions, const Position UpperLeft, const Position BottomRight, const double prob)
 {
-	for (auto i = UpperLeft.getX(); i <= BottomRight.getX(); ++i)
-	{
-		for (auto j = UpperLeft.getY(); j <= BottomRight.getY(); ++j)
-		{
+	for (int i = UpperLeft.getX(); i <= BottomRight.getX(); ++i) {
+		for (int j = UpperLeft.getY(); j <= BottomRight.getY(); ++j){
 			double r = ((double)rand()) / RAND_MAX;
-			r = r < 0 ? -r : r;
-			if (r < prob) {
+			if (abs(r) < prob) {
 				positions.push_back(Position(i, j));
 			}
 		}

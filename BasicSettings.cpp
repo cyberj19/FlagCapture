@@ -20,7 +20,6 @@ map<string, string> BasicSettings::generateCommandMap(int argc, char* argv[]) {
 		string param(""), value("");
 		param = argv[i++];
 
-
 		if (param[0] != '-') {
 			argWithoutParamError(param);
 			break;
@@ -42,12 +41,15 @@ map<string, string> BasicSettings::generateCommandMap(int argc, char* argv[]) {
 			break;
 		}
 
-		if (param == "-quiet" && argv[i][0] != '-') {
+		// value after -quiet is illegal
+		if (param == "-quiet" && 
+			i < argc && argv[i][0] != '-') {
 			illegalValueError("-quiet", argv[i]);
 			break;
 		}
 
 		value = param == "-quiet" ? "" : argv[i++];
+		//param after param
 		if (value[0] == '-') {
 			noValueError(param);
 			break;
@@ -111,6 +113,8 @@ void BasicSettings::parseMovesArgument(const std::string& value) {
 
 void BasicSettings::parsePathArgument(const std::string& value) {
 	_path = value;
+
+	// strip "
 	if (_path.front() == '\"' || _path.back() == '\"') {
 		if (_path.back() != _path.front())
 			illegalValueError("Path", _path);

@@ -106,7 +106,7 @@ void Match::handleRunning()
 
 void Match::handleSubMenu()
 {
-	lastSubMenuChoice = (SubMenuOptions)show_menu(subMenu, Position(11, 5), 1, 9);	
+	lastSubMenuChoice = (SubMenuOptions)showMenu(subMenu, Position(11, 5), 1, 9);	
 	
 	switch (lastSubMenuChoice) {
 	case SubMenuOptions::CONTINUE_GAME:

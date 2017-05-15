@@ -1,12 +1,9 @@
 #include "User.h"
-
-
-
-//void User::increaseScore(){
-//	score++;
-//}
+void User::increaseScore(){
+	_score++;
+}
 
 void User::resetScore()
 {
-	score = 0;
+	_score = 0;
 }

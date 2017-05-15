@@ -7,13 +7,13 @@ using namespace std;
 
 
 class User {
-	string name;
-	int score;
+	std::string _name;
+	int _score;
 public:
-	User(const string _name) :score(0), name(_name){}
-	void setName(const string _name) { name = _name; }
+	User(const std::string& name) : _score(0), _name(name){}
+	void setName(const std::string& name) { _name = name; }
 	void resetScore();
-	void increaseScore(){ score++; }
-	const int getScore() { return score; }
-	const string getName() { return name; }
+	void increaseScore();
+	const int getScore() { return _score; }
+	const string getName() { return _name; }
 };

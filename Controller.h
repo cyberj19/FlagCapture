@@ -14,14 +14,14 @@ class Controller {
 	int _nextMoveA, _nextMoveB;
 	int _moveCounter;
 	State *_state;
-	InputOptions _movesOptions;
+	InputOptions _inputOptions;
 	bool _recording;
 public:
 	Input getInput();
 	Controller(State *state, const GameSettings& settings);
 	void clearBuffer();
 	bool eof() {
-		return _movesOptions == InputOptions::FromFile && _nextMoveA == -1 &&
+		return _inputOptions == InputOptions::FromFile && _nextMoveA == -1 &&
 			_nextMoveB == -1;
 	}
 	int getNumMoves() { return _moveCounter; }

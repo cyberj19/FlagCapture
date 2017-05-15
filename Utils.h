@@ -6,7 +6,7 @@
 #include "Position.h"
 #include <vector>
 
-int show_menu(Menu &menu, Position pos, int minChoice, int maxChoice);
+int showMenu(Menu &menu, Position pos, int minChoice, int maxChoice);
 void setTextColor(int foreground_color, int background_color);
 void setTextColor(int foreground_color);
 void clearScreen();

@@ -35,7 +35,7 @@ void GameManager::buildMenu(){
 
 void GameManager::runAttended() {
 	do {
-		 _lastChoice = (MenuOptions)show_menu(gameMenu, Position(0, 0), 1, 9);
+		 _lastChoice = (MenuOptions)showMenu(gameMenu, Position(0, 0), 1, 9);
 
 		switch (_lastChoice) {
 		case MenuOptions::SET_NAMES:
@@ -93,7 +93,7 @@ void GameManager::startMatch(const GameSettings &settings, MenuOptions GameType)
 	}
 
 	if (!settings.isQuiet())
-		printScores(UserA, UserB);
+		printScoresHeader(UserA, UserB);
 
 	MatchOutput matchOutput = match.Play();
 

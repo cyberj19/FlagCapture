@@ -5,9 +5,13 @@
 using namespace std;
 
 void main(int argc, char *argv[]) {
-	srand(time(NULL));
-	BasicSettings settings = BasicSettings(argc, argv);
+	// in the absence of exceptions mechanism
+	// I have to implement this control flow
+	// sorry for the long main
 
+	srand((unsigned int)time(0));
+	
+	BasicSettings settings = BasicSettings(argc, argv);
 	if (settings.hasErrors()) {
 		cout << "There were errors: " << endl;
 		settings.showErrors();
@@ -17,5 +21,12 @@ void main(int argc, char *argv[]) {
 	}
 
 	GameSettingsGenerator settingsGenerator = GameSettingsGenerator(settings);
+	if (settingsGenerator.getNumSettings() == 0) {
+		cout << "There are no available settings for game" << endl;
+		cout << "Press any key to quit game...";
+		getchar();
+		return;
+	}
+
 	GameManager(settingsGenerator).run();
 }

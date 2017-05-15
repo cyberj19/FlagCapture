@@ -5,12 +5,14 @@
 #include <iterator>
 using namespace std;
 
-int show_menu(Menu & menu, Position pos, int minChoice, int maxChoice)
+int showMenu(Menu& menu, Position pos, int minChoice, int maxChoice)
 {
 	string input;
 	int choice = minChoice - 1;
 	do {
 		menu.printAtPosition(pos.getX(), pos.getY());
+
+		// this allows only valid integer inputs
 		while (_kbhit()) _getch();
 		getline(cin, input);
 		stringstream mstream(input);

@@ -4,21 +4,21 @@
 using namespace std;
 
 State::State(GameSettings settings, BoardConfiguration boardConfig)
-	: _settings(settings), _boardConfig(boardConfig),
-	  _changeBuffer(), forestPositions(), seaPositions(),
-	  clock(0), isFinished(false) {
+	: _settings(settings), 
+	  _boardConfig(boardConfig),
+	  _changeBuffer(),
+	  clock(0), 
+	  isFinished(false) {
 	initRecorder();
 	initGameObjects();
 }
 
 void State::initBoard()
 {
-	for (int y = 0; y < ROWS; ++y)
-		for (int x = 0; x < COLS; ++x)
+	for (int y = 0; y < Board::Rows; ++y)
+		for (int x = 0; x < Board::Cols; ++x)
 			board[y][x] = Cell();
 
-	getCell(_boardConfig.getFlagAPosition()).setType(CellType::FLAG_A);
-	getCell(_boardConfig.getFlagBPosition()).setType(CellType::FLAG_B);
 	fillCells(_boardConfig.getSeaPositions(), CellType::SEA);
 	fillCells(_boardConfig.getForestPositions(), CellType::FOREST);
 }
@@ -33,12 +33,11 @@ void State::resetRecorder()
 
 void State::resetGameObjects()
 {
-
-	for (int y = 0; y < ROWS; ++y)
-		for (int x = 0; x < COLS; ++x)
+	for (int y = 0; y < Board::Rows; ++y)
+		for (int x = 0; x < Board::Cols; ++x)
 			board[y][x].unsetSoldier();
 
-	initSoldiers();
+	initTeams();
 }
 
 void State::reset()
@@ -61,27 +60,41 @@ void State::initRecorder()
 void State::initGameObjects()
 {
 	initBoard();
-	initSoldiers();
+	initTeams();
 }
 
-void State::initSoldiers() {
-	soldiersA = vector<Soldier>();
-	addSoldiers(soldiersA, Player::A, _boardConfig.getSoldiersAPositions());
-	soldierCounterA = soldiersA.size();
+void State::initTeams() {
+	if (_settings.getBoardInitOptions() == BoardOptions::Randomized)
+		_boardConfig.randomizeTeamsPositions();
 
-	soldiersB = vector<Soldier>();
-	addSoldiers(soldiersB, Player::B, _boardConfig.getSoldiersBPositions());
-	soldierCounterB = soldiersB.size();
+	createSoldiers(soldiersA, Player::A, _boardConfig.getSoldiersAPositions());
+	soldierCounterA = (int) soldiersA.size();
+	getCell(_boardConfig.getFlagAPosition()).setType(CellType::FLAG_A);
+	
+	createSoldiers(soldiersB, Player::B, _boardConfig.getSoldiersBPositions());
+	soldierCounterB = (int) soldiersB.size();
+	getCell(_boardConfig.getFlagBPosition()).setType(CellType::FLAG_B);
 }
 
-void State::addSoldiers(vector<Soldier>& soldiersVector, Player player, vector<Position> positions) {
+void State::createSoldiers(vector<Soldier>& soldiers, Player player, vector<Position> positions) {
+	soldiers = vector<Soldier>(3);
 	for (int s = 0; s < 3; ++s) {
-		Soldier soldier = Soldier(this, player, SoldierType(s), positions[s]);
-		soldiersVector.push_back(soldier);
+		soldiers[s] = Soldier(this, player, SoldierType(s), positions[s]);
+		getCell(positions[s]).setSoldier(&soldiers[s]);
 	}
+}
 
-	for (int s = 0; s < 3; ++s)
-		getCell(positions[s]).setSoldier(&soldiersVector[s]);
+bool State::anyMoving()
+{
+	for (const Soldier& soldier : soldiersA)
+		if (soldier.isMoving())
+			return true;
+
+	for (const Soldier& soldier : soldiersB)
+		if (soldier.isMoving())
+			return true;
+
+	return false;
 }
 
 void State::step()
@@ -152,9 +165,9 @@ void State::recordAction(int soldierId, Action action)
 	}
 
 	if (soldierId <= 3)
-		stepsBufferA += newStep;
+		stepsBufferA += newStep + "\n";
 	else
-		stepsBufferB += newStep;
+		stepsBufferB += newStep + "\n";
 }
 
 Position State::popChange() {
@@ -181,4 +194,9 @@ string State::getStepBuffer(Player player) {
 		return stepsBufferA;
 	else
 		return stepsBufferB;
+}
+
+std::string State::getBoardString()
+{
+	return _boardConfig.getBoardString();
 }

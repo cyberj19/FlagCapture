@@ -1,9 +1,7 @@
 #pragma once
 
 #include "enums.h"
-#define ROWS 13
-#define COLS 13
-
+#include <string>
 class Soldier;
 
 class Cell {
@@ -11,7 +9,7 @@ class Cell {
 	Soldier* _soldier;
 public:
 	Cell(CellType type = CellType::EMPTY) : _type(type), _soldier(nullptr) {}
-	const char *getSymbol();
+	std::string getSymbol();
 
 	CellType getType() { return _type; }
 	Soldier* getSoldier() { return _soldier; }

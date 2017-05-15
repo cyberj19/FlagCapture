@@ -1,11 +1,13 @@
 #include "Soldier.h"
 
+Soldier::Soldier() :
+	state(nullptr), _player(Player::A), _type(SoldierType::S1), _moving(false),
+	status(SoldierStatus::ALIVE), _currentPosition(0,0), _symbol("") {}
+
 Soldier::Soldier(State *state, Player player, SoldierType type, Position pos)
 	: state(state), _player(player), _type(type), _moving(false), status(SoldierStatus::ALIVE),
 	_currentPosition(pos)
-{
-	setSymbol();
-}
+{}
 
 Position Soldier::nextPosition()
 {
@@ -15,49 +17,18 @@ Position Soldier::nextPosition()
 	return nextPos;
 }
 
-void Soldier::setSymbol()
-{
-	if (_player == Player::A) {
-		switch (_type) {
-		case SoldierType::S1:
-			_symbol = "[1] ";
-			break;
-		case SoldierType::S2:
-			_symbol = "[2] ";
-			break;
-		case SoldierType::S3:
-		default:
-			_symbol = "[3] ";
-			break;
-		}
-	}
-	else { // (_player == Player::B)
-		switch (_type) {
-		case SoldierType::S1:
-			_symbol = "[7] ";
-			break;
-		case SoldierType::S2:
-			_symbol = "[8] ";
-			break;
-		case SoldierType::S3:
-		default:
-			_symbol = "[9] ";
-			break;
-		}
-	}
-}
-
 void Soldier::control(Input input) {
-	if (input.player != _player) return;
-
-	if (input.action == Action::CHOOSE1)
+	if (input.getPlayer() != _player) return;
+	
+	Action action = input.getAction();
+	if (action == Action::CHOOSE1)
 		_moving = _type == SoldierType::S1;
-	else if (input.action == Action::CHOOSE2)
+	else if (action == Action::CHOOSE2)
 		_moving = _type == SoldierType::S2;
-	else if (input.action == Action::CHOOSE3)
+	else if (action == Action::CHOOSE3)
 		_moving = _type == SoldierType::S3;
 	else if (_moving) {
-		parseAction(input.action);
+		parseAction(action);
 	}
 }
 
@@ -125,7 +96,8 @@ bool Soldier::canMoveInForest() {
 void Soldier::stepLogic()
 {
 	Position nextPos = this->nextPosition();
-	if (nextPos.getX() >= COLS || nextPos.getX() < 0 || nextPos.getY() >= ROWS || nextPos.getY() < 0) {
+	if (nextPos.getX() >= Board::Cols || nextPos.getX() < 0 
+		|| nextPos.getY() >= Board::Rows || nextPos.getY() < 0) {
 		stop(); 
 		return;
 	}
@@ -196,6 +168,7 @@ void Soldier::attack(Soldier & Defender)
 
 void Soldier::die()
 {
+	stop();
 	state->notifySoldierDied(this);
 	status = SoldierStatus::DEAD; 
 }

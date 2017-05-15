@@ -1,6 +1,8 @@
 #include "Cell.h"
 #include "Soldier.h"
-const char* Cell::getSymbol()
+using namespace std;
+
+string Cell::getSymbol()
 {
 	if (_soldier != nullptr) return _soldier->getSymbol();
 	else {

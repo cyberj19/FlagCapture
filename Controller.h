@@ -10,24 +10,27 @@ class State;
 
 class Controller {
 	std::string _layoutA, _layoutB;
-
 	std::vector<std::string> _movesAList, _movesBList;
 	int _nextMoveA, _nextMoveB;
-
-	State *state;
-	MovesSourceOptions _movesOptions;
+	int _moveCounter;
+	State *_state;
+	InputOptions _movesOptions;
 	bool _recording;
-
-	std::string movesAInputBuffer, movesBInputBuffer;
-	std::string movesAOutputFilePath, movesBOutputFilePath;
 public:
 	Input getInput();
-	Controller(State *state, GameSettings settings);
+	Controller(State *state, const GameSettings& settings);
 	void clearBuffer();
+	bool eof() {
+		return _movesOptions == InputOptions::FromFile && _nextMoveA == -1 &&
+			_nextMoveB == -1;
+	}
+	int getNumMoves() { return _moveCounter; }
 private:
-	Input parse(char ch);
+	Input parseKey(char ch);
 	void loadMovesFiles(std::string movesAInputFilePath, 
 		std::string movesBInputFilePath);
+
+	Input applyNextMove(int & nextMove, std::vector<std::string>& moves);
 
 	Input getInputFromFiles();
 	Input getInputFromKeyboard();

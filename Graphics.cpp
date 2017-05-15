@@ -13,7 +13,7 @@ void Graphics::render() {
 void Graphics::renderChange(Position posToChange) {
 	if (posToChange.getX() == -1 || posToChange.getY() == -1) return;
 	goto_scaled_position(posToChange.getY(), posToChange.getX());
-	const char* entity = state->getCell(posToChange).getSymbol();
+	string entity = state->getCell(posToChange).getSymbol();
 	setColorByEntity(entity);
 	cout << entity;
 	setTextColor(WHITE, BLACK);
@@ -23,23 +23,20 @@ void Graphics::drawBoard()
 {
 	gotoxy(0, 1);
 	cout << "     | A  | B  | C  | D  | E  | F  | G  | H  | I  | J  | K  | L  | M   " << endl;
-	for (int i = 0; i < ROWS; i++)
-	{
+	for (int i = 0; i < Board::Rows; i++){
 		hideCursor();
 		cout << "-----------------------------------------------------------------------" << endl;
 		printf(" %2d  ", i + 1);
 		cout << "     |    |    |    |    |    |    |    |    |    |    |    |    |" << endl;
-
-
 	}
 	cout << "-----------------------------------------------------------------------" << endl;
 }
 
 void Graphics::drawEnv()
 {
-	for (int x = 0; x < COLS; x++) {
-		for (int y = 0; y < ROWS; y++) {
-			const char* entity = state->getCell(x, y).getSymbol();
+	for (int x = 0; x < Board::Cols; x++) {
+		for (int y = 0; y < Board::Rows; y++) {
+			string entity = state->getCell(x, y).getSymbol();
 			goto_scaled_position(y, x);
 			setColorByEntity(entity);
 			cout << entity;
@@ -52,15 +49,8 @@ void Graphics::renderRecording()
 {
 	if (!_recording) return;
 	gotoxy(75, 0);
-	bool turnOnWidget = ((int)time(0)) % 2 == 0;
 	setTextColor(RED);
-	if (turnOnWidget) {
-		cout << "O";
-	}
-	else {
-		cout << " ";
-	}
-	cout << " REC";
+	cout << (((int)time(0)) % 2 ? " " : "O") << " REC";
 	setTextColor(WHITE, BLACK);
 }
 
@@ -78,13 +68,14 @@ void announceGameStopped()
 	Sleep(2000);
 }
 
-void printScores(string userA, int scoreA, string userB, int scoreB) {
+void printScores(User userA, User userB) {
 	clearScreen();
 
 	gotoxy(0, 0);
 	setTextColor(DARK_RED, GREY);
-	cout << userA << ": " << scoreA;
-	int usersNamesNScoresLen = userA.length() + userB.length() + (to_string(scoreA)).length() + (to_string(scoreB)).length();
+	cout << userA.getName() << ": " << userA.getScore();
+	int usersNamesNScoresLen = userA.getName().length() + userB.getName().length() +
+		(to_string(userA.getScore())).length() + (to_string(userB.getScore())).length();
 	for (int i = 0; i < floor((56 - usersNamesNScoresLen) / 2.0); i++)
 		cout << " ";
 	setTextColor(BLUE, GREY);
@@ -92,16 +83,15 @@ void printScores(string userA, int scoreA, string userB, int scoreB) {
 	setTextColor(DARK_RED, GREY);
 	for (int i = 0; i < ceil((56 - usersNamesNScoresLen) / 2.0); i++)
 		cout << " ";
-
-	cout << userB << ": " << scoreB << endl;
+	cout << userB.getName() << ": " << userB.getScore();
 	setTextColor(WHITE, BLACK);
 }
 
-void setColorByEntity(const char* entity) {
-	if (!strcmp(entity, " FR ")) {
+void setColorByEntity(string entity) {
+	if (entity == " FR ") {
 		setTextColor(WHITE, DARK_GREEN);
 	}
-	else if (!strcmp(entity, "SEA ")) {
+	else if (entity == "SEA ") {
 		setTextColor(WHITE, DARK_BLUE);
 	}
 	else if ((entity[1] >= '1' && entity[1] <= '3') || (entity[0] == 'F' && entity[3] == 'A')) {
@@ -112,5 +102,41 @@ void setColorByEntity(const char* entity) {
 	}
 	else {
 		setTextColor(BLACK, WHITE);
+	}
+}
+
+
+void showFinalResults(User userA, User userB, bool isQuiet) {
+	if(!isQuiet) 
+		clearScreen();
+
+	cout << "Game summary: " << endl;
+	cout << "A points: " << userA.getScore() << endl;
+	cout << "B points: " << userB.getScore() << endl;
+
+	cout << "Press any key to continue..." << endl;
+	_getch();
+}
+
+void showMatchResults(int round, int numMoves, MatchOutput result)
+{
+	cout << "Game cycle: " << round << endl;
+	cout << "Num moves: " << numMoves << endl;
+	cout << "Winner: " <<
+		(result == MatchOutput::WINNER_A ? "A" :
+		result == MatchOutput::WINNER_B ? "B" : "NONE") << endl;
+}
+
+
+void showErrors(vector<string> errors, bool isQuiet) {
+	if (!isQuiet)
+		clearScreen();
+	cout << "Errors while loading game: " << endl;
+	for (string & error : errors)
+		cout << error << endl;
+	
+	if (!isQuiet) {
+		cout << "Press any key to continue..." << endl;
+		_getch();
 	}
 }

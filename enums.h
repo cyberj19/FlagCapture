@@ -11,6 +11,7 @@ enum class SubMenuOptions { NO_CHOICE = 0, CONTINUE_GAME = 1, RESTART_GAME = 2, 
 enum class MatchStage { START, INIT_DRAW, RUNNING, SUB_MENU, GAME_OVER };
 
 enum class MatchOutput { WINNER_A, WINNER_B, MATCH_TERMINATED, QUIT_GAME };
+
 enum class Player { A, B, NONE };
 
 enum class Action { CHOOSE1, CHOOSE2, CHOOSE3, UP, DOWN, LEFT, RIGHT, NOACTION, ESC = 27 };
@@ -21,8 +22,8 @@ enum class SoldierStatus { ALIVE, DEAD };
 
 enum class CellType { EMPTY, FOREST, SEA, FLAG_A, FLAG_B };
 
-enum class BoardInitOptions { FromFile, Randomized };
+enum class BoardOptions { FromFile, Randomized };
 
-enum class MovesSourceOptions { FromFile, Keyboard };
+enum class InputOptions { FromFile, Keyboard };
 
 enum class errorMsg { WRONG_TOOL_PLAYER_A, WRONG_TOOL_PLAYER_B, WRONG_CHAR };

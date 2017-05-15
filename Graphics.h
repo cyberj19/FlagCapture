@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string>
 #include "State.h"
 #include "Position.h"
 #include "User.h"
@@ -24,7 +25,10 @@ public:
 	void renderRecording();
 };		
 
-void setColorByEntity(const char* entity);
+void setColorByEntity(std::string entity);
 void announceWinner(string winner);
 void announceGameStopped();
-void printScores(string userA, int scoreA, string userB, int scoreB);
+void printScores(User userA, User userB);
+void showErrors(vector<string> errors, bool isQuiet);
+void showFinalResults(User userA, User userB, bool isQuiet);
+void showMatchResults(int round, int numMoves, MatchOutput result);

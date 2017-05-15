@@ -7,21 +7,16 @@
 #include "GameSettings.h"
 #include "Soldier.h"
 #include "BoardConfiguration.h"
+#include "Board.h"
 
 class State {
 	GameSettings _settings;
 	
 	BoardConfiguration _boardConfig;
 
-	std::vector<Position> seaPositions;
-	std::vector<Position> forestPositions;
-	Position flagAPosition, flagBPosition;
-	std::vector<Position> soldierAPositions;
-	std::vector<Position> soldierBPositions;
-
 	std::vector<Soldier> soldiersA, soldiersB;
 	int soldierCounterA, soldierCounterB;
-	GameBoard board;
+	Board::GameBoard board;
 
 	std::vector<Position> _changeBuffer;
 	int clock;
@@ -30,7 +25,7 @@ public:
 	State(GameSettings settings, BoardConfiguration boardConfig);
 	Player winner;
 	bool isFinished;
-
+	bool anyMoving();
 	void step();
 	void reset();
 	void control(Input input);
@@ -45,16 +40,17 @@ public:
 	Cell& getCell(Position cellPos) { return board[cellPos.getY()][cellPos.getX()]; }
 	Cell& getCell(int x, int y) { return board[y][x]; }
 	std::string getStepBuffer(Player player);
+	std::string getBoardString();
 private:
 	void initRecorder();
 	void initGameObjects();
-	void initSoldiers();
+	void initTeams();
 	void initBoard();
 
 	void resetRecorder();
 	void resetGameObjects();
 
-	void addSoldiers(std::vector<Soldier>& soldiersVector, Player player, std::vector<Position> positions);
+	void createSoldiers(std::vector<Soldier>& soldiersVector, Player player, std::vector<Position> positions);
 	void fillCells(const std::vector<Position>& positions, CellType type);
 	void updateBoardSoldierDied(Position placeOfDeath);
 };

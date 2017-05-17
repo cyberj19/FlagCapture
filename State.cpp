@@ -164,7 +164,7 @@ void State::recordAction(int soldierId, Action action)
 	bool fixClock = soldierId > 3 && clock % 2 == 1 ||
 					soldierId <= 3 && clock % 2 == 0;
 
-	newStep += to_string(clock - fixClock ? 1 : 0);
+	newStep += to_string(clock - (fixClock ? 1 : 0));
 	newStep += "," + to_string(soldierId) + ",";
 
 	switch (action) {

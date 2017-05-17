@@ -56,14 +56,13 @@ Input Controller::getInputFromFiles(){
 	// while solves problem when two consecutive moves
 	// where recorded on the same clock cycle
 	// (for example a game with a large delay setting)
-
 	while (_state->getClock() == _nextMoveA)
-		return applyNextMove(_nextMoveA, _movesAList);
+		applyNextMove(_nextMoveA, _movesAList);
 
 	while (_state->getClock() == _nextMoveB)
-		return applyNextMove(_nextMoveB, _movesBList);
+		applyNextMove(_nextMoveB, _movesBList);
 
-	return Input(Action::NOACTION, Player::NONE);
+	return{ Action::NOACTION, Player::NONE };
 }
 
 Input Controller::getInputFromKeyboard(){
@@ -98,7 +97,6 @@ Input Controller::applyMove(std::string moveString){
 
 	_state->control({ choose, player });
 	_state->control({ dir, player });
-	_moveCounter++;
 	return{ dir, player };
 }
 
@@ -110,7 +108,6 @@ void Controller::getNextMoves(){
 
 Controller::Controller(State * state, const GameSettings& settings)
 	: _state(state), 
-	_moveCounter(0),
 	_inputOptions(settings.getMovesOptions()),
 	_layoutA(settings.getKeyboardLayoutA()), _layoutB(settings.getKeyboardLayoutB())
 {

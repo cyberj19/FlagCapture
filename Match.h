@@ -28,7 +28,7 @@ public:
 	MatchOutput Play();
 	bool load(GameSettings settings);
 	std::vector<std::string> getErrors() { return _errors; }
-	int getNumMoves();
+	int getLastClock();
 private:
 	void handleStart();
 	void initDraw();

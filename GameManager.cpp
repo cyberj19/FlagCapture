@@ -105,15 +105,14 @@ void GameManager::startMatch(const GameSettings &settings, MenuOptions GameType)
 		User &winnerUser = getWinningUser(GameType, matchOutput);
 		winnerUser.increaseScore();
 
-		if (!settings.isQuiet()) {
+		if (!settings.isQuiet())
 			announceWinner(winnerUser.getName());
-			if (!settings.isAttended())
-				Sleep(5 * settings.getDelay());
-		}
 	}
 
 	if (settings.isQuiet())
-		showMatchResults(_round, match.getNumMoves(), matchOutput);
+		showMatchResults(_round, match.getLastClock(), matchOutput);
+	else if (!settings.isAttended())
+		Sleep(50 * settings.getDelay());
 }
 void GameManager::startAttendedMatch(MenuOptions GameType) {
 	++_round;

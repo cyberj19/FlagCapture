@@ -16,7 +16,7 @@ void main(int argc, char *argv[]) {
 		cout << "There were errors: " << endl;
 		settings.showErrors();
 		cout << "Press any key to quit game...";
-		getchar();
+		_getch();
 		return;
 	}
 
@@ -24,7 +24,7 @@ void main(int argc, char *argv[]) {
 	if (settingsGenerator.getNumSettings() == 0) {
 		cout << "There are no available settings for game" << endl;
 		cout << "Press any key to quit game...";
-		getchar();
+		_getch();
 		return;
 	}
 

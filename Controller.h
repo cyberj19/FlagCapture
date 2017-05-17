@@ -12,7 +12,6 @@ class Controller {
 	std::string _layoutA, _layoutB;
 	std::vector<std::string> _movesAList, _movesBList;
 	int _nextMoveA, _nextMoveB;
-	int _moveCounter;
 	State *_state;
 	InputOptions _inputOptions;
 	bool _recording;
@@ -24,7 +23,6 @@ public:
 		return _inputOptions == InputOptions::FromFile && _nextMoveA == -1 &&
 			_nextMoveB == -1;
 	}
-	int getNumMoves() { return _moveCounter; }
 private:
 	Input parseKey(char ch);
 	void loadMovesFiles(std::string movesAInputFilePath, 

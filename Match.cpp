@@ -44,9 +44,9 @@ bool Match::load(GameSettings settings) {
 	return true;
 }
 
-int Match::getNumMoves()
+int Match::getLastClock()
 {
-	return controller->getNumMoves();
+	return state->getClock();
 }
 
 Match::~Match() {

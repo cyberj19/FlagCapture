@@ -58,7 +58,7 @@ void Graphics::renderRecording()
 void Graphics::renderClock() {
 	gotoxy(75, 1);
 	setTextColor(BLUE);
-	cout << state->getClock();
+	cout << "Clock: " << state->getClock();
 	setTextColor(WHITE, BLACK);
 }
 

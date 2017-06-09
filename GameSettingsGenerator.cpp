@@ -1,19 +1,25 @@
 #include "GameSettingsGenerator.h"
 #include <Windows.h>
 #include <algorithm>
+#include <map>
+#include "Utils.h"
 using namespace std;
 
-void getFilesList(string filePath, string extension, vector<string> & returnFileName)
+string fullPath(string dirPath, string fileName) {
+	return dirPath + (dirPath == "" ? "" : "\\") + fileName;
+}
+
+void getFilesList(string filePath, string extension, 
+	vector<string> & returnFileName)
 {
 	WIN32_FIND_DATA fileInfo;
 	HANDLE hFind;
-	string fullPath = filePath + "\\" + extension;
-	hFind = FindFirstFile(fullPath.c_str(), &fileInfo);
+	string fileTemplate = fullPath(filePath, string("*.") + extension);
+	hFind = FindFirstFileA(fileTemplate.c_str(), &fileInfo);
 	if (hFind != INVALID_HANDLE_VALUE) {
-		returnFileName.push_back(filePath + "\\" + fileInfo.cFileName);
-		while (FindNextFile(hFind, &fileInfo) != 0) {
-			returnFileName.push_back(filePath + "\\" + fileInfo.cFileName);
-		}
+		do {
+			returnFileName.push_back(fullPath(filePath, fileInfo.cFileName));
+		} while (FindNextFileA(hFind, &fileInfo) != 0); 
 	}
 
 	sort(begin(returnFileName), end(returnFileName));
@@ -24,164 +30,76 @@ bool doesFileExist(const std::string& name) {
 	return (stat(name.c_str(), &buffer) == 0);
 }
 
-GameSettingsGenerator::GameSettingsGenerator(int argc, char *argv[])
-	: _boardOptions(BoardInitOptions::Randomized),
-	_movesOptions(MovesSourceOptions::Keyboard),
-	path(""),
-	quiet(false),
-	delay(20),
+GameSettingsGenerator::GameSettingsGenerator(const BasicSettings& baseSettings)
+	: _baseSettings(baseSettings),
 	_boardFileNames(),
-	_movesAFileNames(),
-	_movesBFileNames(),
-	_currentSetting(0),
-	_maxSettings(0)
+	_movesAFileNames(),_movesBFileNames(),
+	_currentBoardIndex(0), _currentMovesAIndex(0), _currentMovesBIndex(0),
+	_numSettings(0)
 {
-	parseInputArguments(argc, argv);
-
-	if (_boardOptions == BoardInitOptions::FromFile)
-		getFilesList(path, "*.gboard", _boardFileNames);
-
-	if (_movesOptions == MovesSourceOptions::FromFile) {
-		getFilesList(path, "*.moves-a", _movesAFileNames);
-		getFilesList(path, "*.moves-b", _movesBFileNames);
+	if (baseSettings.getBoardOptions() == BoardOptions::FromFile)
+	{
+		getFilesList(baseSettings.getPath(), boardFileExtension, _boardFileNames);
+		_numSettings = (int) _boardFileNames.size();
 	}
 
-	_maxSettings = max(_boardFileNames.size(), max(_movesAFileNames.size(), _movesBFileNames.size()));
-}
-
-bool GameSettingsGenerator::getQuiet() const
-{
-	//quiet is active only if -board f -moves f
-	if (_boardOptions == BoardInitOptions::FromFile && _movesOptions == MovesSourceOptions::FromFile) {
-		return quiet;
-	}
-	return false;
-}
-
-int GameSettingsGenerator::getDelay() const
-{
-	//if quiet is active (true) - delay is ignored
-	return (quiet) ? 0 : delay;
-}
-
-bool GameSettingsGenerator::isAttended() const
-{
-	return _movesOptions == MovesSourceOptions::Keyboard;
-}
-
-GameSettings GameSettingsGenerator::getNextSettings(bool recording, int round)
-{
-	GameSettings settings = GameSettings(delay, quiet, isAttended());
-
-	if (_boardOptions == BoardInitOptions::FromFile) {
-		settings.setBoardInputFile(_boardFileNames[_currentSetting]);
+	if (baseSettings.getInputOptions() == InputOptions::FromFile) {
+		getFilesList(baseSettings.getPath(), movesAFileExtension, _movesAFileNames);
+		getFilesList(baseSettings.getPath(), movesBFileExtension, _movesBFileNames);
 	}
 
-	if (_movesOptions == MovesSourceOptions::FromFile) {
-		settings.setMovesInputFiles(_movesAFileNames[_currentSetting],
-			_movesBFileNames[_currentSetting]);
+	if (_numSettings == 0 && 
+		baseSettings.getBoardOptions() != BoardOptions::FromFile) 
+		_numSettings = 1;
+}
+
+GameSettings GameSettingsGenerator::getNextSettings(bool recording, int round) {
+	if (_currentBoardIndex == _numSettings) _currentBoardIndex = 0;
+
+	GameSettings settings = GameSettings(_baseSettings.getDelay(), _baseSettings.isQuiet(), isAttended());
+
+	if (_baseSettings.getBoardOptions() == BoardOptions::FromFile) {
+		settings.setBoardInputFile(_boardFileNames[_currentBoardIndex]);
+	}
+
+	if (_baseSettings.getInputOptions() == InputOptions::FromFile) {
+		settings.setMovesInputFiles(
+			getNextMoveFile(_currentMovesAIndex, _movesAFileNames),
+			getNextMoveFile(_currentMovesBIndex, _movesBFileNames));
 	}
 
 	if (recording) {
 		string fname = getAvailableOutputFileName(round);
-		settings.setRecordingOutputFiles(fname + ".gboard",
-			fname + ".moves-a",
-			fname + ".moves-b");
+		settings.setRecordingOutputFiles(fname + "." + boardFileExtension,
+										fname + "." + movesAFileExtension,
+										fname + "." + movesBFileExtension);
 	}
-	++_currentSetting;
-
+	_currentBoardIndex++;
+	
 	return settings;
 }
 
-bool GameSettingsGenerator::moreSettings()
-{
-	return _currentSetting < _maxSettings;
-}
-
-void GameSettingsGenerator::parseInputArguments(int argc, char * argv[])
-{
-	for (int i = 1; i < argc; ) {
-		if (strcmp(argv[i], "-board") == 0) {
-			if (i == argc - 1) {
-				//error;
-			}
-			else if (strcmp(argv[i + 1], "f") == 0) {
-				_boardOptions = BoardInitOptions::FromFile;
-			}
-			else if (strcmp(argv[i + 1], "r") == 0) {
-				_boardOptions = BoardInitOptions::Randomized;
-			}
-			else {
-				//error;
-			}
-			i += 2;
-		}
-		else if (strcmp(argv[i], "-moves") == 0) {
-			if (i == argc - 1) {
-				//error;
-			}
-			else if (strcmp(argv[i + 1], "f") == 0) {
-				_movesOptions = MovesSourceOptions::FromFile;
-			}
-			else if (strcmp(argv[i + 1], "k") == 0) {
-				_movesOptions = MovesSourceOptions::Keyboard;
-			}
-			else {
-				//error;
-			}
-			i += 2;
-		}
-		else if (strcmp(argv[i], "-path") == 0) {
-
-			if (i == argc - 1) {
-				//error;
-			}
-			else {
-				path = std::string(argv[i + 1]);
-				if (path.front() == '\"' || path.back() == '\"') {
-					if (path.back() != path.front()) {
-						// error
-					}
-					else {
-						path.pop_back();
-						path.erase(0, 1);
-					}
-				}
-				if (path.back() == '\\')
-					path.pop_back();
-			}
-			i += 2;
-		}
-		else if (strcmp(argv[i], "-quiet") == 0) {
-			//quiet is active only if -board f -moves f
-			quiet = true;
-			i += 1;
-		}
-		else if (strcmp(argv[i], "-delay") == 0) {
-			//if quiet is active - delay is ignored
-			//default is 20 ms
-			if (i == argc - 1) {
-				//error;
-			}
-			else {
-				delay = atoi(argv[i + 1]);//convert from char to int
-			}
-			i += 2;
-		}
-		else {
-			//the command line isn't valid
-			//error
-		}
-	}
-}
-
-std::string GameSettingsGenerator::getAvailableOutputFileName(int round)
-{
-	
-	string new_name = path + "\\record-" + to_string(round);;
-	while (doesFileExist(new_name + ".gboard") ||
-		doesFileExist(new_name + ".moves-a") ||
-		doesFileExist(new_name + ".moves-b"))
+std::string GameSettingsGenerator::getAvailableOutputFileName(int round) {
+	string new_name = fullPath(_baseSettings.getPath(), string("record-") + to_string(round));
+	while (	doesFileExist(new_name + "." +  boardFileExtension) ||
+			doesFileExist(new_name + "." + movesAFileExtension) ||
+			doesFileExist(new_name + "." + movesBFileExtension))
 		new_name += "-new";
 	return new_name;
+}
+
+string GameSettingsGenerator::getNextMoveFile(int& currMoveFileIndex, 
+	const std::vector<std::string>& moveFileNames)
+{
+	// find next move file which's name matches the current board file
+	string ref = stripExtension(_boardFileNames[_currentBoardIndex]);
+	for (; currMoveFileIndex < moveFileNames.size(); currMoveFileIndex++) {
+		string curr = stripExtension(moveFileNames[currMoveFileIndex]);
+
+		if (curr == ref)
+			return moveFileNames[currMoveFileIndex];
+		else if (curr > ref)
+			break;
+	}
+	return string("");
 }

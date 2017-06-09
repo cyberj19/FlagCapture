@@ -1,8 +1,9 @@
 #pragma once
-#include<string>
-#include<vector>
+#include <string>
+#include <vector>
 #include "MenuItem.h"
-#include<Windows.h>
+#include <Windows.h>
+
 
 enum class Alignment { LEFT, CENTER, RIGHT };
 

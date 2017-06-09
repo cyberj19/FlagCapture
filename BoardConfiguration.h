@@ -1,16 +1,18 @@
 #pragma once
-#include <vector>
+#include <iostream>
+#include <fstream>
 #include "Position.h"
 #include "GameSettings.h"
 #include "enums.h"
-#include "GameBoard.h"
+#include <string>
+#include <vector>
+#include <map>
 
-
-void randomCells(std::vector<Position>& positions, Position UpperLeft, Position BottomRight, double prob);
-std::vector<Position> selectCells(Position UpperLeft, Position BottomRight, int num);
+void randomCells(std::vector<Position>& positions, 
+	Position UpperLeft, Position BottomRight, double prob);
 
 class BoardConfiguration {
-	BoardInitOptions _boardInitOptions;
+	BoardOptions _boardInitOptions;  //FromFile, Randomized 
 
 	std::vector<Position> _seaPositions;
 	std::vector<Position> _forestPositions;
@@ -21,6 +23,10 @@ class BoardConfiguration {
 	std::vector<Position> _soldierAPositions;
 	std::vector<Position> _soldierBPositions;
 
+	std::vector<std::string> _errors;
+	std::map<char, int> _toolsValidation;
+	std::map<char, int> _illegalChars;
+
 public:
 	BoardConfiguration();
 	
@@ -29,14 +35,25 @@ public:
 	std::vector<Position> getSeaPositions() const { return _seaPositions; }
 	std::vector<Position> getForestPositions() const { return _forestPositions; }
 
-	std::vector<Position> getSoldiersAPositions();
-	std::vector<Position> getSoldiersBPositions();
+	std::vector<Position> getSoldiersAPositions() const;
+	std::vector<Position> getSoldiersBPositions() const;
 
 	Position getFlagAPosition() const { return _flagAPosition; }
 	Position getFlagBPosition() const { return _flagBPosition; }
+
+	std::string getBoardString() const;
+	std::vector<std::string> getErrors() const { return _errors; }
+
+	void randomizeTeamsPositions();
 private:
 	void generateRandomPositions();
-	int loadPositionsFromFile(std::string inputFile);
+
+	void loadPositionsFromFile(std::string inputFile);
+	void initializeValidationMaps();
+	void initializePositionVectors();
+	std::string readLineFromFile(std::ifstream &file);
+	void updatePositions(std::string line, int row);
+	void generateErrors(std::string fileName);
 
 	std::vector<Position> selectFreePositions(Position UpperLeft, Position BottomRight, int num);
 };

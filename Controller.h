@@ -5,28 +5,30 @@
 #include "Input.h"
 #include "GameSettings.h"
 #include<string>
+#include "Utils.h"
 class State;
 
 class Controller {
 	std::string _layoutA, _layoutB;
-
 	std::vector<std::string> _movesAList, _movesBList;
 	int _nextMoveA, _nextMoveB;
-
-	State *state;
-	MovesSourceOptions _movesOptions;
+	State *_state;
+	InputOptions _inputOptions;
 	bool _recording;
-
-	std::string movesAInputBuffer, movesBInputBuffer;
-	std::string movesAOutputFilePath, movesBOutputFilePath;
 public:
 	Input getInput();
-	Controller(State *state, GameSettings settings);
+	Controller(State *state, const GameSettings& settings);
 	void clearBuffer();
+	bool eof() {
+		return _inputOptions == InputOptions::FromFile && _nextMoveA == -1 &&
+			_nextMoveB == -1;
+	}
 private:
-	Input parse(char ch);
+	Input parseKey(char ch);
 	void loadMovesFiles(std::string movesAInputFilePath, 
 		std::string movesBInputFilePath);
+
+	Input applyNextMove(int & nextMove, std::vector<std::string>& moves);
 
 	Input getInputFromFiles();
 	Input getInputFromKeyboard();

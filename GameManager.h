@@ -8,8 +8,6 @@
 #include "GameSettingsGenerator.h"
 #include "Menu.h"
 
-//void printMainMenu();
-
 class GameManager {
 	int _round;
 	User UserA, UserB;
@@ -17,18 +15,17 @@ class GameManager {
 	Menu gameMenu;
 	MenuOptions _lastChoice;
 	bool recording;
-
-
+public:
+	GameManager(GameSettingsGenerator settingsGeneator);
+	void run();
+private:
 	void setUserNames();
 	void resetScore();
 	User & getWinningUser(MenuOptions GameType, MatchOutput matchOutput);
 	void startAttendedMatch(MenuOptions MatchType);
+	void startMatch(const GameSettings& settings, MenuOptions MatchType = MenuOptions::REGULAR_GAME);
 	void quitGame();
-
 	void runAttended();
 	void runUnattended();
 	void buildMenu();
-public:
-	GameManager(GameSettingsGenerator settingsGeneator);
-	void run();
 };

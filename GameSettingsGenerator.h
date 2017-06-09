@@ -7,33 +7,35 @@
 #include <vector>
 #include "enums.h"
 #include "GameSettings.h"
+#include "BasicSettings.h"
+#include <map>
+
+const std::string boardFileExtension = "gboard";
+const std::string movesAFileExtension = "moves-a_small";
+const std::string movesBFileExtension = "moves-b_small";
 
 class GameSettingsGenerator {
-	BoardInitOptions _boardOptions;  //enum: F, R
-	MovesSourceOptions _movesOptions;  //enum: F, K
-	std::string path;
-	bool quiet;
-	int delay;
+	BasicSettings _baseSettings;
 
 	std::vector<std::string> _boardFileNames;
 	std::vector<std::string> _movesAFileNames;
 	std::vector<std::string> _movesBFileNames;
 
-	int _currentSetting;
-	int _maxSettings;
+	int _currentBoardIndex;
+	int _currentMovesAIndex;
+	int _currentMovesBIndex;
+	int _numSettings;
 public:
-	GameSettingsGenerator(int argc, char *argv[]);
-	BoardInitOptions getBoard() const { return _boardOptions; }
-	MovesSourceOptions getMoves() const { return _movesOptions; }
-	std::string getPath() const { return path; }
-	bool getQuiet() const;
-	int getDelay() const;
-	bool isAttended() const;
+	GameSettingsGenerator(const BasicSettings& baseSettings);
+	bool isAttended() const { return _baseSettings.getInputOptions() == InputOptions::Keyboard; }
 	GameSettings getNextSettings(bool recording, int round = 0);
-	bool moreSettings();
+	bool moreSettings() const { return _currentBoardIndex < _numSettings; }
+	bool isQuiet() const { return _baseSettings.isQuiet(); }
+	int getNumSettings() const { return _numSettings; }
 private:
-	void parseInputArguments(int argc, char *argv[]);
 	std::string getAvailableOutputFileName(int round);
+	std::string getNextMoveFile(int& currMoveFileIndex, 
+		const std::vector<std::string>& moveFileNames);
 };
 
 bool doesFileExist(const std::string& name);

@@ -1,3 +1,4 @@
+#pragma once
 #include "GameManager.h"
 #include "Graphics.h"
 #include <sstream>
@@ -11,20 +12,14 @@ void GameManager::run() {
 		runUnattended();
 }
 
+
 void GameManager::runUnattended() {
-	while (settingsGenerator.moreSettings()) {
-		GameSettings settings = settingsGenerator.getNextSettings(false);
-		MatchOutput matchOutput = Match(settings).Play();
-
-		if (matchOutput == MatchOutput::WINNER_A) UserA.increaseScore();
-		else UserB.increaseScore();
-	}
-
-	// TODO: show scores
+	while (settingsGenerator.moreSettings())
+		startMatch(settingsGenerator.getNextSettings(false, ++_round));
+	showFinalResults(UserA, UserB, settingsGenerator.isQuiet());
 }
 
-void GameManager::buildMenu()
-{
+void GameManager::buildMenu(){
 	gameMenu.setHeader("Main Menu");
 	gameMenu.setFooter("=");
 	gameMenu.setClearScreen(true);	
@@ -37,9 +32,10 @@ void GameManager::buildMenu()
 		"Enable Recording", &recording);
 	gameMenu.addFormattedSimpleItem((int)MenuOptions::EXIT_MENU, "Quit");
 }
+
 void GameManager::runAttended() {
 	do {
-		 _lastChoice = (MenuOptions)show_menu(gameMenu, Position(0, 0), 1, 9);
+		 _lastChoice = (MenuOptions)showMenu(gameMenu, Position(0, 0), 1, 9);
 
 		switch (_lastChoice) {
 		case MenuOptions::SET_NAMES:
@@ -87,24 +83,41 @@ User& GameManager::getWinningUser(MenuOptions GameType, MatchOutput matchOutput)
 	else
 		return matchOutput == MatchOutput::WINNER_B ? UserA : UserB;
 }
-void GameManager::startAttendedMatch(MenuOptions GameType) {
-	++_round;
-	printScores(UserA.getName(), UserA.getScore(), UserB.getName(), UserB.getScore());
 
-	GameSettings settings = settingsGenerator.getNextSettings(recording, _round);
-	MatchOutput matchOutput = Match(settings).Play();
 
-	if (matchOutput == MatchOutput::MATCH_TERMINATED) {
+void GameManager::startMatch(const GameSettings &settings, MenuOptions GameType) {	
+	Match match = Match();
+	if (!match.load(settings)) {
+		showErrors(match.getErrors(), settings.isQuiet());
+		return;
+	}
+
+	if (!settings.isQuiet())
+		printScoresHeader(UserA, UserB);
+
+	MatchOutput matchOutput = match.Play();
+
+	if (matchOutput == MatchOutput::MATCH_TERMINATED && !settings.isQuiet())
 		announceGameStopped();
-	}
-	else if (matchOutput == MatchOutput::QUIT_GAME) {
+	else if (matchOutput == MatchOutput::QUIT_GAME)
 		_lastChoice = MenuOptions::EXIT_MENU;
-	}
 	else {
 		User &winnerUser = getWinningUser(GameType, matchOutput);
 		winnerUser.increaseScore();
-		announceWinner(winnerUser.getName());
+
+		if (!settings.isQuiet())
+			announceWinner(winnerUser.getName());
 	}
+
+	if (settings.isQuiet())
+		showMatchResults(_round, match.getLastClock(), matchOutput);
+	else if (!settings.isAttended())
+		Sleep(50 * settings.getDelay());
+}
+void GameManager::startAttendedMatch(MenuOptions GameType) {
+	++_round;
+	GameSettings settings = settingsGenerator.getNextSettings(recording, _round);
+	startMatch(settings, GameType);
 }
 
 void GameManager::quitGame()
@@ -115,10 +128,8 @@ void GameManager::quitGame()
 }
 
 GameManager::GameManager(GameSettingsGenerator settingsGeneator)
-	: settingsGenerator(settingsGeneator), 
-	recording(false), gameMenu(), _round(0),
-	UserA("A"), UserB("B") {
-
+	: settingsGenerator(settingsGeneator), recording(false), gameMenu(), _round(0), UserA("A"), UserB("B") 
+{
 	if (settingsGenerator.isAttended())
 		buildMenu();
 }

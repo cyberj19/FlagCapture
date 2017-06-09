@@ -1,7 +1,11 @@
 #pragma once
 #include "enums.h"
 
-typedef struct input {
+class Input {
 	Action action;
 	Player player;
-} Input;
+public:
+	Input(Action action, Player player) : action(action), player(player) {}
+	Action getAction() { return action; }
+	Player getPlayer() { return player; }
+};

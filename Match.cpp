@@ -1,37 +1,74 @@
+﻿#pragma once
 #include "Match.h"
 #include<stdio.h>
 #include "Utils.h"
+#include "Graphics.h"
+//#include "Controller.h"
+#include "AlgorithmPlayer.h"
+#include "KeyboardPlayer.h"
+#include "StateProxy.h"
+#include "State.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 
 using namespace std;
 
-Match::Match(GameSettings settings)
-	: _settings(settings), 
+Match::Match()
+	: 
+	_settings(),
 	stage(MatchStage::INIT_DRAW), 
-	delay(settings.getDelay()), 
 	subMenu(),
-	error(false)
+	_errors(),
+	error(false),
+	state(nullptr),
+	//controller(nullptr),
+	graphics(nullptr)
 {
-	BoardConfiguration boardConfig = BoardConfiguration();
-	if (boardConfig.loadSettings(_settings))
+}
+
+bool Match::load(GameSettings settings) {
+	_settings = settings;
+	BoardConfiguration config = BoardConfiguration();
+	if (!config.loadSettings(_settings)) {
 		error = true;
+		_errors = config.getErrors();
+		return false;
+	}
 
-	state = new State(settings, boardConfig);
-	controller = new Controller(state, settings);
+	state = new State(_settings, config);
 
-	if (!settings.isQuiet())
+	const StateProxy proxyForPlayerA = StateProxy(state, Player::A);
+	const StateProxy proxyForPlayerB = StateProxy(state, Player::B);
+	playerA = new AlgorithmPlayer();
+	playerA->init(proxyForPlayerA);
+	playerB = new KeyboardPlayer();
+	playerB->init(proxyForPlayerB);
+
+	//controller = new Controller(state, _settings); - מיותר
+
+	if (!_settings.isQuiet()) {
 		graphics = new Graphics(state, _settings.isRecording());
-	if (settings.isAttended())
 		buildSubMenu();
+	}
+
+	return true;
+}
+
+int Match::getLastClock()
+{
+	return state->getClock();
 }
 
 Match::~Match() {
-	if (_settings.isQuiet())
+	if (graphics != nullptr)
 		delete graphics;
-	delete controller;
-	delete state;
+	if (playerA != nullptr)
+		delete playerA;
+	if (playerB != nullptr)
+		delete playerB;
+	if (state != nullptr)
+		delete state;	
 }
 
 MatchOutput Match::Play()
@@ -61,23 +98,28 @@ MatchOutput Match::Play()
 void Match::handleRunning() 
 {
 	Input input = controller->getInput();
-	if (input.action == Action::ESC) {
+	if (input.getAction() == Action::ESC) {
 		stage = MatchStage::SUB_MENU;
 		return;
 	}
 	state->step();
-	Sleep(delay);
+	Sleep(_settings.getDelay());
 
 	if (!_settings.isQuiet())
 		graphics->render();
 
 	if (state->isFinished)
 		stage = MatchStage::GAME_OVER;
+	else if (controller->eof() && !state->anyMoving()) {
+		stage = MatchStage::GAME_OVER;
+		lastSubMenuChoice = SubMenuOptions::EXIT_GAME;
+	}
+		
 }
 
 void Match::handleSubMenu()
 {
-	lastSubMenuChoice = (SubMenuOptions)show_menu(subMenu, Position(11, 5), 1, 9);	
+	lastSubMenuChoice = (SubMenuOptions)showMenu(subMenu, Position(11, 5), 1, 9);	
 	
 	switch (lastSubMenuChoice) {
 	case SubMenuOptions::CONTINUE_GAME:
@@ -119,7 +161,7 @@ MatchOutput Match::handleEndGame() {
 		return MatchOutput::MATCH_TERMINATED;
 	else {
 		if (_settings.isRecording())
-			saveRecord();
+			saveMatch();
 		if (state->winner == Player::A)
 			return MatchOutput::WINNER_A;
 		else
@@ -127,15 +169,17 @@ MatchOutput Match::handleEndGame() {
 	}
 }
 
-void Match::saveRecord() {
-	ofstream myfile;
-	myfile.open(_settings.getMovesAOutputFilePath());
-	myfile << state->getStepBuffer(Player::A);
-	myfile.close();
+void writeToFile(string str, string file) {
+	ofstream hfile;
+	hfile.open(file);
+	hfile << str;
+	hfile.close();
+}
 
-	myfile.open(_settings.getMovesBOutputFilePath());
-	myfile << state->getStepBuffer(Player::B);
-	myfile.close();
+void Match::saveMatch() {
+	writeToFile(state->getStepBuffer(Player::A), _settings.getMovesAOutputFilePath());
+	writeToFile(state->getStepBuffer(Player::B), _settings.getMovesBOutputFilePath());
+	writeToFile(state->getBoardString(), _settings.getBoardOutputFilePath());
 }
 
 void Match::buildSubMenu()

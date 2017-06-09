@@ -1,19 +1,18 @@
 #include "Utils.h"
 #include <sstream>
 #include <stdio.h>
-#include <conio.h>
 #include <iostream>
-#include <string>
-#include <vector>
 #include <iterator>
 using namespace std;
 
-int show_menu(Menu & menu, Position pos, int minChoice, int maxChoice)
+int showMenu(Menu& menu, Position pos, int minChoice, int maxChoice)
 {
 	string input;
 	int choice = minChoice - 1;
 	do {
 		menu.printAtPosition(pos.getX(), pos.getY());
+
+		// this allows only valid integer inputs
 		while (_kbhit()) _getch();
 		getline(cin, input);
 		stringstream mstream(input);
@@ -81,4 +80,24 @@ vector<string> split(string input, string delims) {
 	}
 
 	return output;
+}
+
+std::string stripExtension(const std::string & file){
+	return file.substr(0, file.find_last_of('.'));
+}
+
+
+void trim(string& str) {
+	size_t endpos = str.find_last_not_of(" \t\r\n");
+	if (string::npos != endpos)
+		str = str.substr(0, endpos + 1);
+
+	size_t startpos = str.find_first_not_of(" \t\r\n");
+	if (string::npos != startpos)
+		str = str.substr(startpos);
+}
+
+void trim(vector<string>& strings) {
+	for (string& str : strings)
+		trim(str);
 }

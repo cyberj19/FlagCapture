@@ -1,23 +1,24 @@
+#pragma once
 #include "State.h"
 #include "Soldier.h"
 using namespace std;
 
 State::State(GameSettings settings, BoardConfiguration boardConfig)
-	: _settings(settings), _boardConfig(boardConfig),
-	  _changeBuffer(), forestPositions(), seaPositions(),
-	  clock(0), isFinished(false) {
+	: _settings(settings), 
+	  _boardConfig(boardConfig),
+	  _changeBuffer(),
+	  clock(0), 
+	  isFinished(false) {
 	initRecorder();
 	initGameObjects();
 }
 
 void State::initBoard()
 {
-	for (int y = 0; y < ROWS; ++y)
-		for (int x = 0; x < COLS; ++x)
+	for (int y = 0; y < Board::Rows; ++y)
+		for (int x = 0; x < Board::Cols; ++x)
 			board[y][x] = Cell();
 
-	getCell(_boardConfig.getFlagAPosition()).setType(CellType::FLAG_A);
-	getCell(_boardConfig.getFlagBPosition()).setType(CellType::FLAG_B);
 	fillCells(_boardConfig.getSeaPositions(), CellType::SEA);
 	fillCells(_boardConfig.getForestPositions(), CellType::FOREST);
 }
@@ -32,12 +33,11 @@ void State::resetRecorder()
 
 void State::resetGameObjects()
 {
-
-	for (int y = 0; y < ROWS; ++y)
-		for (int x = 0; x < COLS; ++x)
+	for (int y = 0; y < Board::Rows; ++y)
+		for (int x = 0; x < Board::Cols; ++x)
 			board[y][x].unsetSoldier();
 
-	initSoldiers();
+	initTeams();
 }
 
 void State::reset()
@@ -60,27 +60,44 @@ void State::initRecorder()
 void State::initGameObjects()
 {
 	initBoard();
-	initSoldiers();
+	initTeams();
 }
 
-void State::initSoldiers() {
-	soldiersA = vector<Soldier>();
-	addSoldiers(soldiersA, Player::A, _boardConfig.getSoldiersAPositions());
-	soldierCounterA = soldiersA.size();
-
-	soldiersB = vector<Soldier>();
-	addSoldiers(soldiersB, Player::B, _boardConfig.getSoldiersBPositions());
-	soldierCounterB = soldiersB.size();
-}
-
-void State::addSoldiers(vector<Soldier>& soldiersVector, Player player, vector<Position> positions) {
-	for (int s = 0; s < 3; ++s) {
-		Soldier soldier = Soldier(this, player, SoldierType(s), positions[s]);
-		soldiersVector.push_back(soldier);
+void State::initTeams() {
+	if (_settings.getBoardInitOptions() == BoardOptions::Randomized) {
+		getCell(_boardConfig.getFlagAPosition()).setType(CellType::EMPTY);
+		getCell(_boardConfig.getFlagBPosition()).setType(CellType::EMPTY);
+		_boardConfig.randomizeTeamsPositions();
 	}
+	
+	createSoldiers(soldiersA, Player::A, _boardConfig.getSoldiersAPositions());
+	soldierCounterA = (int) soldiersA.size();
+	getCell(_boardConfig.getFlagAPosition()).setType(CellType::FLAG_A);
+	
+	createSoldiers(soldiersB, Player::B, _boardConfig.getSoldiersBPositions());
+	soldierCounterB = (int) soldiersB.size();
+	getCell(_boardConfig.getFlagBPosition()).setType(CellType::FLAG_B);
+}
 
-	for (int s = 0; s < 3; ++s)
-		getCell(positions[s]).setSoldier(&soldiersVector[s]);
+void State::createSoldiers(vector<Soldier>& soldiers, Player player, vector<Position> positions) {
+	soldiers = vector<Soldier>(3);
+	for (int s = 0; s < 3; ++s) {
+		soldiers[s] = Soldier(this, player, SoldierType(s), positions[s]);
+		getCell(positions[s]).setSoldier(&soldiers[s]);
+	}
+}
+
+bool State::anyMoving()
+{
+	for (const Soldier& soldier : soldiersA)
+		if (soldier.isMoving())
+			return true;
+
+	for (const Soldier& soldier : soldiersB)
+		if (soldier.isMoving())
+			return true;
+
+	return false;
 }
 
 void State::step()
@@ -141,7 +158,14 @@ void State::recordAction(int soldierId, Action action)
 
 	string newStep = string();
 
-	newStep += to_string(clock) + "," + to_string(soldierId) + ",";
+	// if a soldier's move is not recorded on its
+	// "correct" clock cycle, fix it by rounding
+	// to the correct parity
+	bool fixClock = soldierId > 3 && clock % 2 == 1 ||
+					soldierId <= 3 && clock % 2 == 0;
+
+	newStep += to_string(clock - (fixClock ? 1 : 0));
+	newStep += "," + to_string(soldierId) + ",";
 
 	switch (action) {
 	case Action::UP: newStep += 'U'; break;
@@ -151,9 +175,9 @@ void State::recordAction(int soldierId, Action action)
 	}
 
 	if (soldierId <= 3)
-		stepsBufferA += newStep;
+		stepsBufferA += newStep + "\n";
 	else
-		stepsBufferB += newStep;
+		stepsBufferB += newStep + "\n";
 }
 
 Position State::popChange() {
@@ -180,4 +204,9 @@ string State::getStepBuffer(Player player) {
 		return stepsBufferA;
 	else
 		return stepsBufferB;
+}
+
+std::string State::getBoardString()
+{
+	return _boardConfig.getBoardString();
 }

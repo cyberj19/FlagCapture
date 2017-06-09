@@ -10,30 +10,32 @@ class State;
 bool isMatchLines(int myLine, int startLine, int stopLine);
 
 class Soldier {
+	State* state;
+
 	Position _currentPosition;
-	//Position _direction;
 
 	int _dir_x, _dir_y;
-	const char* _symbol;
+	std::string _symbol;
 	bool _moving;
 	Player _player;
 	SoldierType _type;
-	State* state;
 	SoldierStatus status;
 
 public:
+	Soldier();
 	Soldier(State *state, Player player, SoldierType type, Position pos);
 	void control(Input input);
 	void step();
 	Position nextPosition();
 
-	//Position getDirection() { return _direction; }
 	void setCurrentPosition(int x, int y) { _currentPosition.setX(x);  _currentPosition.setY(y); }
 	Position getCurrentPosition() { return _currentPosition; }
 	bool isAlive() { return status == SoldierStatus::ALIVE; }
-	const char* getSymbol() { return _symbol; }
+	std::string getSymbol() { return std::string("[") + std::to_string(getId()) + std::string("] "); }
 	Player getPlayer() { return _player; }
 
+	bool isMoving() const { return _moving && (_dir_x != 0 || _dir_y != 0); }
+	int getId() const;
 private:
 	void stepLogic();
 	Soldier& battleWinner(Soldier & Attacker, Soldier & Defender, Position & battleCell);
@@ -47,10 +49,7 @@ private:
 	bool canMoveInSea();
 	bool canMoveInForest();
 	bool isMyTurn();
-	bool isMoving() { return _moving && (_dir_x != 0 || _dir_y != 0); }
 
-	int getId();
-	void setSymbol();
 
 	void parseAction(Action action);
 };

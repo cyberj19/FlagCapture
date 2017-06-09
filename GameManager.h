@@ -25,7 +25,8 @@ private:
 	void startAttendedMatch(MenuOptions MatchType);
 	void startMatch(const GameSettings& settings, MenuOptions MatchType = MenuOptions::REGULAR_GAME);
 	void quitGame();
-	void runAttended();
-	void runUnattended();
+	void runAttendedGame();
+	void runFileGame();
+	void runAlgorithmGame();
 	void buildMenu();
 };

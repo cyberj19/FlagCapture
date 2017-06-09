@@ -1,15 +1,21 @@
 #pragma once
 #include<string>
 #include "enums.h"
+#include "AlgorithmPlayer.h"
 
 class GameSettings {
 
 	const std::string _keyboardLayoutA = "123wxad";
 	const std::string _keyboardLayoutB = "789imjl";
 
-	InputOptions _movesOptions;
+	InputOptions _movesOptionsA;
+	InputOptions _movesOptionsB;
+
 	std::string _movesAInputFilePath;
 	std::string _movesBInputFilePath;
+	
+	AlgorithmPlayer* AlgorithmA;
+	AlgorithmPlayer* AlgorithmB;
 
 	BoardOptions _boardOptions;
 	std::string _boardInputFilePath;
@@ -21,14 +27,15 @@ class GameSettings {
 
 	int _delay;
 	bool _quiet;
-	bool _attended;
+	GameType _gameType;
 public:
 	GameSettings& operator =(const GameSettings &settings) {
 		_delay = settings._delay;
 		_quiet = settings._quiet;
-		_attended = settings._attended;
+		_gameType = settings._gameType;
 
-		_movesOptions = settings._movesOptions;
+		_movesOptionsA = settings._movesOptionsA;
+		_movesOptionsB = settings._movesOptionsB;
 		_movesAInputFilePath = settings._movesAInputFilePath;
 		_movesBInputFilePath = settings._movesBInputFilePath;
 
@@ -43,20 +50,25 @@ public:
 		return *this;
 	}
 
-	GameSettings(int delay = 100, bool quiet = false, bool attended = true)
+	GameSettings(int delay = 100, bool quiet = false, 
+		GameType gameType = GameType::Attended)
 		: 
-		_movesOptions(InputOptions::Keyboard),
+		_movesOptionsA(InputOptions::Keyboard),
+		_movesOptionsB(InputOptions::Keyboard),
 		_boardOptions(BoardOptions::Randomized),
 		_recording(false),
 		_delay(delay), 
 		_quiet(quiet),
-		_attended(attended)
+		_gameType(gameType)
 	{}
 
-	void setMovesInputFiles(std::string movesAInputFilePath,
-							std::string movesBInputFilePath) {
-		_movesOptions = InputOptions::FromFile;
+	void setMovesInputFileA(const std::string& movesAInputFilePath) {
+		_movesOptionsA = InputOptions::FromFile;
 		_movesAInputFilePath = movesAInputFilePath;
+	}
+	
+	void setMovesInputFileB(const std::string& movesBInputFilePath) {
+		_movesOptionsB = InputOptions::FromFile;
 		_movesBInputFilePath = movesBInputFilePath;
 	}
 
@@ -74,11 +86,12 @@ public:
 		_movesBOutputFilePath = movesBOutputFilePath;
 	}
 
-	const bool isAttended() const { return _attended; }
+	const GameType getGameType() const { return _gameType; }
 	const std::string getKeyboardLayoutA() const { return _keyboardLayoutA; }
 	const std::string getKeyboardLayoutB() const { return _keyboardLayoutB; }
 
-	const InputOptions getMovesOptions() const { return _movesOptions; }
+	const InputOptions getMovesOptionsA() const { return _movesOptionsA; }
+	const InputOptions getMovesOptionsB() const { return _movesOptionsB; }
 	const std::string getMovesAInputFilePath() const { return _movesAInputFilePath; }
 	const std::string getMovesBInputFilePath() const { return _movesBInputFilePath; }
 

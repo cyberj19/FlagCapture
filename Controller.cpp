@@ -108,7 +108,7 @@ void Controller::getNextMoves(){
 
 Controller::Controller(State * state, const GameSettings& settings)
 	: _state(state), 
-	_inputOptions(settings.getMovesOptions()),
+	_inputOptions(settings.getMovesOptionsA()),
 	_layoutA(settings.getKeyboardLayoutA()), _layoutB(settings.getKeyboardLayoutB())
 {
 	if (_inputOptions == InputOptions::FromFile)

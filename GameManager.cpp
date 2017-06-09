@@ -6,14 +6,21 @@
 using namespace std;
 
 void GameManager::run() {
-	if (settingsGenerator.isAttended())
-		runAttended();
-	else
-		runUnattended();
+	switch (settingsGenerator.getGameType()) {
+	case GameType::Attended:
+		runAttendedGame();
+		break;
+	case GameType::FileGame:
+		runFileGame();
+		break;
+	case GameType::AlgorithmGame:
+	default:
+		runAlgorithmGame();
+	}
 }
 
 
-void GameManager::runUnattended() {
+void GameManager::runFileGame() {
 	while (settingsGenerator.moreSettings())
 		startMatch(settingsGenerator.getNextSettings(false, ++_round));
 	showFinalResults(UserA, UserB, settingsGenerator.isQuiet());
@@ -33,7 +40,7 @@ void GameManager::buildMenu(){
 	gameMenu.addFormattedSimpleItem((int)MenuOptions::EXIT_MENU, "Quit");
 }
 
-void GameManager::runAttended() {
+void GameManager::runAttendedGame() {
 	do {
 		 _lastChoice = (MenuOptions)showMenu(gameMenu, Position(0, 0), 1, 9);
 
@@ -59,6 +66,11 @@ void GameManager::runAttended() {
 	quitGame();
 }
 
+void GameManager::runAlgorithmGame() {
+	while (settingsGenerator.moreSettings())
+		startMatch(settingsGenerator.getNextSettings(false, ++_round));
+	showFinalResults(UserA, UserB, settingsGenerator.isQuiet());
+}
 void GameManager::setUserNames() {
 	string user_A_name, user_B_name;
 	clearScreen();
@@ -111,7 +123,7 @@ void GameManager::startMatch(const GameSettings &settings, MenuOptions GameType)
 
 	if (settings.isQuiet())
 		showMatchResults(_round, match.getLastClock(), matchOutput);
-	else if (!settings.isAttended())
+	else if (settings.getGameType() != GameType::Attended)
 		Sleep(50 * settings.getDelay());
 }
 void GameManager::startAttendedMatch(MenuOptions GameType) {
@@ -130,6 +142,6 @@ void GameManager::quitGame()
 GameManager::GameManager(GameSettingsGenerator settingsGeneator)
 	: settingsGenerator(settingsGeneator), recording(false), gameMenu(), _round(0), UserA("A"), UserB("B") 
 {
-	if (settingsGenerator.isAttended())
+	if (settingsGenerator.getGameType() == GameType::Attended)
 		buildMenu();
 }

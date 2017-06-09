@@ -27,11 +27,11 @@ class GameSettingsGenerator {
 	int _numSettings;
 public:
 	GameSettingsGenerator(const BasicSettings& baseSettings);
-	bool isAttended() const { return _baseSettings.getInputOptions() == InputOptions::Keyboard; }
 	GameSettings getNextSettings(bool recording, int round = 0);
 	bool moreSettings() const { return _currentBoardIndex < _numSettings; }
 	bool isQuiet() const { return _baseSettings.isQuiet(); }
 	int getNumSettings() const { return _numSettings; }
+	GameType getGameType();
 private:
 	std::string getAvailableOutputFileName(int round);
 	std::string getNextMoveFile(int& currMoveFileIndex, 

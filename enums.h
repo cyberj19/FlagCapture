@@ -6,6 +6,12 @@ enum class MenuOptions {
 	EXIT_MENU = 9
 };
 
+enum class GameType {
+	Attended,
+	FileGame,
+	AlgorithmGame
+};
+
 enum class SubMenuOptions { NO_CHOICE = 0, CONTINUE_GAME = 1, RESTART_GAME = 2, MAIN_MENU = 8, EXIT_GAME = 9 };
 
 enum class MatchStage { START, INIT_DRAW, RUNNING, SUB_MENU, GAME_OVER };
@@ -24,6 +30,6 @@ enum class CellType { EMPTY, FOREST, SEA, FLAG_A, FLAG_B };
 
 enum class BoardOptions { FromFile, Randomized };
 
-enum class InputOptions { FromFile, Keyboard };
+enum class InputOptions { FromFile, Keyboard, Algorithm };
 
 enum class errorMsg { WRONG_TOOL_PLAYER_A, WRONG_TOOL_PLAYER_B, WRONG_CHAR };

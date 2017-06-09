@@ -3,7 +3,7 @@
 #include "enums.h"
 #include "GameSettings.h"
 #include "Menu.h"
-
+#include "AbstractPlayer.h"
 class State;
 class Controller;
 class Graphics;

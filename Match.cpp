@@ -40,11 +40,11 @@ bool Match::load(GameSettings settings) {
 
 	const StateProxy proxyForPlayerA = StateProxy(state, Player::A);
 	const StateProxy proxyForPlayerB = StateProxy(state, Player::B);
-	playerA = new AlgorithmPlayer();
+	/*playerA = new AlgorithmPlayer();
 	playerA->init(proxyForPlayerA);
 	playerB = new KeyboardPlayer();
 	playerB->init(proxyForPlayerB);
-
+	*/
 	//controller = new Controller(state, _settings); - מיותר
 
 	if (!_settings.isQuiet()) {
@@ -97,7 +97,7 @@ MatchOutput Match::Play()
 
 void Match::handleRunning() 
 {
-	Input input = controller->getInput();
+	/*Input input = controller->getInput();
 	if (input.getAction() == Action::ESC) {
 		stage = MatchStage::SUB_MENU;
 		return;
@@ -114,7 +114,7 @@ void Match::handleRunning()
 		stage = MatchStage::GAME_OVER;
 		lastSubMenuChoice = SubMenuOptions::EXIT_GAME;
 	}
-		
+		*/
 }
 
 void Match::handleSubMenu()
@@ -138,9 +138,9 @@ void Match::handleSubMenu()
 
 void Match::handleStart()
 {
-	state->reset();
+	/*state->reset();
 	controller->clearBuffer();
-	stage = MatchStage::INIT_DRAW;
+	stage = MatchStage::INIT_DRAW;*/
 }
 
 void Match::initDraw()
@@ -154,7 +154,7 @@ void Match::initDraw()
 
 
 MatchOutput Match::handleEndGame() {
-	controller->clearBuffer();
+	/*controller->clearBuffer();
 	if (lastSubMenuChoice == SubMenuOptions::EXIT_GAME)
 		return MatchOutput::QUIT_GAME;
 	else if (lastSubMenuChoice == SubMenuOptions::MAIN_MENU)
@@ -166,7 +166,8 @@ MatchOutput Match::handleEndGame() {
 			return MatchOutput::WINNER_A;
 		else
 			return MatchOutput::WINNER_B;
-	}
+	}*/
+	return MatchOutput::WINNER_A;
 }
 
 void writeToFile(string str, string file) {

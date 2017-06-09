@@ -1,78 +1,61 @@
 #include "BasicSettings.h"
 #include <iostream>
+#include "Utils.h"
 using namespace std;
 
 BasicSettings::BasicSettings(const BasicSettings& s) : 
-	_boardOptions(s._boardOptions), _inputOptions(s._inputOptions),
+	_boardOptions(s._boardOptions), _numRounds(s._numRounds),
+	_inputOptionsA(s._inputOptionsA), _inputOptionsB(s._inputOptionsB),
 	_path(s._path), _quiet(s._quiet), _delay(s._delay)
 {}
 
-
-void BasicSettings::showErrors() const{
-	for (const string& error : errors)
-		cout << error << endl;
+bool isKnownParam(string param) {
+	return	param == "-path" ||
+			param == "-quiet" ||
+			param == "-board" ||
+			param == "-delay" ||
+			param == "-moves";
 }
 
+bool isParam(string str) {
+	return str[0] == '-';
+}
 map<string, string> BasicSettings::generateCommandMap(int argc, char* argv[]) {
 	map<string, string> commandMap = map<string, string>();
+
 
 	for (int i = 1; i < argc;) {
 		string param(""), value("");
 		param = argv[i++];
 
-		if (param[0] != '-') {
-			argWithoutParamError(param);
-			break;
+		if (!isParam(param))
+			throw "Not a param name: " + param;
+		if (!isKnownParam(param))
+			throw "Unknown param: " + param;
+		if (commandMap.find(param) != commandMap.end())
+			throw "Duplicate param: " + param;
+		for (; i < argc && !isParam(argv[i]); i++) {
+			value += argv[i];
+			value += ',';
 		}
-
-		if (param != "-path" && param != "-quiet" && param != "-board" &&
-			param != "-delay" && param != "-moves") {
-			unknownParamError(param);
-			break;
-		}
-
-		if (commandMap.find(param) != commandMap.end()) {
-			duplicateValueError(param);
-			break;
-		}
-
-		if (i == argc && param != "-quiet") {
-			noValueError(param);
-			break;
-		}
-
-		// value after -quiet is illegal
-		if (param == "-quiet" && 
-			i < argc && argv[i][0] != '-') {
-			illegalValueError("-quiet", argv[i]);
-			break;
-		}
-
-		value = param == "-quiet" ? "" : argv[i++];
-		//param after param
-		if (value[0] == '-') {
-			noValueError(param);
-			break;
-		}
-
+		if (value.length() > 0)
+			value.pop_back();
 		commandMap[param] = value;
 	}
 	return commandMap;
 }
 
-BasicSettings::BasicSettings(int argc, char * argv[]){
+BasicSettings::BasicSettings(int argc, char * argv[]) {
 	map<string, string> commandMap = generateCommandMap(argc, argv);
-	if (!errors.empty()) return;
-
 	auto none = commandMap.end();
 
 	if (commandMap.find("-path") != none)
 		parsePathArgument(commandMap["-path"]);
 	else
 		_path = string("");
-	
+
 	if (commandMap.find("-quiet") != none)
-		_quiet = true;
+		parseQuietArgument(commandMap["-quiet"]);
 	else
 		_quiet = false;
 
@@ -87,37 +70,61 @@ BasicSettings::BasicSettings(int argc, char * argv[]){
 		_boardOptions = BoardOptions::Randomized;
 
 	if (commandMap.find("-moves") != none)
-		parseMovesArgument(commandMap["-moves"]);
-	else
-		_inputOptions = InputOptions::Keyboard;
+		parseInputArgument(commandMap["-moves"]);
+	else {
+		_inputOptionsA = InputOptions::Algorithm;
+		_inputOptionsB = InputOptions::Algorithm;
+	}
 }
-
-
+BoardOptions parseBoardOption(const std::string& opt) {
+	if (opt == "f") return BoardOptions::FromFile;
+	if (opt == "r") return BoardOptions::Randomized;
+	throw "Illegal board option " + opt;
+}
 void BasicSettings::parseBoardArgument(const std::string& value) {
-	if (value == "f")
-		_boardOptions = BoardOptions::FromFile;
-	else if (value == "r")
-		_boardOptions = BoardOptions::Randomized;
-	else
-		illegalValueError("Board", value);
+	vector<string> values = verifyNumOptions("board", value, 1, 2);
+	_boardOptions = parseBoardOption(values[0]);
+	if (values.size() == 2)
+		_numRounds = stoi(values[1]);
 }
 
-void BasicSettings::parseMovesArgument(const std::string& value) {
-	if (value == "f")
-		_inputOptions = InputOptions::FromFile;
-	else if (value == "k")
-		_inputOptions = InputOptions::Keyboard;
-	else
-		illegalValueError("Moves", value);
+InputOptions parseInputOption(const char opt) {
+	if (opt == 'f') return InputOptions::FromFile;
+	if (opt == 'k') return InputOptions::Keyboard;
+	if (opt == 'a') return InputOptions::Algorithm;
+	throw "Unknown input option " + opt;
+}
+
+void BasicSettings::parseInputArgument(const std::string& value) {
+	verifyNumOptions("moves", value);
+	char first, second;
+	if (value.length() == 1) {
+		first = second = value[0];
+	}
+	else if (value.length() == 2) {
+		first = value[0];
+		second = value[1];
+	}
+	else throw "Moves option cannot have more than 3 charactes";
+
+	_inputOptionsA = parseInputOption(first);
+	_inputOptionsB = parseInputOption(second);
+}
+
+void BasicSettings::parseQuietArgument(const std::string & value)
+{
+	verifyNumOptions("quiet", value, 0, 0);
+	_quiet = true;
 }
 
 void BasicSettings::parsePathArgument(const std::string& value) {
+	verifyNumOptions("path", value);
 	_path = value;
 
 	// strip "
 	if (_path.front() == '\"' || _path.back() == '\"') {
 		if (_path.back() != _path.front())
-			illegalValueError("Path", _path);
+			throw "Illegal value for path argument: " + value;
 		else {
 			_path.pop_back();
 			_path.erase(0, 1);
@@ -128,25 +135,22 @@ void BasicSettings::parsePathArgument(const std::string& value) {
 }
 
 void BasicSettings::parseDelayArgument(const std::string& value) {
-	_delay = atoi(value.c_str());
+	verifyNumOptions("delay", value);
+	_delay = stoi(value);
 }
 
-void BasicSettings::noValueError(string param) {
-	errors.push_back(param + " parameter was declared but supplied no value");
-}
+vector<string> verifyNumOptions(const std::string& argName, 
+	const std::string& value, 
+	int minOptions, int maxOptions) {
 
-void BasicSettings::duplicateValueError(string param) {
-	errors.push_back(param + " parameter was supplied with duplicate values");
-}
-
-void BasicSettings::illegalValueError(string param, string value) {
-	errors.push_back(param + " was supplied an illegal value \'" + value + "\'");
-}
-
-void BasicSettings::unknownParamError(string param) {
-	errors.push_back("Unknown parameter with name " + param);
-}
-
-void BasicSettings::argWithoutParamError(std::string value) {
-	errors.push_back("Argument " + value + " was supplied without a param name");
+	if (minOptions > 0 && value == "")
+		throw "No value was passed to " + argName + " argument";
+	if (minOptions == 0 && maxOptions == 0 && value != "")
+		throw "Too many options were passed to " + argName + " argument";
+	vector<string> values = split(value, ",");
+	if (values.size() < minOptions)
+		throw "Not enough options were passed to " + argName + " argument";
+	else if (values.size() > maxOptions)
+		throw "Too many options were passed to " + argName + " argument";
+	return values;
 }

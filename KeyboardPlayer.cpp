@@ -12,8 +12,9 @@ void KeyboardPlayer::processKey(char key, bool storeDiscarded) {
 	}
 	else if (idx < 3) // first 3 chars of layout are soldier selection
 	{
+		if (_layout[idx] != _selectedSoldier)
+			_selectedMove = -1;
 		_selectedSoldier = _layout[idx];
-		_selectedMove = -1;
 	}
 	else // last 4 chars of layout are dir selection
 		_selectedMove = idx - 3;

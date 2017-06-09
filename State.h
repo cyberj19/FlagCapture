@@ -26,9 +26,8 @@ public:
 	Player winner;
 	bool isFinished;
 	bool anyMoving();
-	void step();
+	void step(GameMove move);
 	void reset();
-	void control(Input input);
 	int getClock() const { return clock; }
 
 	void updateBoardSoldierMoved(Position source, Position dest);

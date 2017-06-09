@@ -24,8 +24,7 @@ class Soldier {
 public:
 	Soldier();
 	Soldier(State *state, Player player, SoldierType type, Position pos);
-	void control(Input input);
-	void step();
+	void step(GameMove move);
 	Position nextPosition();
 
 	void setCurrentPosition(int x, int y) { _currentPosition.setX(x);  _currentPosition.setY(y); }
@@ -37,19 +36,15 @@ public:
 	bool isMoving() const { return _moving && (_dir_x != 0 || _dir_y != 0); }
 	int getId() const;
 private:
-	void stepLogic();
 	Soldier& battleWinner(Soldier & Attacker, Soldier & Defender, Position & battleCell);
 	
-	void attack(Soldier& Defender);
+	bool attack(Soldier& Defender);
 	void die();
-	void move();
+	void move(Position targ);
 	void stop() { _dir_x = 0; _dir_y = 0; }
-	void win(Player player);
+	void win(Position targ);
 
 	bool canMoveInSea();
 	bool canMoveInForest();
 	bool isMyTurn();
-
-
-	void parseAction(Action action);
 };

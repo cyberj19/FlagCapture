@@ -1,30 +1,52 @@
 #include "KeyboardPlayer.h"
+using namespace std;
 
+queue<char> KeyboardPlayer::discarded = queue<char>();
 
+void KeyboardPlayer::processKey(char key, bool storeDiscarded) {
+	int idx = _layout.find(key);
+
+	if (idx == string::npos) {
+		if (storeDiscarded)
+			discarded.push(key);
+	}
+	else if (idx < 3) // first 3 chars of layout are soldier selection
+	{
+		_selectedSoldier = _layout[idx];
+		_selectedMove = -1;
+	}
+	else // last 4 chars of layout are dir selection
+		_selectedMove = idx - 3;
+}
 GameMove KeyboardPlayer::play(const GameMove & opponentsMove)
 {
-	while (_kbhit()) {
-		char ch = _getch();
-		int idx = _layout.find(ch);
-		
-		if (idx == string::npos)
-			continue;
-		else if (idx < 3) // first 3 chars of layout are soldier selection
-			_selectedSoldier = _layout[idx];
-		else // last 4 chars of layout are dir selection
-			_selectedMove = idx - 3;
+	while (!discarded.empty()) {
+		processKey(discarded.front(), false);
+		discarded.pop();
 	}
-	
-	int from_x, from_y, to_x, to_y;
-	for (int y = 1; y < _board->rows; y++) {
-		for (int x = 1; x < _board->cols; x++) {
-			if (_selectedSoldier == _board->charAt(x, y)) {
+	while (_kbhit()) {
+		processKey(_getch(), true);
+	}
+
+	if (_selectedSoldier == -1)
+		return GameMove(0, 0, 0, 0);
+
+	int from_x = 0, from_y = 0, to_x = 0, to_y = 0;
+	for (int y = 1; y <= _board->rows; y++) {
+		for (int x = 1; x <= _board->cols; x++) {
+			char bchar = _board->charAt(x, y);
+			if (_selectedSoldier == bchar) {
 				to_x = from_x = x;
 				to_y = from_y = y;
+				break;
 			}
 		}
 	}
 
+	if (_selectedMove == -1)
+		return GameMove(0, 0, 0, 0);
+	if (from_x == 0 || from_y == 0 || to_x == 0 || to_y == 0)
+		return GameMove(0, 0, 0, 0);
 	switch (_selectedMove) {
 	case 0:
 		to_y--; break;

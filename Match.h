@@ -4,16 +4,17 @@
 #include "GameSettings.h"
 #include "Menu.h"
 #include "AbstractPlayer.h"
+
 class State;
-class Controller;
+class FilePlayer;
 class Graphics;
 
 class Match{
 	Graphics *graphics;
-	//Controller *controller;
 	AbstractPlayer *playerA, *playerB;
+	BoardData *proxyA, *proxyB;
 	State *state;
-
+	GameMove lastMove = GameMove(0, 0, 0, 0);
 	GameSettings _settings;
 
 	bool error;
@@ -38,4 +39,5 @@ private:
 	MatchOutput handleEndGame();
 	void saveMatch();
 	void buildSubMenu();
+	void applyLastMove();
 };

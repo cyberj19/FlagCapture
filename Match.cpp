@@ -3,9 +3,6 @@
 #include<stdio.h>
 #include "Utils.h"
 #include "Graphics.h"
-//#include "Controller.h"
-#include "AlgorithmPlayer.h"
-#include "KeyboardPlayer.h"
 #include "StateProxy.h"
 #include "State.h"
 #include <iostream>
@@ -17,12 +14,11 @@ using namespace std;
 Match::Match()
 	: 
 	_settings(),
-	stage(MatchStage::INIT_DRAW), 
+	stage(MatchStage::START), 
 	subMenu(),
 	_errors(),
 	error(false),
 	state(nullptr),
-	//controller(nullptr),
 	graphics(nullptr)
 {
 }
@@ -37,16 +33,13 @@ bool Match::load(GameSettings settings) {
 	}
 
 	state = new State(_settings, config);
+	proxyA = new StateProxy(state, Player::A);
+	proxyB = new StateProxy(state, Player::B);
 
-	const StateProxy proxyForPlayerA = StateProxy(state, Player::A);
-	const StateProxy proxyForPlayerB = StateProxy(state, Player::B);
-	/*playerA = new AlgorithmPlayer();
-	playerA->init(proxyForPlayerA);
-	playerB = new KeyboardPlayer();
-	playerB->init(proxyForPlayerB);
-	*/
-	//controller = new Controller(state, _settings); - מיותר
-
+	playerA = _settings.getPlayerA();
+	playerA->init(*proxyA);
+	playerB = _settings.getPlayerB();
+	playerB->init(*proxyB);
 	if (!_settings.isQuiet()) {
 		graphics = new Graphics(state, _settings.isRecording());
 		buildSubMenu();
@@ -67,13 +60,16 @@ Match::~Match() {
 		delete playerA;
 	if (playerB != nullptr)
 		delete playerB;
+	if (proxyA != nullptr)
+		delete proxyA;
+	if (proxyB != nullptr)
+		delete proxyB;
 	if (state != nullptr)
 		delete state;	
 }
 
 MatchOutput Match::Play()
 {
-	if (error) return MatchOutput::MATCH_TERMINATED;
 	while (true) {
 		switch (stage) {
 		case MatchStage::START:
@@ -95,26 +91,33 @@ MatchOutput Match::Play()
 	}
 }
 
+void Match::applyLastMove() {
+	state->step(lastMove);
+	if (!_settings.isQuiet())
+	{
+		Sleep(_settings.getDelay());
+		graphics->render();
+	}
+}
 void Match::handleRunning() 
 {
-	/*Input input = controller->getInput();
-	if (input.getAction() == Action::ESC) {
-		stage = MatchStage::SUB_MENU;
-		return;
-	}
-	state->step();
-	Sleep(_settings.getDelay());
-
-	if (!_settings.isQuiet())
-		graphics->render();
+	lastMove = playerA->play(lastMove);
+	applyLastMove();
 
 	if (state->isFinished)
+	{
 		stage = MatchStage::GAME_OVER;
-	else if (controller->eof() && !state->anyMoving()) {
-		stage = MatchStage::GAME_OVER;
-		lastSubMenuChoice = SubMenuOptions::EXIT_GAME;
+		return;
 	}
-		*/
+
+	lastMove = playerB->play(lastMove);
+	applyLastMove();
+
+	if (state->isFinished)
+	{
+		stage = MatchStage::GAME_OVER;
+		return;
+	}
 }
 
 void Match::handleSubMenu()
@@ -138,9 +141,8 @@ void Match::handleSubMenu()
 
 void Match::handleStart()
 {
-	/*state->reset();
-	controller->clearBuffer();
-	stage = MatchStage::INIT_DRAW;*/
+	state->reset();
+	stage = MatchStage::INIT_DRAW;
 }
 
 void Match::initDraw()
@@ -154,7 +156,6 @@ void Match::initDraw()
 
 
 MatchOutput Match::handleEndGame() {
-	/*controller->clearBuffer();
 	if (lastSubMenuChoice == SubMenuOptions::EXIT_GAME)
 		return MatchOutput::QUIT_GAME;
 	else if (lastSubMenuChoice == SubMenuOptions::MAIN_MENU)
@@ -166,7 +167,7 @@ MatchOutput Match::handleEndGame() {
 			return MatchOutput::WINNER_A;
 		else
 			return MatchOutput::WINNER_B;
-	}*/
+	}
 	return MatchOutput::WINNER_A;
 }
 

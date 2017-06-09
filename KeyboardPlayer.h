@@ -7,11 +7,12 @@
 #include<string>
 #include "Utils.h"
 #include "AbstractPlayer.h"
-
+#include <queue>
 
 class State;
 
 class KeyboardPlayer : public AbstractPlayer {
+	static std::queue<char> discarded;
 	std::string _layout;
 	int _selectedSoldier, _selectedMove;
 	bool _recording;
@@ -27,5 +28,9 @@ public:
 	virtual GameMove play(const GameMove& opponentsMove);
 	virtual string getName() const { return "KeyboardPlayer"; }
 
-	KeyboardPlayer(const GameSettings& settings) : _settings(settings) {}
+	KeyboardPlayer(const GameSettings& settings) : 
+		_settings(settings),
+		_selectedSoldier(-1), _selectedMove(-1){}
+private:
+	void processKey(char key, bool storeDiscarded);
 };

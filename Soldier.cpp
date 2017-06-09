@@ -17,37 +17,6 @@ Position Soldier::nextPosition()
 	return nextPos;
 }
 
-void Soldier::control(Input input) {
-	if (input.getPlayer() != _player) return;
-	
-	Action action = input.getAction();
-	if (action == Action::CHOOSE1)
-		_moving = _type == SoldierType::S1;
-	else if (action == Action::CHOOSE2)
-		_moving = _type == SoldierType::S2;
-	else if (action == Action::CHOOSE3)
-		_moving = _type == SoldierType::S3;
-	else if (_moving) {
-		parseAction(action);
-	}
-}
-
-void Soldier::parseAction(Action action) {
-	int _old_dir_x = _dir_x;
-	int _old_dir_y = _dir_y;
-
-	_dir_x = _dir_y = 0;
-	switch (action) {
-	case Action::UP: _dir_y = -1; break;
-	case Action::DOWN: _dir_y = 1; break;
-	case Action::LEFT: _dir_x = -1; break;
-	case Action::RIGHT: _dir_x = 1; break;
-	}
-
-	if (_dir_x != _old_dir_x || _dir_y != _old_dir_y)
-		state->recordAction(getId(), action);
-}
-
 bool Soldier::isMyTurn() {
 	if (state->getClock() % 2 == 1 && _player == Player::A)
 		return true;
@@ -78,10 +47,42 @@ int Soldier::getId() const
 
 	return id;
 }
-void Soldier::step()
+void Soldier::step(GameMove gameMove)
 {
-	if (!isMoving() || !isAlive() || !isMyTurn()) return;
-	stepLogic();
+	if (!isAlive()) return; 
+	Position nextPos(gameMove.to_x - 1, gameMove.to_y - 1);
+	if (nextPos.getX() >= Board::Cols || nextPos.getX() < 0
+		|| nextPos.getY() >= Board::Rows || nextPos.getY() < 0) {
+		stop();
+		return;
+	}
+	Cell nextCell = state->getCell(nextPos);
+	CellType cellType = nextCell.getType();
+	if (cellType == CellType::FLAG_A) {
+		if (_player == Player::B) win(nextPos);
+		else stop();
+	}
+	else if (cellType == CellType::FLAG_B) {
+		if (_player == Player::A) win(nextPos);
+		else stop();
+	}
+	else if (cellType == CellType::FOREST && !canMoveInForest())
+		stop();
+	else if (cellType == CellType::SEA && !canMoveInSea())
+		stop();
+	else {
+		Soldier* cellSoldier = nextCell.getSoldier();
+		if (cellSoldier == nullptr) 
+			move(nextPos);
+		else if (cellSoldier->_player == _player) 
+			stop();
+		else if (attack(*cellSoldier)) {
+			cellSoldier->die();
+			move(nextPos);
+		}
+		else
+			die();
+	}
 }
 
 bool Soldier::canMoveInSea() {
@@ -93,39 +94,9 @@ bool Soldier::canMoveInForest() {
 	if (_player == Player::A) return _type == SoldierType::S2 || _type == SoldierType::S3;
 	else return _type == SoldierType::S1 || _type == SoldierType::S3;
 }
-void Soldier::stepLogic()
-{
-	Position nextPos = this->nextPosition();
-	if (nextPos.getX() >= Board::Cols || nextPos.getX() < 0 
-		|| nextPos.getY() >= Board::Rows || nextPos.getY() < 0) {
-		stop(); 
-		return;
-	}
-	Cell nextCell = state->getCell(nextPos);
-	CellType cellType = nextCell.getType();
-	if (cellType == CellType::FLAG_A ) {
-		if (_player == Player::B) win(_player);
-		else stop();
-	}
-	else if (cellType == CellType::FLAG_B) {
-		if (_player == Player::A) win(_player);
-		else stop();
-	}
-	else if (cellType == CellType::FOREST && !canMoveInForest())
-		stop();
-	else if (cellType == CellType::SEA && !canMoveInSea())
-		stop();
-	else {
-		Soldier* cellSoldier = nextCell.getSoldier();
-		if (cellSoldier == nullptr) move(); 
-		else if (cellSoldier->_player == _player) stop();
-		else attack(*cellSoldier);
-	}
-}
-
-void Soldier::win(Player player) {
-	move();
-	state->winner = player;
+void Soldier::win(Position nextPos) {
+	move(nextPos);
+	state->winner = _player;
 	state->isFinished = true;
 }
 
@@ -152,18 +123,12 @@ Soldier & Soldier::battleWinner(Soldier & Attacker, Soldier & Defender, Position
 	}	
 }
 
-void Soldier::attack(Soldier & Defender)
+bool Soldier::attack(Soldier & Defender)
 {
 	Position battleCell;
 	battleCell = Defender.getCurrentPosition();
 	Soldier& winner = battleWinner(*this, Defender, battleCell);
-	if (winner._player == _player) {
-		Defender.die();
-		move();
-	}
-	else {
-		die();
-	}
+	return winner._player == _player;
 }
 
 void Soldier::die()
@@ -173,11 +138,10 @@ void Soldier::die()
 	status = SoldierStatus::DEAD; 
 }
 
-void Soldier::move()
+void Soldier::move(Position targ)
 {
-	Position nextPos = nextPosition();
-	state->updateBoardSoldierMoved(_currentPosition, nextPos);
-	_currentPosition = nextPos;
+	state->updateBoardSoldierMoved(_currentPosition, targ);
+	_currentPosition = targ;
 }
 
 bool isMatchLines(int myLine, int startLine, int stopLine) {

@@ -100,27 +100,12 @@ bool State::anyMoving()
 	return false;
 }
 
-void State::step()
+void State::step(GameMove move)
 {
 	clock++;
-	for (auto& soldier : soldiersA) {
-		soldier.step();
-	}
-
-	for (auto& soldier : soldiersB) {
-		soldier.step();
-	}
-}
-
-void State::control(Input input)
-{
-	for (auto& soldier : soldiersA) {
-		soldier.control(input);
-	}
-
-	for (auto& soldier : soldiersB) {
-		soldier.control(input);
-	}
+	if (move.from_x == 0 || move.from_y == 0 || move.to_x == 0 || move.to_y == 0)
+		return;
+	getCell(move.from_x - 1, move.from_y - 1).getSoldier()->step(move);
 }
 
 void State::updateBoardSoldierMoved(Position source, Position dest)

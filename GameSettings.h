@@ -13,9 +13,6 @@ class GameSettings {
 
 	std::string _movesAInputFilePath;
 	std::string _movesBInputFilePath;
-	
-	AlgorithmPlayer* AlgorithmA;
-	AlgorithmPlayer* AlgorithmB;
 
 	BoardOptions _boardOptions;
 	std::string _boardInputFilePath;
@@ -29,26 +26,7 @@ class GameSettings {
 	bool _quiet;
 	GameType _gameType;
 public:
-	GameSettings& operator =(const GameSettings &settings) {
-		_delay = settings._delay;
-		_quiet = settings._quiet;
-		_gameType = settings._gameType;
-
-		_movesOptionsA = settings._movesOptionsA;
-		_movesOptionsB = settings._movesOptionsB;
-		_movesAInputFilePath = settings._movesAInputFilePath;
-		_movesBInputFilePath = settings._movesBInputFilePath;
-
-		_boardOptions = settings._boardOptions;
-		_boardInputFilePath = settings._boardInputFilePath;
-
-		_recording = settings._recording;
-		_movesAOutputFilePath = settings._movesAOutputFilePath;
-		_movesBOutputFilePath = settings._movesBOutputFilePath;
-		_boardOutputFilePath = settings._boardOutputFilePath;
-
-		return *this;
-	}
+	GameSettings& operator =(const GameSettings &settings);
 
 	GameSettings(int delay = 100, bool quiet = false, 
 		GameType gameType = GameType::Attended)
@@ -105,4 +83,7 @@ public:
 
 	const int getDelay() const { return _delay; }
 	const bool isQuiet() const { return _quiet; }
+
+	AbstractPlayer* getPlayerA() const;
+	AbstractPlayer* getPlayerB() const;
 };

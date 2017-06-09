@@ -76,17 +76,9 @@ GameSettings GameSettingsGenerator::getNextSettings(bool recording, int round) {
 	if (_baseSettings.getInputOptionsA() == InputOptions::FromFile)
 		settings.setMovesInputFileA(
 			getNextMoveFile(_currentMovesAIndex, _movesAFileNames));
-	else if (_baseSettings.getInputOptionsA() == InputOptions::Algorithm)
-	{
-	}//settings.setAlgorithmA(AlgorithmRegistration::getAlgorithm());
-
 	if (_baseSettings.getInputOptionsB() == InputOptions::FromFile)
 		settings.setMovesInputFileB(
 			getNextMoveFile(_currentMovesBIndex, _movesBFileNames));
-	else if (_baseSettings.getInputOptionsB() == InputOptions::Algorithm)
-	{
-	}//settings.setAlgorithmB(AlgorithmRegistration::getAlgorithm());
-
 	if (recording) {
 		string fname = getAvailableOutputFileName(round);
 		settings.setRecordingOutputFiles(fname + "." + boardFileExtension,

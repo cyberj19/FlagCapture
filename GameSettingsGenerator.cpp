@@ -117,7 +117,7 @@ std::string GameSettingsGenerator::getAvailableOutputFileName(int round) {
 string GameSettingsGenerator::getNextMoveFile(int& currMoveFileIndex, 
 	const std::vector<std::string>& moveFileNames)
 {
-	// find next move file which's name matches the current board file
+	// find next move file which's name matches the current _board file
 	string ref = stripExtension(_boardFileNames[_currentBoardIndex]);
 	for (; currMoveFileIndex < moveFileNames.size(); currMoveFileIndex++) {
 		string curr = stripExtension(moveFileNames[currMoveFileIndex]);

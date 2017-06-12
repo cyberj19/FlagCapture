@@ -19,7 +19,8 @@ Match::Match()
 	_errors(),
 	error(false),
 	state(nullptr),
-	graphics(nullptr)
+	graphics(nullptr),
+	drawFlag(false)
 {
 }
 
@@ -37,9 +38,7 @@ bool Match::load(GameSettings settings) {
 	proxyB = new StateProxy(state, Player::B);
 
 	playerA = _settings.getPlayerA();
-	playerA->init(*proxyA);
 	playerB = _settings.getPlayerB();
-	playerB->init(*proxyB);
 	if (!_settings.isQuiet()) {
 		graphics = new Graphics(state, _settings.isRecording());
 		buildSubMenu();
@@ -113,6 +112,12 @@ void Match::handleRunning()
 	lastMove = playerB->play(lastMove);
 	applyLastMove();
 
+	if (state->getClock() == 1250) 
+	{
+		stage = MatchStage::GAME_OVER;
+		drawFlag = true;
+		return;
+	}
 	if (state->isFinished)
 	{
 		stage = MatchStage::GAME_OVER;
@@ -142,6 +147,8 @@ void Match::handleSubMenu()
 void Match::handleStart()
 {
 	state->reset();
+	playerA->init(*proxyA);
+	playerB->init(*proxyB);
 	stage = MatchStage::INIT_DRAW;
 }
 
@@ -163,6 +170,9 @@ MatchOutput Match::handleEndGame() {
 	else {
 		if (_settings.isRecording())
 			saveMatch();
+		if (drawFlag)
+			return MatchOutput::TIE;
+
 		if (state->winner == Player::A)
 			return MatchOutput::WINNER_A;
 		else

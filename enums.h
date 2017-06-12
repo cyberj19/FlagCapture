@@ -16,7 +16,7 @@ enum class SubMenuOptions { NO_CHOICE = 0, CONTINUE_GAME = 1, RESTART_GAME = 2, 
 
 enum class MatchStage { START, INIT_DRAW, RUNNING, SUB_MENU, GAME_OVER };
 
-enum class MatchOutput { WINNER_A, WINNER_B, MATCH_TERMINATED, QUIT_GAME };
+enum class MatchOutput { WINNER_A, WINNER_B, TIE, MATCH_TERMINATED, QUIT_GAME };
 
 enum class Player { A=1, B=2, NONE };
 

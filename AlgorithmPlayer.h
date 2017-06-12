@@ -1,8 +1,7 @@
 #pragma once
+#include "AlgorithmRegistration.h"
 #include "AbstractPlayer.h"
 #include "enums.h"
-#include "AlgorithmRegistration.h"
-AlgorithmRegistration reg("Jac", []() {return new AlgorithmPlayer(); });
 enum class AlgorithmCell {
 	none,
 	me1, me2, me3, meFlag,
@@ -16,6 +15,9 @@ class AlgorithmPlayer : public AbstractPlayer {
 	AlgorithmCell *_background;
 	AlgorithmCell *_soldiers;
 	int _rows;
+
+	GameMove lastGameMove = GameMove(0, 0, 0, 0);
+	int s1x, s1y;
 public:
 	virtual void setPlayer(int player);
 	virtual string getName()const { return _name; }

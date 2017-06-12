@@ -28,6 +28,7 @@ public:
 
 void setColorByEntity(std::string entity);
 void announceWinner(string winner);
+void announceTie();
 void announceGameStopped();
 void printScoresHeader(User userA, User userB);
 void showErrors(vector<string> errors, bool isQuiet);

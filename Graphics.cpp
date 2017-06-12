@@ -69,6 +69,12 @@ void announceWinner(string winner)
 	Sleep(2000);
 }
 
+void announceTie() {
+	gotoxy(0, 29);
+	cout << "The match has ended in a tie" << endl;
+	Sleep(2000);
+}
+
 void announceGameStopped()
 {
 	gotoxy(0, 29);

@@ -4,17 +4,17 @@
 AbstractPlayer * GameSettings::getPlayerA() const
 {
 	AbstractPlayer *playerA;
-	if (_movesOptionsA == InputOptions::Keyboard)
-		playerA =  new KeyboardPlayer(*this);
+	if (_inputOptionA == InputOptions::Keyboard)
+		playerA = new KeyboardPlayer(*this);
 	else // Algorithm
-		playerA =  AlgorithmRegistration::nextAlgorithm();
+		playerA = new AlgorithmPlayer(); // AlgorithmRegistration::nextAlgorithm();
 	playerA->setPlayer(1);
 	return playerA;
 }
 AbstractPlayer * GameSettings::getPlayerB() const
 {
 	AbstractPlayer *playerB;
-	if (_movesOptionsB == InputOptions::Keyboard)
+	if (_inputOptionB == InputOptions::Keyboard)
 		playerB = new KeyboardPlayer(*this);
 	else // Algorithm
 		playerB = AlgorithmRegistration::nextAlgorithm();
@@ -27,8 +27,8 @@ GameSettings& GameSettings::operator =(const GameSettings &settings) {
 	_quiet = settings._quiet;
 	_gameType = settings._gameType;
 
-	_movesOptionsA = settings._movesOptionsA;
-	_movesOptionsB = settings._movesOptionsB;
+	_inputOptionA = settings._inputOptionA;
+	_inputOptionB = settings._inputOptionB;
 	_movesAInputFilePath = settings._movesAInputFilePath;
 	_movesBInputFilePath = settings._movesBInputFilePath;
 

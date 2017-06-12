@@ -16,7 +16,7 @@ class Match{
 	State *state;
 	GameMove lastMove = GameMove(0, 0, 0, 0);
 	GameSettings _settings;
-
+	bool drawFlag;
 	bool error;
 	std::vector<std::string> _errors;
 

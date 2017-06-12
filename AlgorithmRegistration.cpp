@@ -1,21 +1,19 @@
 #include "AlgorithmRegistration.h"
 using namespace std;
-
-vector<AbstractPlayer*> AlgorithmRegistration::algorithms =
-	vector<AbstractPlayer*>();
-
-int AlgorithmRegistration::currentAlgorithm = 0;
-
+map < string, function<AbstractPlayer*()>> 
+		AlgorithmRegistration::_generators;
+vector<string> AlgorithmRegistration::_names;
+int AlgorithmRegistration::_current = 0;
 
 AlgorithmRegistration::AlgorithmRegistration(std::string algorithmName,
-	std::function<AbstractPlayer*()> generator)
-{
-	algorithms.push_back(generator());
+	std::function<AbstractPlayer*()> generator) {
+//	_generators[algorithmName] = generator;
+//	_names.push_back(algorithmName);
 }
 
-AbstractPlayer * AlgorithmRegistration::nextAlgorithm()
-{
-	return algorithms[currentAlgorithm++];
-	if (currentAlgorithm == algorithms.size())
-		currentAlgorithm = 0;
+AbstractPlayer * AlgorithmRegistration::nextAlgorithm() {
+	AbstractPlayer* ret = _generators[_names[_current++]]();
+	if (_current == (int)_names.size())
+		_current = 0;
+	return ret;
 }

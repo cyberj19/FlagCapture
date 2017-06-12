@@ -1,5 +1,7 @@
 #include "AlgorithmPlayer.h"
 
+AlgorithmRegistration reg("Jac", []() {return new AlgorithmPlayer(); });
+
 AlgorithmCell& AlgorithmPlayer::sat(int x, int y) const {
 	return _soldiers[x - 1 + (y - 1)*_rows];
 }
@@ -20,7 +22,10 @@ void AlgorithmPlayer::parseBoardChar(int x, int y, char ch) {
 		sat(x, y) = AlgorithmCell::opx;
 	else {
 		int id = (ch - '0') % 6;
-		if (id == 1) sat(x, y) = AlgorithmCell::me1;
+		if (id == 1) {
+			sat(x, y) = AlgorithmCell::me1;
+			s1x = x; s1y = y;
+		}
 		else if (id == 2) sat(x, y) = AlgorithmCell::me2;
 		else sat(x, y) = AlgorithmCell::me3;
 	}
@@ -64,8 +69,7 @@ void AlgorithmPlayer::init(const BoardData & board)
 GameMove AlgorithmPlayer::play(const GameMove & opponentsMove)
 {
 	updateBoard(opponentsMove);
-	GameMove gameMove = GameMove(0, 0, 0, 0);
-
-	updateBoard(gameMove);
-	return gameMove;
+	updateBoard(lastGameMove);
+	lastGameMove = GameMove(s1x, s1y, s1x, s1y + 1);
+	return lastGameMove;
 }

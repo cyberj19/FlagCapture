@@ -105,7 +105,14 @@ void State::step(GameMove move)
 	clock++;
 	if (move.from_x == 0 || move.from_y == 0 || move.to_x == 0 || move.to_y == 0)
 		return;
-	getCell(move.from_x - 1, move.from_y - 1).getSoldier()->step(move);
+
+	int displacement = (move.to_x - move.from_x) + (move.to_y - move.from_y);
+	if (abs(displacement) > 1)
+		return;
+
+	Soldier *sold = getCell(move.from_x - 1, move.from_y - 1).getSoldier();
+	if (sold != nullptr)
+		sold->step(move);
 }
 
 void State::updateBoardSoldierMoved(Position source, Position dest)

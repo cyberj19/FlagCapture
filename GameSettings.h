@@ -8,8 +8,8 @@ class GameSettings {
 	const std::string _keyboardLayoutA = "123wxad";
 	const std::string _keyboardLayoutB = "789imjl";
 
-	InputOptions _movesOptionsA;
-	InputOptions _movesOptionsB;
+	InputOptions _inputOptionA;
+	InputOptions _inputOptionB;
 
 	std::string _movesAInputFilePath;
 	std::string _movesBInputFilePath;
@@ -31,8 +31,8 @@ public:
 	GameSettings(int delay = 100, bool quiet = false, 
 		GameType gameType = GameType::Attended)
 		: 
-		_movesOptionsA(InputOptions::Keyboard),
-		_movesOptionsB(InputOptions::Keyboard),
+		_inputOptionA(InputOptions::Keyboard),
+		_inputOptionB(InputOptions::Keyboard),
 		_boardOptions(BoardOptions::Randomized),
 		_recording(false),
 		_delay(delay), 
@@ -41,12 +41,12 @@ public:
 	{}
 
 	void setMovesInputFileA(const std::string& movesAInputFilePath) {
-		_movesOptionsA = InputOptions::FromFile;
+		_inputOptionA = InputOptions::FromFile;
 		_movesAInputFilePath = movesAInputFilePath;
 	}
 	
 	void setMovesInputFileB(const std::string& movesBInputFilePath) {
-		_movesOptionsB = InputOptions::FromFile;
+		_inputOptionB = InputOptions::FromFile;
 		_movesBInputFilePath = movesBInputFilePath;
 	}
 
@@ -68,8 +68,12 @@ public:
 	const std::string getKeyboardLayoutA() const { return _keyboardLayoutA; }
 	const std::string getKeyboardLayoutB() const { return _keyboardLayoutB; }
 
-	const InputOptions getMovesOptionsA() const { return _movesOptionsA; }
-	const InputOptions getMovesOptionsB() const { return _movesOptionsB; }
+	const InputOptions getInputOptionA() const { return _inputOptionA; }
+	const InputOptions getInputOptionB() const { return _inputOptionB; }
+
+	void setInputOptionA(InputOptions opt) { _inputOptionA = opt; }
+	void setInputOptionB(InputOptions opt) { _inputOptionB = opt; }
+
 	const std::string getMovesAInputFilePath() const { return _movesAInputFilePath; }
 	const std::string getMovesBInputFilePath() const { return _movesBInputFilePath; }
 

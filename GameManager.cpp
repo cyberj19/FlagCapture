@@ -113,6 +113,12 @@ void GameManager::startMatch(const GameSettings &settings, MenuOptions GameType)
 		announceGameStopped();
 	else if (matchOutput == MatchOutput::QUIT_GAME)
 		_lastChoice = MenuOptions::EXIT_MENU;
+	else if (matchOutput == MatchOutput::TIE) {
+		UserA.increaseScore();
+		UserB.increaseScore();
+		if (!settings.isQuiet())
+			announceTie();
+	}
 	else {
 		User &winnerUser = getWinningUser(GameType, matchOutput);
 		winnerUser.increaseScore();

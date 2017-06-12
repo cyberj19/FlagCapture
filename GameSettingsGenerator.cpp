@@ -33,7 +33,7 @@ bool doesFileExist(const std::string& name) {
 GameSettingsGenerator::GameSettingsGenerator(const BasicSettings& baseSettings)
 	: _baseSettings(baseSettings),
 	_boardFileNames(),
-	_movesAFileNames(),_movesBFileNames(),
+	_movesAFileNames(), _movesBFileNames(),
 	_currentBoardIndex(0), _currentMovesAIndex(0), _currentMovesBIndex(0),
 	_numSettings(0)
 {
@@ -48,9 +48,9 @@ GameSettingsGenerator::GameSettingsGenerator(const BasicSettings& baseSettings)
 			throw "No rounds were set for algorithm game";
 	}
 
-	if (baseSettings.getInputOptionsA() == InputOptions::FromFile)
+	if (baseSettings.getInputOptionA() == InputOptions::FromFile)
 		getFilesList(baseSettings.getPath(), movesAFileExtension, _movesAFileNames);
-	if (baseSettings.getInputOptionsB() == InputOptions::FromFile)
+	if (baseSettings.getInputOptionB() == InputOptions::FromFile)
 		getFilesList(baseSettings.getPath(), movesBFileExtension, _movesBFileNames);
 
 
@@ -73,12 +73,17 @@ GameSettings GameSettingsGenerator::getNextSettings(bool recording, int round) {
 	}
 
 
-	if (_baseSettings.getInputOptionsA() == InputOptions::FromFile)
-		settings.setMovesInputFileA(
-			getNextMoveFile(_currentMovesAIndex, _movesAFileNames));
-	if (_baseSettings.getInputOptionsB() == InputOptions::FromFile)
-		settings.setMovesInputFileB(
-			getNextMoveFile(_currentMovesBIndex, _movesBFileNames));
+	if (_baseSettings.getInputOptionA() == InputOptions::FromFile)
+		settings.setMovesInputFileA(getNextMoveFile(_currentMovesAIndex, _movesAFileNames));
+	else
+		settings.setInputOptionA(_baseSettings.getInputOptionA());
+
+	if (_baseSettings.getInputOptionB() == InputOptions::FromFile)
+		settings.setMovesInputFileB(getNextMoveFile(_currentMovesBIndex, _movesBFileNames));
+	else
+		settings.setInputOptionB(_baseSettings.getInputOptionB());
+
+
 	if (recording) {
 		string fname = getAvailableOutputFileName(round);
 		settings.setRecordingOutputFiles(fname + "." + boardFileExtension,
@@ -93,13 +98,13 @@ GameSettings GameSettingsGenerator::getNextSettings(bool recording, int round) {
 GameType GameSettingsGenerator::getGameType()
 {
 	//check is attended
-	if (_baseSettings.getInputOptionsA() == InputOptions::Keyboard
-		|| _baseSettings.getInputOptionsB() == InputOptions::Keyboard)
+	if (_baseSettings.getInputOptionA() == InputOptions::Keyboard
+		|| _baseSettings.getInputOptionB() == InputOptions::Keyboard)
 		return GameType::Attended;
 
 	//check if both algorithm
-	if (_baseSettings.getInputOptionsA() == InputOptions::Algorithm
-		&& _baseSettings.getInputOptionsB() == InputOptions::Algorithm)
+	if (_baseSettings.getInputOptionA() == InputOptions::Algorithm
+		&& _baseSettings.getInputOptionB() == InputOptions::Algorithm)
 		return GameType::AlgorithmGame;
 
 	return GameType();
@@ -119,7 +124,7 @@ string GameSettingsGenerator::getNextMoveFile(int& currMoveFileIndex,
 {
 	// find next move file which's name matches the current _board file
 	string ref = stripExtension(_boardFileNames[_currentBoardIndex]);
-	for (; currMoveFileIndex < moveFileNames.size(); currMoveFileIndex++) {
+	for (; currMoveFileIndex < (int) moveFileNames.size(); currMoveFileIndex++) {
 		string curr = stripExtension(moveFileNames[currMoveFileIndex]);
 
 		if (curr == ref)

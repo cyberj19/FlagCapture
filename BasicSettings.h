@@ -31,8 +31,8 @@ public:
 
 	BoardOptions getBoardOptions() const { return _boardOptions; }
 	int getNumRounds() const { return _numRounds; }
-	InputOptions getInputOptionsA() const { return _inputOptionsA; }
-	InputOptions getInputOptionsB() const { return _inputOptionsB; }
+	InputOptions getInputOptionA() const { return _inputOptionsA; }
+	InputOptions getInputOptionB() const { return _inputOptionsB; }
 
 	std::string getPath() const { return _path; }
 	bool hasErrors() const { return !errors.empty(); }

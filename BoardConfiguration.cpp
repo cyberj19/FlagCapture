@@ -150,7 +150,7 @@ void BoardConfiguration::generateErrors(string fileName) {
 }
 
 void BoardConfiguration::updatePositions(string line, int row) {
-	for (int col = 0; col < line.size(); ++col) {
+	for (int col = 0; col < (int) line.size(); ++col) {
 		char ch = line[col];
 		Position currentPosition = Position(col, row);
 		if (ch >= '1' && ch <= '3') {
@@ -190,7 +190,7 @@ void removeComment(string &str) {
 }
 
 void limitSize(string &str, int numChars) {
-	if (numChars > str.size()) 
+	if (numChars > (int) str.size()) 
 		str = str.substr(0, numChars);
 }
 string BoardConfiguration::readLineFromFile(ifstream &file) {

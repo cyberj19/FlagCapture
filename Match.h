@@ -39,5 +39,6 @@ private:
 	MatchOutput handleEndGame();
 	void saveMatch();
 	void buildSubMenu();
-	void applyLastMove();
+	void handleLastMove();
+	bool checkForEscape();
 };

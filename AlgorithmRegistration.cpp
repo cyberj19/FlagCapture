@@ -1,3 +1,4 @@
+#pragma init_seg(lib)
 #include "AlgorithmRegistration.h"
 using namespace std;
 map < string, function<AbstractPlayer*()>> 
@@ -7,8 +8,8 @@ int AlgorithmRegistration::_current = 0;
 
 AlgorithmRegistration::AlgorithmRegistration(std::string algorithmName,
 	std::function<AbstractPlayer*()> generator) {
-//	_generators[algorithmName] = generator;
-//	_names.push_back(algorithmName);
+	_generators[algorithmName] = generator;
+	_names.push_back(algorithmName);
 }
 
 AbstractPlayer * AlgorithmRegistration::nextAlgorithm() {

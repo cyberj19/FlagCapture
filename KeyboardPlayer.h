@@ -16,6 +16,7 @@ class KeyboardPlayer : public AbstractPlayer {
 	std::string _layout;
 	int _selectedSoldier, _selectedMove;
 	bool _recording;
+	bool _escape;
 	const GameSettings& _settings;
 	const BoardData* _board;
 public:
@@ -24,13 +25,13 @@ public:
 		_layout = player == 1 ?
 			_settings.getKeyboardLayoutA() : _settings.getKeyboardLayoutB();
 	}
-	virtual void init(const BoardData& board) { _board = &board; }
+	virtual void init(const BoardData& board);
 	virtual GameMove play(const GameMove& opponentsMove);
 	virtual string getName() const { return "KeyboardPlayer"; }
 
 	KeyboardPlayer(const GameSettings& settings) : 
 		_settings(settings),
-		_selectedSoldier(-1), _selectedMove(-1){}
+		_selectedSoldier(-1), _selectedMove(-1), _escape(false) {}
 private:
 	void processKey(char key, bool storeDiscarded);
 };

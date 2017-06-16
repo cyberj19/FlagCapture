@@ -65,11 +65,11 @@ string BoardConfiguration::getBoardString() const{
 }
 
 void BoardConfiguration::randomizeTeamsPositions(){
+	_flagBPosition = selectFreePositions(Position(0, 11), Position(12, 12), 1).front();
+	_flagAPosition = selectFreePositions(Position(0, 0), Position(12, 1), 1).front();
 	_soldierAPositions = selectFreePositions(Position(0, 0), Position(12, 5), 3);
 	_soldierBPositions = selectFreePositions(Position(0, 8), Position(12, 12), 3);
 
-	_flagBPosition = selectFreePositions(Position(0, 11), Position(12, 12), 1).front();
-	_flagAPosition = selectFreePositions(Position(0, 0), Position(12, 1), 1).front();
 }
 
 void BoardConfiguration::generateRandomPositions() {

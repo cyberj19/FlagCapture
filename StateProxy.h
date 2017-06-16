@@ -14,6 +14,8 @@ public:
 		if (soldier == nullptr) {
 			if (cell.getType() == CellType::FOREST) return 'T';
 			else if (cell.getType() == CellType::SEA) return 'S';
+			else if (cell.getType() == CellType::FLAG_A) return 'A';
+			else if (cell.getType() == CellType::FLAG_B) return 'B';
 			else return ' ';
 		}
 		else if (soldier->getPlayer() == _player) {

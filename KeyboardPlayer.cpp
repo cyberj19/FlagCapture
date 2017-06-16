@@ -4,6 +4,10 @@ using namespace std;
 queue<char> KeyboardPlayer::discarded = queue<char>();
 
 void KeyboardPlayer::processKey(char key, bool storeDiscarded) {
+	if (key == 27) {  //ESC
+		_escape = true;
+		return;
+	}
 	int idx = _layout.find(key);
 
 	if (idx == string::npos) {
@@ -19,6 +23,13 @@ void KeyboardPlayer::processKey(char key, bool storeDiscarded) {
 	else // last 4 chars of layout are dir selection
 		_selectedMove = idx - 3;
 }
+void KeyboardPlayer::init(const BoardData & board)
+{
+	_board = &board; 
+	while (_kbhit()) _getch();
+	_selectedSoldier = -1;
+	_selectedMove = -1;
+}
 GameMove KeyboardPlayer::play(const GameMove & opponentsMove)
 {
 	while (!discarded.empty()) {
@@ -29,6 +40,10 @@ GameMove KeyboardPlayer::play(const GameMove & opponentsMove)
 		processKey(_getch(), true);
 	}
 
+	if (_escape) {
+		_escape = false;
+		return GameMove(-1, -2, -3, -5);
+	}
 	if (_selectedSoldier == -1)
 		return GameMove(0, 0, 0, 0);
 

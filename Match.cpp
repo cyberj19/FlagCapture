@@ -90,7 +90,13 @@ MatchOutput Match::Play()
 	}
 }
 
-void Match::applyLastMove() {
+bool Match::checkForEscape() {
+	return (lastMove.from_x == -1 && lastMove.from_y == -2
+		&& lastMove.to_x == -3 && lastMove.to_y == -5);
+		
+}
+
+void Match::handleLastMove() {
 	state->step(lastMove);
 	if (!_settings.isQuiet())
 	{
@@ -98,10 +104,12 @@ void Match::applyLastMove() {
 		graphics->render();
 	}
 }
-void Match::handleRunning() 
+void Match::handleRunning()
 {
+	bool escape = false;
 	lastMove = playerA->play(lastMove);
-	applyLastMove();
+	escape = checkForEscape();
+	handleLastMove();
 
 	if (state->isFinished)
 	{
@@ -110,9 +118,10 @@ void Match::handleRunning()
 	}
 
 	lastMove = playerB->play(lastMove);
-	applyLastMove();
+	escape = escape || checkForEscape();
+	handleLastMove();
 
-	if (state->getClock() == 1250) 
+	if (state->getClock() == 1250)
 	{
 		stage = MatchStage::GAME_OVER;
 		drawFlag = true;
@@ -123,11 +132,16 @@ void Match::handleRunning()
 		stage = MatchStage::GAME_OVER;
 		return;
 	}
+	if (escape){
+		stage = MatchStage::SUB_MENU;
+		return;
+	}
+	
 }
 
 void Match::handleSubMenu()
 {
-	lastSubMenuChoice = (SubMenuOptions)showMenu(subMenu, Position(11, 5), 1, 9);	
+	lastSubMenuChoice = (SubMenuOptions)showMenu(subMenu, Position_203398664(11, 5), 1, 9);	
 	
 	switch (lastSubMenuChoice) {
 	case SubMenuOptions::CONTINUE_GAME:

@@ -7,7 +7,7 @@ AbstractPlayer * GameSettings::getPlayerA() const
 	if (_inputOptionA == InputOptions::Keyboard)
 		playerA = new KeyboardPlayer(*this);
 	else // Algorithm
-		playerA = new AlgorithmPlayer(); // AlgorithmRegistration::nextAlgorithm();
+		playerA = AlgorithmRegistration::nextAlgorithm();
 	playerA->setPlayer(1);
 	return playerA;
 }

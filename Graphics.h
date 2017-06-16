@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string>
 #include "State.h"
-#include "Position.h"
+#include "Position_203398664.h"
 #include "User.h"
 #include "Utils.h"
 
@@ -19,7 +19,7 @@ public:
 	Graphics(State* state, bool recording) 
 		: state(state), _recording(recording) {}
 	void render();
-	void renderChange(Position positionToChange);
+	void renderChange(Position_203398664 positionToChange);
 	void drawBoard();
 	void drawEnv();
 	void renderRecording();

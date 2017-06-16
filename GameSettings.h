@@ -1,7 +1,7 @@
 #pragma once
 #include<string>
 #include "enums.h"
-#include "AlgorithmPlayer.h"
+#include "AlgorithmPlayer_203398664.h"
 
 class GameSettings {
 

@@ -2,7 +2,7 @@
 #include <vector>
 #include "enums.h"
 #include "Cell.h"
-#include "Position.h"
+#include "Position_203398664.h"
 #include "Input.h"
 #include "GameSettings.h"
 #include "Soldier.h"
@@ -18,7 +18,7 @@ class State {
 	int soldierCounterA, soldierCounterB;
 	Board::GameBoard board;
 
-	std::vector<Position> _changeBuffer;
+	std::vector<Position_203398664> _changeBuffer;
 	int clock;
 	std::string stepsBufferA, stepsBufferB;
 public:
@@ -30,13 +30,13 @@ public:
 	void reset();
 	int getClock() const { return clock; }
 
-	void updateBoardSoldierMoved(Position source, Position dest);
+	void updateBoardSoldierMoved(Position_203398664 source, Position_203398664 dest);
 	void notifySoldierDied(Soldier * soldier);
 	void recordAction(int soldierId, Action action);
 
-	Position popChange();
+	Position_203398664 popChange();
 	bool hasChanges() { return !_changeBuffer.empty(); }
-	Cell& getCell(Position cellPos) { return board[cellPos.getY()][cellPos.getX()]; }
+	Cell& getCell(Position_203398664 cellPos) { return board[cellPos.getY()][cellPos.getX()]; }
 	Cell& getCell(int x, int y) { return board[y][x]; }
 	std::string getStepBuffer(Player player);
 	std::string getBoardString();
@@ -49,7 +49,7 @@ private:
 	void resetRecorder();
 	void resetGameObjects();
 
-	void createSoldiers(std::vector<Soldier>& soldiersVector, Player player, std::vector<Position> positions);
-	void fillCells(const std::vector<Position>& positions, CellType type);
-	void updateBoardSoldierDied(Position placeOfDeath);
+	void createSoldiers(std::vector<Soldier>& soldiersVector, Player player, std::vector<Position_203398664> positions);
+	void fillCells(const std::vector<Position_203398664>& positions, CellType type);
+	void updateBoardSoldierDied(Position_203398664 placeOfDeath);
 };

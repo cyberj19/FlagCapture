@@ -24,7 +24,7 @@ public:
 		}
 	}
 
-	bool count(GameMove move) {
+	int count(GameMove move) {
 		int c = 0;
 		for (const GameMove& imove : _history) {
 			if (move.from_x == imove.from_x && move.from_y == imove.from_y &&

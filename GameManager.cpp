@@ -42,7 +42,7 @@ void GameManager::buildMenu(){
 
 void GameManager::runAttendedGame() {
 	do {
-		 _lastChoice = (MenuOptions)showMenu(gameMenu, Position(0, 0), 1, 9);
+		 _lastChoice = (MenuOptions)showMenu(gameMenu, Position_203398664(0, 0), 1, 9);
 
 		switch (_lastChoice) {
 		case MenuOptions::SET_NAMES:

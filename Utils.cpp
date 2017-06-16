@@ -5,7 +5,7 @@
 #include <iterator>
 using namespace std;
 
-int showMenu(Menu& menu, Position pos, int minChoice, int maxChoice)
+int showMenu(Menu& menu, Position_203398664 pos, int minChoice, int maxChoice)
 {
 	string input;
 	int choice = minChoice - 1;

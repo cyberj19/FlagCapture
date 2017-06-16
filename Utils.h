@@ -3,10 +3,10 @@
 #include <windows.h>
 #include <string>
 #include "Menu.h"
-#include "Position.h"
+#include "Position_203398664.h"
 #include <vector>
 
-int showMenu(Menu &menu, Position pos, int minChoice, int maxChoice);
+int showMenu(Menu &menu, Position_203398664 pos, int minChoice, int maxChoice);
 void setTextColor(int foreground_color, int background_color);
 void setTextColor(int foreground_color);
 void clearScreen();

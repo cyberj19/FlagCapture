@@ -13,9 +13,6 @@
     <ClInclude Include="AbstractPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="algorithmplayer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AlgorithmRegistration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -70,9 +67,6 @@
     <ClInclude Include="MenuItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Position.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Soldier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -88,12 +82,15 @@
     <ClInclude Include="Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Position_203398664.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithmplayer_203398664.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AlgorithmPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AlgorithmRegistration.cpp">
@@ -142,6 +139,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AlgoFlag.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AlgorithmPlayer_203398664.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

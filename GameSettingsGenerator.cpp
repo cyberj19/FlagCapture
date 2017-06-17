@@ -107,7 +107,7 @@ GameType GameSettingsGenerator::getGameType()
 		&& _baseSettings.getInputOptionB() == InputOptions::Algorithm)
 		return GameType::AlgorithmGame;
 
-	return GameType();
+	return GameType::FileGame;
 }
 
 std::string GameSettingsGenerator::getAvailableOutputFileName(int round) {

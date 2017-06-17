@@ -66,8 +66,10 @@ BasicSettings::BasicSettings(int argc, char * argv[]) {
 
 	if (commandMap.find("-board") != none)
 		parseBoardArgument(commandMap["-board"]);
-	else
+	else {
 		_boardOptions = BoardOptions::Randomized;
+		_numRounds = 10;
+	}
 
 	if (commandMap.find("-moves") != none)
 		parseInputArgument(commandMap["-moves"]);

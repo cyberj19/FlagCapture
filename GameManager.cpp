@@ -66,6 +66,30 @@ void GameManager::runAttendedGame() {
 	quitGame();
 }
 
+void initiatePlayer(User& user, const GameSettings& settings, InputOptions playerType, Player playerId) {
+	int playerIdx = playerId == Player::A ? 1 : 2;
+
+	AbstractPlayer* player;
+	if (playerType == InputOptions::Algorithm)
+		player = AlgorithmRegistration::nextAlgorithm();
+	else if (playerType == InputOptions::FromFile)
+		player = new FilePlayer(settings);
+	else
+		player = new KeyboardPlayer(settings);
+
+	player->setPlayer(playerIdx);
+	user.setPlayer(player);
+}
+
+void GameManager::initiatePlayers(const GameSettings& settings) {
+	initiatePlayer(UserA, settings, settings.getInputOptionA(), Player::A);
+	initiatePlayer(UserB, settings, settings.getInputOptionB(), Player::B);
+}
+void GameManager::deallocatePlayers()
+{
+	delete UserA.getPlayer();
+	delete UserB.getPlayer();
+}
 void GameManager::runAlgorithmGame() {
 	while (settingsGenerator.moreSettings())
 		startMatch(settingsGenerator.getNextSettings(false, ++_round));
@@ -97,9 +121,10 @@ User& GameManager::getWinningUser(MenuOptions GameType, MatchOutput matchOutput)
 }
 
 
-void GameManager::startMatch(const GameSettings &settings, MenuOptions GameType) {	
+void GameManager::startMatch(const GameSettings &settings, MenuOptions GameType) {
+	initiatePlayers(settings);
 	Match match = Match();
-	if (!match.load(settings)) {
+	if (!match.load(settings, UserA.getPlayer(), UserB.getPlayer())) {
 		showErrors(match.getErrors(), settings.isQuiet());
 		return;
 	}
@@ -131,6 +156,7 @@ void GameManager::startMatch(const GameSettings &settings, MenuOptions GameType)
 		showMatchResults(_round, match.getLastClock(), matchOutput);
 	else if (settings.getGameType() != GameType::Attended)
 		Sleep(50 * settings.getDelay());
+	deallocatePlayers();
 }
 void GameManager::startAttendedMatch(MenuOptions GameType) {
 	++_round;

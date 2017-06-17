@@ -87,7 +87,4 @@ public:
 
 	const int getDelay() const { return _delay; }
 	const bool isQuiet() const { return _quiet; }
-
-	AbstractPlayer* getPlayerA() const;
-	AbstractPlayer* getPlayerB() const;
 };

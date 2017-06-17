@@ -10,6 +10,7 @@ GameMove FilePlayer::play(const GameMove& opponentsMove) {
 }
 
 void FilePlayer::acquireNextMove() {
+	if (_movesQueue.empty()) return;
 	string move = _movesQueue.front();
 	_movesQueue.pop();
 
@@ -39,6 +40,7 @@ void FilePlayer::acquireNextMove() {
 }
 
 void FilePlayer::setPlayer(int player) {
+	_player = player;
 	string filePath;
 	if (player == 1)
 		filePath = settings.getMovesAInputFilePath();

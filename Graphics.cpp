@@ -134,8 +134,8 @@ void showFinalResults(User userA, User userB, bool isQuiet) {
 		clearScreen();
 
 	cout << "Game summary: " << endl;
-	cout << "A points: " << userA.getScore() << endl;
-	cout << "B points: " << userB.getScore() << endl;
+	cout << userA.getName() << " for A points: " << userA.getScore() << endl;
+	cout << userB.getName() << " for B points: " << userB.getScore() << endl;
 
 	cout << "Press any key to continue..." << endl;
 	_getch();

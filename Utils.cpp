@@ -18,6 +18,7 @@ int showMenu(Menu& menu, Position_203398664 pos, int minChoice, int maxChoice)
 		stringstream mstream(input);
 		if (!(mstream >> choice))
 			choice = minChoice - 1;
+		mstream.clear();
 	} while (choice < minChoice || choice > maxChoice);
 	return choice;
 }

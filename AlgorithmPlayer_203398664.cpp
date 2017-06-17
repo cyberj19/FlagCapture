@@ -60,6 +60,7 @@ void AlgorithmPlayer_203398664::updateBoard(const GameMove & gameMove, bool enem
 void AlgorithmPlayer_203398664::setPlayer(int player)
 {
 	_player = player == 1 ? Player::A : Player::B;
+	_soldier = player == 1 ? 1 : 1;
 }
 
 void AlgorithmPlayer_203398664::init(const BoardData & board)
@@ -73,11 +74,19 @@ void AlgorithmPlayer_203398664::init(const BoardData & board)
 	cacheBoard();
 }
 
+bool isTryAgain(const GameMove& move) {
+	return move.from_x == -3 && move.from_y == -4 && move.to_x == -7 && move.to_y == -11;
+}
+
 GameMove AlgorithmPlayer_203398664::play(const GameMove & opponentsMove)
 {
 	updateBoard(opponentsMove, true);
 	updateBoard(lastGameMove, false);
-	lastGameMove = genericPlay(opponentsMove);
+
+	lastGameMove = GameMove(-3, -4, -7, -11);
+	while (isTryAgain(lastGameMove))
+		lastGameMove = genericPlay(opponentsMove);
+
 	historyTracker.save(lastGameMove);
 	return lastGameMove;
 }
@@ -105,6 +114,14 @@ Position_203398664 unwards(Position_203398664 from, Position_203398664 to, HDir 
 
 bool AlgorithmPlayer_203398664::checkCollision(const Position_203398664& curr, HDir dir) {
 	Position_203398664 nextPos = towards(curr, opFlag, dir);
+
+	if (bat(nextPos[0], nextPos[0]) == AlgorithmCell_203398664::sea)
+		return (_player == Player::A ? _soldier != 1 : _soldier != 0);
+
+	if (bat(nextPos[0], nextPos[0]) == AlgorithmCell_203398664::sea)
+		return _player == Player::A ?
+					_soldier == 0 : _soldier != 1;
+
 	if (nextPos == myFlag)
 		return true;
 
@@ -119,12 +136,14 @@ bool AlgorithmPlayer_203398664::checkCollision(const Position_203398664& curr, H
 }
 
 GameMove AlgorithmPlayer_203398664::genericPlay(const GameMove& opponentsMove) {
-	Position_203398664 sol = _player == Player::A ? me[1] : me[0];
+	Position_203398664 sol = me[_soldier];
 	Position_203398664 nextPos = towards(sol, opFlag, homingDir);
 	HDir otherDir = (HDir)(1 - homingDir);
 	if (sol[homingDir] == opFlag[homingDir]) {
+		if (sol[otherDir] == opFlag[otherDir])
+			return GameMove(0, 0, 0, 0);
 		homingDir = otherDir;
-		return genericPlay(opponentsMove);
+		return GameMove(-3, -4, -7, -11); //try again
 	}
 	bool collisionInDir = checkCollision(sol, homingDir);
 	bool collisionInOtherDir = checkCollision(sol, otherDir);
@@ -147,7 +166,8 @@ GameMove AlgorithmPlayer_203398664::genericPlay(const GameMove& opponentsMove) {
 	}
 	GameMove ret = GameMove(sol[0], sol[1], nextPos[0], nextPos[1]);
 	if (historyTracker.count(ret) == 3) {
-
+		_soldier = (_soldier + 1) % 3;
+		return GameMove(-3, -4, -7, -11); // try again
 	}
 	return ret;
 }

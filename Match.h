@@ -11,7 +11,7 @@ class Graphics;
 
 class Match{
 	Graphics *graphics;
-	AbstractPlayer *playerA, *playerB;
+	AbstractPlayer *_playerA, *_playerB;
 	BoardData *proxyA, *proxyB;
 	State *state;
 	GameMove lastMove = GameMove(0, 0, 0, 0);
@@ -28,7 +28,7 @@ public:
 	Match();
 	~Match();
 	MatchOutput Play();
-	bool load(GameSettings settings);
+	bool load(GameSettings settings, AbstractPlayer* playerA, AbstractPlayer* playerB);
 	std::vector<std::string> getErrors() { return _errors; }
 	int getLastClock();
 private:

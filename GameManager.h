@@ -7,6 +7,8 @@
 #include "enums.h"
 #include "GameSettingsGenerator.h"
 #include "Menu.h"
+#include "FilePlayer.h"
+#include "KeyboardPlayer.h"
 
 class GameManager {
 	int _round;
@@ -28,5 +30,9 @@ private:
 	void runAttendedGame();
 	void runFileGame();
 	void runAlgorithmGame();
+
+	void initiatePlayers(const GameSettings& settings);
+	void deallocatePlayers();
+
 	void buildMenu();
 };

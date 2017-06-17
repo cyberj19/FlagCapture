@@ -24,7 +24,7 @@ Match::Match()
 {
 }
 
-bool Match::load(GameSettings settings) {
+bool Match::load(GameSettings settings, AbstractPlayer *playerA, AbstractPlayer *playerB) {
 	_settings = settings;
 	BoardConfiguration config = BoardConfiguration();
 	if (!config.loadSettings(_settings)) {
@@ -37,8 +37,8 @@ bool Match::load(GameSettings settings) {
 	proxyA = new StateProxy(state, Player::A);
 	proxyB = new StateProxy(state, Player::B);
 
-	playerA = _settings.getPlayerA();
-	playerB = _settings.getPlayerB();
+	_playerA = playerA;
+	_playerB = playerB;
 	if (!_settings.isQuiet()) {
 		graphics = new Graphics(state, _settings.isRecording());
 		buildSubMenu();
@@ -55,10 +55,6 @@ int Match::getLastClock()
 Match::~Match() {
 	if (graphics != nullptr)
 		delete graphics;
-	if (playerA != nullptr)
-		delete playerA;
-	if (playerB != nullptr)
-		delete playerB;
 	if (proxyA != nullptr)
 		delete proxyA;
 	if (proxyB != nullptr)
@@ -107,7 +103,7 @@ void Match::handleLastMove() {
 void Match::handleRunning()
 {
 	bool escape = false;
-	lastMove = playerA->play(lastMove);
+	lastMove = _playerA->play(lastMove);
 	escape = checkForEscape();
 	handleLastMove();
 
@@ -117,7 +113,7 @@ void Match::handleRunning()
 		return;
 	}
 
-	lastMove = playerB->play(lastMove);
+	lastMove = _playerB->play(lastMove);
 	escape = escape || checkForEscape();
 	handleLastMove();
 
@@ -161,8 +157,8 @@ void Match::handleSubMenu()
 void Match::handleStart()
 {
 	state->reset();
-	playerA->init(*proxyA);
-	playerB->init(*proxyB);
+	_playerA->init(*proxyA);
+	_playerB->init(*proxyB);
 	stage = MatchStage::INIT_DRAW;
 }
 

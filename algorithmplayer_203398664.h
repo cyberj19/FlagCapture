@@ -27,8 +27,7 @@ public:
 	int count(GameMove move) {
 		int c = 0;
 		for (const GameMove& imove : _history) {
-			if (move.from_x == imove.from_x && move.from_y == imove.from_y &&
-				move.to_x == imove.to_x && move.to_y == imove.to_y)
+			if (move.to_x == imove.to_x && move.to_y == imove.to_y)
 				c++;
 		}
 		return c;
@@ -44,7 +43,6 @@ enum HDir { X, Y };
 class AlgorithmPlayer_203398664 : public AbstractPlayer {
 	// metadata
 	Player _player;
-	string _name;
 
 	//technical stuff
 	const BoardData* _boardProxy;
@@ -60,12 +58,19 @@ class AlgorithmPlayer_203398664 : public AbstractPlayer {
 	HDir homingDir;
 	int clock = 0;
 	int chaseFlagDir = 0; // 0 - x, 1 - y
+	int _soldier;
 	MovesHistoryTracker_203398664 historyTracker;
+
 public:
 	virtual void setPlayer(int player);
-	virtual string getName()const { return _name; }
+	virtual string getName() const { return string("Algorithm 203398664"); }
 	virtual void init(const BoardData& board);
 	virtual GameMove play(const GameMove& opponentsMove);
+
+	~AlgorithmPlayer_203398664() {
+		if (_background != nullptr)
+			delete []_background;
+	}
 private:
 	AlgorithmCell_203398664& bat(int x, int y) const;
 	void parseBoardChar(int x, int y);

@@ -18,6 +18,7 @@ class BasicSettings {
 
 	std::string _path;
 	bool _quiet;
+	bool _save;
 	int _delay;
 public:
 	BasicSettings() {}
@@ -41,6 +42,7 @@ public:
 		return _quiet &&
 			_inputOptionsA != InputOptions::Keyboard && _inputOptionsB != InputOptions::Keyboard;
 	}
+	bool shouldSave() const { return _save; }
 private:
 	std::map<std::string, std::string> generateCommandMap(int argc, char* argv[]);
 	void parsePathArgument(const std::string& value);
@@ -48,4 +50,5 @@ private:
 	void parseBoardArgument(const std::string& value);
 	void parseInputArgument(const std::string& value);
 	void parseQuietArgument(const std::string& value);
+	void parseSaveArgument(const std::string& value);
 };

@@ -84,7 +84,7 @@ GameSettings GameSettingsGenerator::getNextSettings(bool recording, int round) {
 		settings.setInputOptionB(_baseSettings.getInputOptionB());
 
 
-	if (recording) {
+	if (recording || _baseSettings.shouldSave()) {
 		string fname = getAvailableOutputFileName(round);
 		settings.setRecordingOutputFiles(fname + "." + boardFileExtension,
 										fname + "." + movesAFileExtension,

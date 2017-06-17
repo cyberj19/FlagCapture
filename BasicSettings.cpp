@@ -6,7 +6,7 @@ using namespace std;
 BasicSettings::BasicSettings(const BasicSettings& s) : 
 	_boardOptions(s._boardOptions), _numRounds(s._numRounds),
 	_inputOptionsA(s._inputOptionsA), _inputOptionsB(s._inputOptionsB),
-	_path(s._path), _quiet(s._quiet), _delay(s._delay)
+	_path(s._path), _quiet(s._quiet), _delay(s._delay), _save(s._save)
 {}
 
 bool isKnownParam(string param) {
@@ -14,7 +14,8 @@ bool isKnownParam(string param) {
 			param == "-quiet" ||
 			param == "-board" ||
 			param == "-delay" ||
-			param == "-moves";
+			param == "-moves" ||
+			param == "-save";
 }
 
 bool isParam(string str) {
@@ -58,6 +59,11 @@ BasicSettings::BasicSettings(int argc, char * argv[]) {
 		parseQuietArgument(commandMap["-quiet"]);
 	else
 		_quiet = false;
+
+	if (commandMap.find("-save") != none)
+		parseSaveArgument(commandMap["-save"]);
+	else
+		_save = false;
 
 	if (commandMap.find("-delay") != none)
 		parseDelayArgument(commandMap["-delay"]);
@@ -117,6 +123,11 @@ void BasicSettings::parseQuietArgument(const std::string & value)
 {
 	verifyNumOptions("quiet", value, 0, 0);
 	_quiet = true;
+}
+
+void BasicSettings::parseSaveArgument(const std::string& value) {
+	verifyNumOptions("save", value, 0, 0);
+	_save = true;
 }
 
 void BasicSettings::parsePathArgument(const std::string& value) {

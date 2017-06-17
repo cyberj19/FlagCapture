@@ -17,6 +17,4 @@ void main(int argc, char *argv[]) {
 	}
 	cout << "Press any key to quit game...";
 	_getch();
-
-	
 }

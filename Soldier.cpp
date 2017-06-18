@@ -4,14 +4,14 @@ Soldier::Soldier() :
 	state(nullptr), _player(Player::A), _type(SoldierType::S1), _moving(false),
 	status(SoldierStatus::ALIVE), _currentPosition(0,0), _symbol("") {}
 
-Soldier::Soldier(State *state, Player player, SoldierType type, Position_203398664 pos)
+Soldier::Soldier(State *state, Player player, SoldierType type, Pos203398664 pos)
 	: state(state), _player(player), _type(type), _moving(false), status(SoldierStatus::ALIVE),
 	_currentPosition(pos)
 {}
 
-Position_203398664 Soldier::nextPosition()
+Pos203398664 Soldier::nextPosition()
 {
-	Position_203398664 nextPos = _currentPosition;
+	Pos203398664 nextPos = _currentPosition;
 	nextPos.setX(nextPos.getX() + _dir_x);
 	nextPos.setY(nextPos.getY() + _dir_y);
 	return nextPos;
@@ -50,7 +50,7 @@ int Soldier::getId() const
 void Soldier::step(GameMove gameMove)
 {
 	if (!isAlive()) return; 
-	Position_203398664 nextPos(gameMove.to_x - 1, gameMove.to_y - 1);
+	Pos203398664 nextPos(gameMove.to_x - 1, gameMove.to_y - 1);
 	if (nextPos.getX() >= Board::Cols || nextPos.getX() < 0
 		|| nextPos.getY() >= Board::Rows || nextPos.getY() < 0) {
 		stop();
@@ -86,22 +86,26 @@ void Soldier::step(GameMove gameMove)
 }
 
 bool Soldier::canMoveInSea() {
-	if (_player == Player::A) return _type == SoldierType::S2;
-	else return _type == SoldierType::S1;
+	if (_player == Player::A) 
+		return _type == SoldierType::S2 || _type == SoldierType::S3;
+	else 
+		return _type == SoldierType::S1 || _type == SoldierType::S3;
 }
 
 bool Soldier::canMoveInForest() {
-	if (_player == Player::A) return _type == SoldierType::S2 || _type == SoldierType::S3;
-	else return _type == SoldierType::S1 || _type == SoldierType::S3;
+	if (_player == Player::A)
+		return _type == SoldierType::S2;
+	else 
+		return _type == SoldierType::S1 || _type == SoldierType::S2;
 }
-void Soldier::win(Position_203398664 nextPos) {
+void Soldier::win(Pos203398664 nextPos) {
 	move(nextPos);
 	state->winner = _player;
 	state->isFinished = true;
 }
 
 // returns the winner of the battle
-Soldier & Soldier::battleWinner(Soldier & Attacker, Soldier & Defender, Position_203398664 & battleCell)
+Soldier & Soldier::battleWinner(Soldier & Attacker, Soldier & Defender, Pos203398664 & battleCell)
 {
 	Soldier & SoldierOfA = Attacker._player == Player::A ? Attacker : Defender;
 	Soldier & SoldierOfB = Attacker._player == Player::A ? Defender : Attacker;
@@ -125,7 +129,7 @@ Soldier & Soldier::battleWinner(Soldier & Attacker, Soldier & Defender, Position
 
 bool Soldier::attack(Soldier & Defender)
 {
-	Position_203398664 battleCell;
+	Pos203398664 battleCell;
 	battleCell = Defender.getCurrentPosition();
 	Soldier& winner = battleWinner(*this, Defender, battleCell);
 	return winner._player == _player;
@@ -138,7 +142,7 @@ void Soldier::die()
 	status = SoldierStatus::DEAD; 
 }
 
-void Soldier::move(Position_203398664 targ)
+void Soldier::move(Pos203398664 targ)
 {
 	state->updateBoardSoldierMoved(_currentPosition, targ);
 	_currentPosition = targ;

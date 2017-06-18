@@ -11,7 +11,7 @@ void Graphics::render() {
 	renderClock();
 }
 
-void Graphics::renderChange(Position_203398664 posToChange) {
+void Graphics::renderChange(Pos203398664 posToChange) {
 	if (posToChange.getX() == -1 || posToChange.getY() == -1) return;
 	goto_scaled_position(posToChange.getY(), posToChange.getX());
 	string entity = state->getCell(posToChange).getSymbol();

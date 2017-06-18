@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbstractPlayer.h" />
-    <ClInclude Include="algorithmplayer_203398664.h" />
+    <ClInclude Include="Algo203398664.h" />
     <ClInclude Include="AlgorithmRegistration.h" />
     <ClInclude Include="BasicSettings.h" />
     <ClInclude Include="Board.h" />
@@ -39,7 +39,7 @@
     <ClInclude Include="Match.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuItem.h" />
-    <ClInclude Include="Position_203398664.h" />
+    <ClInclude Include="Pos203398664.h" />
     <ClInclude Include="Soldier.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateProxy.h" />
@@ -47,7 +47,7 @@
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AlgorithmPlayer_203398664.cpp" />
+    <ClCompile Include="Algo203398664.cpp" />
     <ClCompile Include="AlgorithmRegistration.cpp" />
     <ClCompile Include="BasicSettings.cpp" />
     <ClCompile Include="BoardConfiguration.cpp" />
@@ -58,7 +58,7 @@
     <ClCompile Include="GameSettingsGenerator.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="KeyboardPlayer.cpp" />
-    <ClCompile Include="AlgoFlag.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Match.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Soldier.cpp" />

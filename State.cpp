@@ -79,7 +79,7 @@ void State::initTeams() {
 	getCell(_boardConfig.getFlagBPosition()).setType(CellType::FLAG_B);
 }
 
-void State::createSoldiers(vector<Soldier>& soldiers, Player player, vector<Position_203398664> positions) {
+void State::createSoldiers(vector<Soldier>& soldiers, Player player, vector<Pos203398664> positions) {
 	soldiers = vector<Soldier>(3);
 	for (int s = 0; s < 3; ++s) {
 		soldiers[s] = Soldier(this, player, SoldierType(s), positions[s]);
@@ -115,7 +115,7 @@ void State::step(GameMove move)
 		sold->step(move);
 }
 
-void State::updateBoardSoldierMoved(Position_203398664 source, Position_203398664 dest)
+void State::updateBoardSoldierMoved(Pos203398664 source, Pos203398664 dest)
 {
 	if (source == dest) return;
 
@@ -172,20 +172,20 @@ void State::recordAction(int soldierId, Action action)
 		stepsBufferB += newStep + "\n";
 }
 
-Position_203398664 State::popChange() {
-	Position_203398664 back = _changeBuffer.back();
+Pos203398664 State::popChange() {
+	Pos203398664 back = _changeBuffer.back();
 	_changeBuffer.pop_back();
 	return back;
 }
 
-void State::updateBoardSoldierDied(Position_203398664 placeOfDeath)
+void State::updateBoardSoldierDied(Pos203398664 placeOfDeath)
 {
 	getCell(placeOfDeath).unsetSoldier();
 	_changeBuffer.push_back(placeOfDeath);
 }
 
 
-void State::fillCells(const std::vector<Position_203398664>& positions, CellType type) {
+void State::fillCells(const std::vector<Pos203398664>& positions, CellType type) {
 	for (auto& pos : positions) {
 		getCell(pos).setType(type);
 	}

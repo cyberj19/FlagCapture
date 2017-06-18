@@ -82,10 +82,10 @@
     <ClInclude Include="Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Position_203398664.h">
+    <ClInclude Include="Algo203398664.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="algorithmplayer_203398664.h">
+    <ClInclude Include="Pos203398664.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -138,10 +138,10 @@
     <ClCompile Include="User.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AlgoFlag.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AlgorithmPlayer_203398664.cpp">
+    <ClCompile Include="Algo203398664.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

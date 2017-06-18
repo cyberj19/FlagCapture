@@ -23,11 +23,11 @@ int BoardConfiguration::loadSettings(GameSettings settings) {
 	return _errors.size() == 0;
 }
 
-vector<Position_203398664> BoardConfiguration::getSoldiersAPositions() const{
+vector<Pos203398664> BoardConfiguration::getSoldiersAPositions() const{
 	return _soldierAPositions;
 }
 
-vector<Position_203398664> BoardConfiguration::getSoldiersBPositions() const{
+vector<Pos203398664> BoardConfiguration::getSoldiersBPositions() const{
 	return _soldierBPositions;
 }
 
@@ -40,15 +40,15 @@ string emptyBoardString() {
 	}
 	return board.str();
 }
-void setCharsInBoardString(string &boardString, const vector<Position_203398664>& positions, const char ch) {
-	for (const Position_203398664& pos : positions)
+void setCharsInBoardString(string &boardString, const vector<Pos203398664>& positions, const char ch) {
+	for (const Pos203398664& pos : positions)
 		boardString[pos.getY()*(Board::Rows + 1) + pos.getX()] = ch;
 }
-void setCharsInBoardString(string &boardString, Position_203398664 pos, const char ch) {
+void setCharsInBoardString(string &boardString, Pos203398664 pos, const char ch) {
 	boardString[pos.getY()*(Board::Rows + 1) + pos.getX()] = ch;
 }
-void setNumsInBoardString(string &boardString, const vector<Position_203398664>& positions, int seed) {
-	for (const Position_203398664& pos : positions)
+void setNumsInBoardString(string &boardString, const vector<Pos203398664>& positions, int seed) {
+	for (const Pos203398664& pos : positions)
 		boardString[pos.getY()*(Board::Rows + 1) + pos.getX()] = '0' + (seed++);
 }
 
@@ -65,22 +65,22 @@ string BoardConfiguration::getBoardString() const{
 }
 
 void BoardConfiguration::randomizeTeamsPositions(){
-	_flagBPosition = selectFreePositions(Position_203398664(0, 11), Position_203398664(12, 12), 1).front();
-	_flagAPosition = selectFreePositions(Position_203398664(0, 0), Position_203398664(12, 1), 1).front();
-	_soldierAPositions = selectFreePositions(Position_203398664(0, 0), Position_203398664(12, 5), 3);
-	_soldierBPositions = selectFreePositions(Position_203398664(0, 8), Position_203398664(12, 12), 3);
+	_flagBPosition = selectFreePositions(Pos203398664(0, 11), Pos203398664(12, 12), 1).front();
+	_flagAPosition = selectFreePositions(Pos203398664(0, 0), Pos203398664(12, 1), 1).front();
+	_soldierAPositions = selectFreePositions(Pos203398664(0, 0), Pos203398664(12, 5), 3);
+	_soldierBPositions = selectFreePositions(Pos203398664(0, 8), Pos203398664(12, 12), 3);
 
 }
 
 void BoardConfiguration::generateRandomPositions() {
 	// switch sides of forest and sea randomly
 	if (rand() % 2 == 0) {
-		randomCells(_seaPositions, Position_203398664(7, 3), Position_203398664(11, 9), 0.5);
-		randomCells(_forestPositions, Position_203398664(1, 3), Position_203398664(7, 9), 0.5);
+		randomCells(_seaPositions, Pos203398664(7, 3), Pos203398664(11, 9), 0.5);
+		randomCells(_forestPositions, Pos203398664(1, 3), Pos203398664(7, 9), 0.5);
 	}
 	else {
-		randomCells(_forestPositions, Position_203398664(7, 3), Position_203398664(11, 9), 0.5);
-		randomCells(_seaPositions, Position_203398664(1, 3), Position_203398664(7, 9), 0.5);
+		randomCells(_forestPositions, Pos203398664(7, 3), Pos203398664(11, 9), 0.5);
+		randomCells(_seaPositions, Pos203398664(1, 3), Pos203398664(7, 9), 0.5);
 	}
 }
 
@@ -117,11 +117,11 @@ void BoardConfiguration::initializeValidationMaps() {
 
 void BoardConfiguration::initializePositionVectors()
 {
-	_forestPositions = vector<Position_203398664>();
-	_seaPositions = vector<Position_203398664>();
+	_forestPositions = vector<Pos203398664>();
+	_seaPositions = vector<Pos203398664>();
 
-	_soldierAPositions = vector<Position_203398664>(3);
-	_soldierBPositions = vector<Position_203398664>(3);
+	_soldierAPositions = vector<Pos203398664>(3);
+	_soldierBPositions = vector<Pos203398664>(3);
 }
 
 string formatToolErrorMessage(char tool, string fileName) {
@@ -152,7 +152,7 @@ void BoardConfiguration::generateErrors(string fileName) {
 void BoardConfiguration::updatePositions(string line, int row) {
 	for (int col = 0; col < (int) line.size(); ++col) {
 		char ch = line[col];
-		Position_203398664 currentPosition = Position_203398664(col, row);
+		Pos203398664 currentPosition = Pos203398664(col, row);
 		if (ch >= '1' && ch <= '3') {
 			_toolsValidation[ch]++;
 			_soldierAPositions[ch - '1'] = currentPosition;
@@ -203,20 +203,20 @@ string BoardConfiguration::readLineFromFile(ifstream &file) {
 	return line;
 }
 
-Position_203398664 randomPosition(const Position_203398664& UpperLeft, const Position_203398664& BottomRight) {
+Pos203398664 randomPosition(const Pos203398664& UpperLeft, const Pos203398664& BottomRight) {
 	int minX = UpperLeft.getX(), minY = UpperLeft.getY(),
 		maxX = BottomRight.getX(), maxY = BottomRight.getY();
 	int rx = minX + (rand() % (int)(maxX - minX + 1));
 	int ry = minY + (rand() % (int)(maxY - minY + 1));
 
-	return Position_203398664(rx, ry);
+	return Pos203398664(rx, ry);
 }
-std::vector<Position_203398664> BoardConfiguration::selectFreePositions(Position_203398664 UpperLeft, 
-	Position_203398664 BottomRight, int num)
+std::vector<Pos203398664> BoardConfiguration::selectFreePositions(Pos203398664 UpperLeft, 
+	Pos203398664 BottomRight, int num)
 {
-	vector<Position_203398664> positions = vector<Position_203398664>();
+	vector<Pos203398664> positions = vector<Pos203398664>();
 	while (num) {
-		Position_203398664 pos;
+		Pos203398664 pos;
 		do {
 			pos = randomPosition(UpperLeft, BottomRight);
 		} 
@@ -233,13 +233,13 @@ std::vector<Position_203398664> BoardConfiguration::selectFreePositions(Position
 }
 
 
-void randomCells(vector<Position_203398664>& positions, const Position_203398664 UpperLeft, const Position_203398664 BottomRight, const double prob)
+void randomCells(vector<Pos203398664>& positions, const Pos203398664 UpperLeft, const Pos203398664 BottomRight, const double prob)
 {
 	for (int i = UpperLeft.getX(); i <= BottomRight.getX(); ++i) {
 		for (int j = UpperLeft.getY(); j <= BottomRight.getY(); ++j){
 			double r = ((double)rand()) / RAND_MAX;
 			if (abs(r) < prob) {
-				positions.push_back(Position_203398664(i, j));
+				positions.push_back(Pos203398664(i, j));
 			}
 		}
 	}

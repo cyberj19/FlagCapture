@@ -94,6 +94,8 @@ void BasicSettings::parseBoardArgument(const std::string& value) {
 	_boardOptions = parseBoardOption(values[0]);
 	if (values.size() == 2)
 		_numRounds = stoi(values[1]);
+	else
+		_numRounds = 10;
 }
 
 InputOptions parseInputOption(const char opt) {

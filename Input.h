@@ -3,9 +3,9 @@
 
 class Input {
 	Action action;
-	Player player;
+	Player203398664 player;
 public:
-	Input(Action action, Player player) : action(action), player(player) {}
+	Input(Action action, Player203398664 player) : action(action), player(player) {}
 	Action getAction() { return action; }
-	Player getPlayer() { return player; }
+	Player203398664 getPlayer() { return player; }
 };

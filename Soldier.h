@@ -17,13 +17,13 @@ class Soldier {
 	int _dir_x, _dir_y;
 	std::string _symbol;
 	bool _moving;
-	Player _player;
+	Player203398664 _player;
 	SoldierType _type;
 	SoldierStatus status;
 
 public:
 	Soldier();
-	Soldier(State *state, Player player, SoldierType type, Pos203398664 pos);
+	Soldier(State *state, Player203398664 player, SoldierType type, Pos203398664 pos);
 	void step(GameMove move);
 	Pos203398664 nextPosition();
 
@@ -31,7 +31,7 @@ public:
 	Pos203398664 getCurrentPosition() { return _currentPosition; }
 	bool isAlive() { return status == SoldierStatus::ALIVE; }
 	std::string getSymbol() { return std::string("[") + std::to_string(getId()) + std::string("] "); }
-	Player getPlayer() { return _player; }
+	Player203398664 getPlayer() { return _player; }
 
 	bool isMoving() const { return _moving && (_dir_x != 0 || _dir_y != 0); }
 	int getId() const;

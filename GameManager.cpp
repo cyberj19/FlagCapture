@@ -67,8 +67,8 @@ void GameManager::runAttendedGame() {
 	quitGame();
 }
 
-void initiatePlayer(User& user, const GameSettings& settings, InputOptions playerType, Player playerId) {
-	int playerIdx = playerId == Player::A ? 1 : 2;
+void initiatePlayer(User& user, const GameSettings& settings, InputOptions playerType, Player203398664 playerId) {
+	int playerIdx = playerId == Player203398664::A ? 1 : 2;
 
 	AbstractPlayer* player;
 	if (playerType == InputOptions::Algorithm)
@@ -83,8 +83,8 @@ void initiatePlayer(User& user, const GameSettings& settings, InputOptions playe
 }
 
 void GameManager::initiatePlayers(const GameSettings& settings) {
-	initiatePlayer(UserA, settings, settings.getInputOptionA(), Player::A);
-	initiatePlayer(UserB, settings, settings.getInputOptionB(), Player::B);
+	initiatePlayer(UserA, settings, settings.getInputOptionA(), Player203398664::A);
+	initiatePlayer(UserB, settings, settings.getInputOptionB(), Player203398664::B);
 }
 void GameManager::deallocatePlayers()
 {

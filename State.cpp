@@ -70,16 +70,16 @@ void State::initTeams() {
 		_boardConfig.randomizeTeamsPositions();
 	}
 	
-	createSoldiers(soldiersA, Player::A, _boardConfig.getSoldiersAPositions());
+	createSoldiers(soldiersA, Player203398664::A, _boardConfig.getSoldiersAPositions());
 	soldierCounterA = (int) soldiersA.size();
 	getCell(_boardConfig.getFlagAPosition()).setType(CellType::FLAG_A);
 	
-	createSoldiers(soldiersB, Player::B, _boardConfig.getSoldiersBPositions());
+	createSoldiers(soldiersB, Player203398664::B, _boardConfig.getSoldiersBPositions());
 	soldierCounterB = (int) soldiersB.size();
 	getCell(_boardConfig.getFlagBPosition()).setType(CellType::FLAG_B);
 }
 
-void State::createSoldiers(vector<Soldier>& soldiers, Player player, vector<Pos203398664> positions) {
+void State::createSoldiers(vector<Soldier>& soldiers, Player203398664 player, vector<Pos203398664> positions) {
 	soldiers = vector<Soldier>(3);
 	for (int s = 0; s < 3; ++s) {
 		soldiers[s] = Soldier(this, player, SoldierType(s), positions[s]);
@@ -129,18 +129,18 @@ void State::updateBoardSoldierMoved(Pos203398664 source, Pos203398664 dest)
 void State::notifySoldierDied(Soldier *soldier) {
 	updateBoardSoldierDied(soldier->getCurrentPosition());
 
-	if (soldier->getPlayer() == Player::A) {
+	if (soldier->getPlayer() == Player203398664::A) {
 		soldierCounterA--;
 		if (soldierCounterA == 0) {
 			isFinished = true;
-			winner = Player::B;
+			winner = Player203398664::B;
 		}
 	}
-	else if (soldier->getPlayer() == Player::B) {
+	else if (soldier->getPlayer() == Player203398664::B) {
 		soldierCounterB--;
 		if (soldierCounterB == 0) {
 			isFinished = true;
-			winner = Player::A;
+			winner = Player203398664::A;
 		}
 	}
 }
@@ -191,8 +191,8 @@ void State::fillCells(const std::vector<Pos203398664>& positions, CellType type)
 	}
 }
 
-string State::getStepBuffer(Player player) {
-	if (player == Player::A)
+string State::getStepBuffer(Player203398664 player) {
+	if (player == Player203398664::A)
 		return stepsBufferA;
 	else
 		return stepsBufferB;

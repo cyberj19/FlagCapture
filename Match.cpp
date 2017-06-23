@@ -34,8 +34,8 @@ bool Match::load(GameSettings settings, AbstractPlayer *playerA, AbstractPlayer 
 	}
 
 	state = new State(_settings, config);
-	proxyA = new StateProxy(state, Player::A);
-	proxyB = new StateProxy(state, Player::B);
+	proxyA = new StateProxy(state, Player203398664::A);
+	proxyB = new StateProxy(state, Player203398664::B);
 
 	_playerA = playerA;
 	_playerB = playerB;
@@ -183,7 +183,7 @@ MatchOutput Match::handleEndGame() {
 		if (drawFlag)
 			return MatchOutput::TIE;
 
-		if (state->winner == Player::A)
+		if (state->winner == Player203398664::A)
 			return MatchOutput::WINNER_A;
 		else
 			return MatchOutput::WINNER_B;
@@ -199,8 +199,8 @@ void writeToFile(string str, string file) {
 }
 
 void Match::saveMatch() {
-	writeToFile(state->getStepBuffer(Player::A), _settings.getMovesAOutputFilePath());
-	writeToFile(state->getStepBuffer(Player::B), _settings.getMovesBOutputFilePath());
+	writeToFile(state->getStepBuffer(Player203398664::A), _settings.getMovesAOutputFilePath());
+	writeToFile(state->getStepBuffer(Player203398664::B), _settings.getMovesBOutputFilePath());
 	writeToFile(state->getBoardString(), _settings.getBoardOutputFilePath());
 }
 

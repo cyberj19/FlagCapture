@@ -1,10 +1,10 @@
 #include "Soldier.h"
 
 Soldier::Soldier() :
-	state(nullptr), _player(Player::A), _type(SoldierType::S1), _moving(false),
+	state(nullptr), _player(Player203398664::A), _type(SoldierType::S1), _moving(false),
 	status(SoldierStatus::ALIVE), _currentPosition(0,0), _symbol("") {}
 
-Soldier::Soldier(State *state, Player player, SoldierType type, Pos203398664 pos)
+Soldier::Soldier(State *state, Player203398664 player, SoldierType type, Pos203398664 pos)
 	: state(state), _player(player), _type(type), _moving(false), status(SoldierStatus::ALIVE),
 	_currentPosition(pos)
 {}
@@ -18,9 +18,9 @@ Pos203398664 Soldier::nextPosition()
 }
 
 bool Soldier::isMyTurn() {
-	if (state->getClock() % 2 == 1 && _player == Player::A)
+	if (state->getClock() % 2 == 1 && _player == Player203398664::A)
 		return true;
-	else if (state->getClock() % 2 == 0 && _player == Player::B) 
+	else if (state->getClock() % 2 == 0 && _player == Player203398664::B) 
 		return true;
 	else
 		return false;
@@ -41,7 +41,7 @@ int Soldier::getId() const
 		id = 3;
 		break;
 	}
-	if (_player == Player::B) {
+	if (_player == Player203398664::B) {
 		id += 6;
 	}
 
@@ -59,11 +59,11 @@ void Soldier::step(GameMove gameMove)
 	Cell nextCell = state->getCell(nextPos);
 	CellType cellType = nextCell.getType();
 	if (cellType == CellType::FLAG_A) {
-		if (_player == Player::B) win(nextPos);
+		if (_player == Player203398664::B) win(nextPos);
 		else stop();
 	}
 	else if (cellType == CellType::FLAG_B) {
-		if (_player == Player::A) win(nextPos);
+		if (_player == Player203398664::A) win(nextPos);
 		else stop();
 	}
 	else if (cellType == CellType::FOREST && !canMoveInForest())
@@ -86,14 +86,14 @@ void Soldier::step(GameMove gameMove)
 }
 
 bool Soldier::canMoveInSea() {
-	if (_player == Player::A) 
+	if (_player == Player203398664::A) 
 		return _type == SoldierType::S2 || _type == SoldierType::S3;
 	else 
 		return _type == SoldierType::S1 || _type == SoldierType::S3;
 }
 
 bool Soldier::canMoveInForest() {
-	if (_player == Player::A)
+	if (_player == Player203398664::A)
 		return _type == SoldierType::S2;
 	else 
 		return _type == SoldierType::S1 || _type == SoldierType::S2;
@@ -107,8 +107,8 @@ void Soldier::win(Pos203398664 nextPos) {
 // returns the winner of the battle
 Soldier & Soldier::battleWinner(Soldier & Attacker, Soldier & Defender, Pos203398664 & battleCell)
 {
-	Soldier & SoldierOfA = Attacker._player == Player::A ? Attacker : Defender;
-	Soldier & SoldierOfB = Attacker._player == Player::A ? Defender : Attacker;
+	Soldier & SoldierOfA = Attacker._player == Player203398664::A ? Attacker : Defender;
+	Soldier & SoldierOfB = Attacker._player == Player203398664::A ? Defender : Attacker;
 
 	if (SoldierOfA._type == SoldierType::S1)
 		return (isMatchLines(battleCell.getY(), 9, 12) || 

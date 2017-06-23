@@ -58,6 +58,9 @@ GameSettingsGenerator::GameSettingsGenerator(const BasicSettings& baseSettings)
 		baseSettings.getBoardOptions() != BoardOptions::FromFile) 
 		_numSettings = 1;
 
+	if (baseSettings.getBoardOptions() == BoardOptions::Randomized)
+		_numSettings = baseSettings.getNumRounds();
+
 	if (_numSettings == 0)
 		throw "No settings are available for gameplay";
 }

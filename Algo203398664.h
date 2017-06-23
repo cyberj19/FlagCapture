@@ -2,11 +2,13 @@
 #include "AlgorithmRegistration.h"
 #include "AbstractPlayer.h"
 #include "Pos203398664.h"
-#include "enums.h"
+//#include "enums.h"
+
+enum class Player203398664 { A = 1, B = 2, NONE };
 
 class Algo203398664 : public AbstractPlayer {
 	// metadata
-	Player _player;
+	Player203398664 _player;
 
 	//technical stuff
 	const BoardData* _boardProxy;

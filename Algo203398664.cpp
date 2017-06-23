@@ -10,7 +10,7 @@ bool Algo203398664::isOutOfBounds(int x, int y) const
 
 bool Algo203398664::isEnemyFlag(int x, int y) const
 {
-	if (_player == Player::A)
+	if (_player == Player203398664::A)
 		return _boardProxy->charAt(x, y) == 'B';
 	else
 		return _boardProxy->charAt(x, y) == 'A';
@@ -18,7 +18,7 @@ bool Algo203398664::isEnemyFlag(int x, int y) const
 
 bool Algo203398664::isMyFlag(int x, int y) const
 {
-	if (_player == Player::A)
+	if (_player == Player203398664::A)
 		return _boardProxy->charAt(x, y) == 'A';
 	else
 		return _boardProxy->charAt(x, y) == 'B';
@@ -39,13 +39,13 @@ bool Algo203398664::canMove(int x, int y) const
 {
 	char ch = _boardProxy->charAt(x, y);
 	if (ch == 'S') {
-		if (_player == Player::A)
+		if (_player == Player203398664::A)
 			return _soldier == 1 || _soldier == 2;
 		else
 			return _soldier == 0 || _soldier == 2;
 	}
 	else if (ch == 'T') {
-		if (_player == Player::A)
+		if (_player == Player203398664::A)
 			return _soldier == 1;
 		else
 			return _soldier == 0 || _soldier == 1;
@@ -71,12 +71,12 @@ void Algo203398664::captureBoard()
 void Algo203398664::setPlayer(int player)
 {
 	if (player == 1) {
-		_player = Player::A;
-		_soldier = 1; 
+		_player = Player203398664::A;
+		_soldier = 1; // start with soldier "2"
 	}
 	else {
-		_player = Player::B;
-		_soldier = 0;
+		_player = Player203398664::B;
+		_soldier = 0; // start with soldier "7"
 	}
 }
 

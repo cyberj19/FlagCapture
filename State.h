@@ -23,7 +23,7 @@ class State {
 	std::string stepsBufferA, stepsBufferB;
 public:
 	State(GameSettings settings, BoardConfiguration boardConfig);
-	Player winner;
+	Player203398664 winner;
 	bool isFinished;
 	bool anyMoving();
 	void step(GameMove move);
@@ -38,7 +38,7 @@ public:
 	bool hasChanges() { return !_changeBuffer.empty(); }
 	Cell& getCell(Pos203398664 cellPos) { return board[cellPos.getY()][cellPos.getX()]; }
 	Cell& getCell(int x, int y) { return board[y][x]; }
-	std::string getStepBuffer(Player player);
+	std::string getStepBuffer(Player203398664 player);
 	std::string getBoardString();
 private:
 	void initRecorder();
@@ -49,7 +49,7 @@ private:
 	void resetRecorder();
 	void resetGameObjects();
 
-	void createSoldiers(std::vector<Soldier>& soldiersVector, Player player, std::vector<Pos203398664> positions);
+	void createSoldiers(std::vector<Soldier>& soldiersVector, Player203398664 player, std::vector<Pos203398664> positions);
 	void fillCells(const std::vector<Pos203398664>& positions, CellType type);
 	void updateBoardSoldierDied(Pos203398664 placeOfDeath);
 };

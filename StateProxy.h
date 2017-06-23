@@ -3,10 +3,10 @@
 #include "State.h"
 class StateProxy : public BoardData {
 	State* _state;
-	Player _player;
+	Player203398664 _player;
 
 public:
-	StateProxy(State* state, Player player) : _state(state), _player(player) {}
+	StateProxy(State* state, Player203398664 player) : _state(state), _player(player) {}
 	virtual char charAt(int x, int y) const {
 		Cell cell = _state->getCell(x - 1, y - 1);
 		Soldier* soldier = cell.getSoldier();

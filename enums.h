@@ -18,7 +18,7 @@ enum class MatchStage { START, INIT_DRAW, RUNNING, SUB_MENU, GAME_OVER };
 
 enum class MatchOutput { WINNER_A, WINNER_B, TIE, MATCH_TERMINATED, QUIT_GAME };
 
-enum class Player { A=1, B=2, NONE };
+enum class Player203398664 { A=1, B=2, NONE };
 
 enum class Action { CHOOSE1, CHOOSE2, CHOOSE3, UP, DOWN, LEFT, RIGHT, NOACTION, ESC = 27 };
 
